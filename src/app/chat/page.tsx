@@ -22,6 +22,15 @@ const firebaseConfig = {
 
 const ChatPage = () => {
   // Initialize Firebase if it hasn't been already
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+        return (
+            <div>
+                <p>Please set the <code>NEXT_PUBLIC_FIREBASE_API_KEY</code> environment variable.</p>
+                <p>See the <a href="https://firebase.google.com/docs/web/setup" target="_blank">Firebase documentation</a> for more information.</p>
+            </div>
+        );
+    }
+
   if (getApps().length === 0) {
     initializeApp(firebaseConfig);
   }
