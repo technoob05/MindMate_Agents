@@ -20,16 +20,27 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+const CHAT_STORAGE_KEY = 'mindful_hub_chat_messages';
+
 const ChatPage = () => {
   // Initialize Firebase if it hasn't been already
-    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
-        return (
-            <div>
-                <p>Please set the <code>NEXT_PUBLIC_FIREBASE_API_KEY</code> environment variable.</p>
-                <p>See the <a href="https://firebase.google.com/docs/web/setup" target="_blank">Firebase documentation</a> for more information.</p>
-            </div>
-        );
-    }
+  if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+    return (
+      <div>
+        <p>
+          Please set the <code>NEXT_PUBLIC_FIREBASE_API_KEY</code> environment
+          variable.
+        </p>
+        <p>
+          See the{' '}
+          <a href="https://firebase.google.com/docs/web/setup" target="_blank">
+            Firebase documentation
+          </a>{' '}
+          for more information.
+        </p>
+      </div>
+    );
+  }
 
   if (getApps().length === 0) {
     initializeApp(firebaseConfig);
@@ -50,6 +61,14 @@ const ChatPage = () => {
   }, [user, router]);
 
   useEffect(() => {
+    // Load messages from local storage on component mount
+    const storedMessages = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (storedMessages) {
+      setMessages(JSON.parse(storedMessages));
+    }
+  }, []);
+
+  useEffect(() => {
     // Scroll to the bottom of the chat on new messages
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
@@ -61,18 +80,37 @@ const ChatPage = () => {
     if (newMessage.trim() === '') return;
 
     // Display user message immediately
-    setMessages([...messages, {sender: 'user', text: newMessage }]);
+    const updatedMessages = [...messages, {sender: 'user', text: newMessage }];
+    setMessages(updatedMessages);
+    // Save messages to local storage
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(updatedMessages));
+
     const userMessage = newMessage;
     setNewMessage('');
 
     // Call Genkit flow for AI response
     try {
-      const aiResponse = await chatWithAi({ message: userMessage });
-      setMessages(prevMessages => [...prevMessages, { sender: 'AI', text: aiResponse.response }]);
+      const aiResponse = await chatWithAi({message: userMessage});
+      const aiMessage = {sender: 'AI', text: aiResponse.response};
+      const updatedMessagesWithAI = [...updatedMessages, aiMessage];
+      setMessages(updatedMessagesWithAI);
+      localStorage.setItem(
+        CHAT_STORAGE_KEY,
+        JSON.stringify(updatedMessagesWithAI)
+      );
     } catch (error) {
-      console.error("Failed to get AI response:", error);
+      console.error('Failed to get AI response:', error);
       // Display an error message to the user if the AI call fails
-      setMessages(prevMessages => [...prevMessages, { sender: 'AI', text: 'Sorry, I am having trouble connecting. Please try again later.' }]);
+      const aiErrorMessage = {
+        sender: 'AI',
+        text: 'Sorry, I am having trouble connecting. Please try again later.',
+      };
+      const updatedMessagesWithError = [...updatedMessages, aiErrorMessage];
+      setMessages(updatedMessagesWithError);
+      localStorage.setItem(
+        CHAT_STORAGE_KEY,
+        JSON.stringify(updatedMessagesWithError)
+      );
     }
   };
 
@@ -115,7 +153,7 @@ const ChatPage = () => {
         <div className="flex space-x-2">
           <Textarea
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={e => setNewMessage(e.target.value)}
             placeholder="Type your message..."
             className="flex-1"
           />
