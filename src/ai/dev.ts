@@ -1,1 +1,3 @@
-// Flows will be imported for their side effects in this file.
+import '@/ai/flows/summarize-ai-team-chat.ts';
+import '@/ai/flows/suggest-self-help-exercise.ts';
+import '@/ai/flows/moderate-multi-user-chat.ts';
