@@ -6,11 +6,17 @@
 
 ## Overview
 
+## Overview
+
 MindMate Agents is an innovative web application designed to provide comprehensive mental wellness support through a suite of AI-powered tools. Developed using Next.js, TypeScript, and cutting-edge AI technologies, it aims to offer accessible, personalized, and interactive mental health resources. Key features include empathetic AI chat, intelligent journaling with analysis, moderated multi-user support groups, and interactive AI avatars. This project targets individuals seeking proactive and engaging ways to manage their mental well-being.
 
 ## Problem Statement
 
+## Problem Statement
+
 Mental well-being is a critical global challenge (aligning with UN SDG 3: Good Health and Well-being). Many individuals lack access to timely, personalized, and non-stigmatizing mental health support. Traditional methods can be expensive, inconvenient, or lack continuous engagement. Furthermore, existing digital solutions may feel impersonal or fail to integrate seamlessly into users' daily lives. MindMate Agents addresses the need for accessible, engaging, and intelligent tools that empower users to proactively manage their mental wellness through technology.
+
+## Our Solution
 
 ## Our Solution
 
@@ -65,6 +71,8 @@ MindMate Agents provides a multi-faceted platform leveraging AI to deliver perso
 
 ## Architecture
 
+## Architecture
+
 MindMate Agents utilizes the Next.js App Router architecture for a modern, performant web application.
 *   **Frontend:** Leverages React Server Components (RSC) for static parts and Client Components for interactive elements (like chat interfaces, journaling inputs, avatar interaction). TypeScript ensures type safety. Styling is managed efficiently with Tailwind CSS, and Shadcn UI provides accessible, reusable components.
 *   **Backend:** Built using Next.js API Routes located in `src/app/api`. These handle requests for authentication, data persistence (via `db.json` in dev), AI interactions, TTS, and Google service integrations.
@@ -101,29 +109,12 @@ graph TD
 
 ### Installation
 
-1.  **Create a new Git repository (if you haven't already):**
-
+1.  **Clone the repository:**
     ```bash
-    git init
-    ```
-
-2.  **Add, commit, and push your changes to GitHub:**
-
-    ```bash
-    git add .
-    git commit -m "Initial commit"
-    git branch -M main
-    git remote add origin https://github.com/your-username/your-repo-name.git  # Replace with your repository URL
-    git push -u origin main
-    ```
-
-3.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-username/your-repo-name.git # Replace with your repository URL
+    git clone https://github.com/your-username/your-repo-name.git
     cd your-repo-name
     ```
-
-4.  **Install dependencies:**
+2.  **Install dependencies:**
     ```bash
     npm install
     # or
@@ -131,8 +122,7 @@ graph TD
     # or
     pnpm install
     ```
-
-5.  **Set up environment variables:**
+3.  **Set up environment variables:**
     Create a `.env.local` file in the root directory by copying the example `.env` file (if one exists) or by creating it manually. Add the necessary environment variables:
     ```env
     # Example - Add your actual required variables
@@ -145,19 +135,7 @@ graph TD
     ```
     *Note: Ensure `google-credentials.json` is correctly configured if used directly.*
 
-6.  **Firebase Setup (Important if using Firebase services):**
-
-    *   **Download Service Account Key:** In your Firebase project, go to "Project settings" -> "Service accounts". Generate a new private key and download the JSON file (e.g., `mindmate-agents-firebase-adminsdk.json`).
-    *   **Set `GOOGLE_APPLICATION_CREDENTIALS`:** Set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to the path of your downloaded service account key:
-
-        ```bash
-        export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/mindmate-agents-firebase-adminsdk.json"
-        ```
-
-        *   **Note:** For local development, you can set this in your `.env.local` file. However, **never commit this file to your repository!**
-        *   **Alternative:** If you are using Firebase Admin SDK directly in your code, ensure it's initialized with the service account credentials.
-
-7.  **Database Setup:**
+4.  **Database Setup:**
     *   The project currently uses a simple `db.json` file for development data storage. No specific setup is required other than ensuring the application has write permissions if needed.
     *   **Important:** For production deployment, replace `db.json` with a proper database solution (e.g., PostgreSQL, MongoDB, Firebase, Supabase) and update the data access logic in the API routes accordingly.
 
