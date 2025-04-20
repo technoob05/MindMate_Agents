@@ -109,12 +109,12 @@ graph TD
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/technoob05/MindMate_Agents/tree/master.git
+    cd MindMate_Agents
     ```
 2.  **Install dependencies:**
     ```bash
-    npm install
+    npm install (Recommend)
     # or
     yarn install
     # or
