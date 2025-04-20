@@ -21,24 +21,18 @@ export default {
   				foreground: 'hsl(var(--popover-foreground))'
   			},
   			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				DEFAULT: '#A0D2EB', // Soft Blue
+  				foreground: 'hsl(var(--primary-foreground))' // Keep default foreground for now, adjust if needed for contrast
   			},
+  			// Removed duplicate hsl definition below
   			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
+  				DEFAULT: '#C4DFAA', // Gentle Green
+  				foreground: 'hsl(var(--secondary-foreground))' // Keep default foreground for now, adjust if needed for contrast
   			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
+  			// Removed duplicate hsl definition below
   			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
+  				DEFAULT: '#E6E6FA', // Lavender
+  				foreground: 'hsl(var(--accent-foreground))' // Keep default foreground for now, adjust if needed for contrast
   			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',

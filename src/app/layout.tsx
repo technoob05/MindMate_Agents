@@ -1,7 +1,10 @@
-import type {Metadata} from 'next';
-import {Geist, Geist_Mono} from 'next/font/google';
-import './globals.css';
-import {initializeApp} from 'firebase/app';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google"; // Import Inter
+import "./globals.css";
+import { initializeApp } from "firebase/app";
+import { AppLayout } from "@/components/layout/app-layout"; // Import the new layout
+import { ThemeProvider } from "@/components/theme-provider"; // Import ThemeProvider
+import { cn } from "@/lib/utils"; // Import cn utility
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,22 +16,24 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
+// Initialize Firebase (Keep this part)
 const app = initializeApp(firebaseConfig);
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
+// Setup Inter font
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans", // Use standard --font-sans variable
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+// Keep Geist Mono for code if needed, or remove if not used extensively
+// const geistMono = Geist_Mono({
+//   variable: '--font-geist-mono',
+//   subsets: ['latin'],
+// });
 
 export const metadata: Metadata = {
-  title: 'Mindful Hub',
-  description: 'A mental wellness and support platform.',
+  title: "MindMate", // Update title to MindMate
+  description: "Your AI companion for mental wellness and support.", // Updated description slightly
 };
 
 export default function RootLayout({
@@ -37,11 +42,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      {/* Apply Inter font variable and antialiasing */}
+      <body
+        className={cn(
+          "font-sans antialiased", // Base font style
+          inter.variable // Apply Inter font variable
+          // geistMono.variable // Add mono font if kept
+        )}
+      >
+        {/* Use props compatible with the custom ThemeProvider */}
+        <ThemeProvider
+          defaultTheme="light" // Revert to compatible default
+          storageKey="mindmate-theme" // Keep updated storage key
+        >
+          {/* Wrap children with the AppLayout */}
+          <AppLayout>{children}</AppLayout>
+        </ThemeProvider>
       </body>
     </html>
   );
 }
-
