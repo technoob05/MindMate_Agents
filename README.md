@@ -4,13 +4,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
 
 ## Overview
 
 MindMate Agents is an innovative web application designed to provide comprehensive mental wellness support through a suite of AI-powered tools. Developed using Next.js, TypeScript, and cutting-edge AI technologies, it aims to offer accessible, personalized, and interactive mental health resources. Key features include empathetic AI chat, intelligent journaling with analysis, moderated multi-user support groups, and interactive AI avatars. This project targets individuals seeking proactive and engaging ways to manage their mental well-being.
 
-## Problem Statement
 
 ## Problem Statement
 
