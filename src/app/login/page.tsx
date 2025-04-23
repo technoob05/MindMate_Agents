@@ -41,7 +41,7 @@ const LoginPage = () => {
       router.push('/'); // Redirect to the home/root page on successful login
 
     } catch (err: any) {
-      console.error('Login failed:', err);
+      // console.error('Login failed:', err); // Commented out to prevent console logging
       // Xử lý các lỗi cụ thể của Firebase
       let errorMessage = 'An unexpected error occurred.';
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
