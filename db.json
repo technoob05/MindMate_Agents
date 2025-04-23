@@ -5,6 +5,12 @@
       "email": "duyminh12122005@gmail.com",
       "hashedPassword": "$2b$10$RcKic36Kughh83gFBh8E1eBDt3loMnX0uw8UHAoWLv5j23DRs4NSO",
       "pseudonym": "hello"
+    },
+    {
+      "id": "4a09a5d2-5c55-4422-9948-fff972044665",
+      "email": "123@gg.gg",
+      "hashedPassword": "$2b$10$/5IVcjCR0pj1pgcfhIV/RudxJRzxaQ96spQUEIcZOuQYBWWXLTvnG",
+      "pseudonym": "abc"
     }
   ],
   "chats": {
@@ -289,6 +295,21 @@
         "agentName": "Coordinator",
         "timestamp": 1745154858797,
         "conversationId": "720541ae-8344-45a4-a53e-06507f976a9f"
+      },
+      {
+        "text": "fuck you",
+        "sender": "user",
+        "id": "da445db3-1f26-4377-8652-d33d7b79e83b",
+        "timestamp": 1745247560384,
+        "conversationId": "60494773-142d-4c98-aa01-0ccba5c7d225"
+      },
+      {
+        "id": "34d57189-4415-4638-9417-6a169942596b",
+        "text": "I understand you're feeling angry. Is there something specific I can help you with?\n",
+        "sender": "ai",
+        "agentName": "Coordinator",
+        "timestamp": 1745247563246,
+        "conversationId": "60494773-142d-4c98-aa01-0ccba5c7d225"
       }
     ],
     "multi_user": [
@@ -390,23 +411,5 @@
         }
       ]
     }
-  },
-  "reports": [
-    {
-      "reportId": "d0963924-4d5c-476d-879f-8dccb85b48b7",
-      "messageId": "msg2",
-      "roomId": "stress-management",
-      "reporterUserId": "User_h80oe",
-      "timestamp": 1745141856790,
-      "status": "pending"
-    },
-    {
-      "reportId": "de16099f-4fde-4ab1-ad5a-d3fcc015fff0",
-      "messageId": "msg1",
-      "roomId": "stress-management",
-      "reporterUserId": "User_h80oe",
-      "timestamp": 1745141883221,
-      "status": "pending"
-    }
-  ]
+  }
 }

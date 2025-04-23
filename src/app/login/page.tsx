@@ -1,5 +1,4 @@
 'use client';
-'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -15,6 +14,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { motion } from "framer-motion"; // Import motion
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"; // Import Firebase Auth functions
+import { app } from '@/lib/firebase/config'; // Đảm bảo đường dẫn này đúng
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -24,42 +25,40 @@ const LoginPage = () => {
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault(); // Keep one
+    e.preventDefault();
     setLoading(true);
     setError(null); // Clear previous errors
+    const auth = getAuth(app); // Get Firebase Auth instance
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle errors from the API (e.g., invalid credentials)
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
-      }
+      // Sử dụng Firebase để đăng nhập
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
       // Login successful
-      console.log('Login successful:', data);
-      // TODO: Implement proper session management (e.g., store token/user info)
-      // For demo purposes, we just redirect
+      console.log('Login successful:', user);
+      // TODO: Implement proper session management if needed beyond Firebase's handling
       router.push('/'); // Redirect to the home/root page on successful login
 
     } catch (err: any) {
       console.error('Login failed:', err);
-      setError(err.message || 'An unexpected error occurred.');
+      // Xử lý các lỗi cụ thể của Firebase
+      let errorMessage = 'An unexpected error occurred.';
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        errorMessage = 'Invalid email or password.';
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email format.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      setError(errorMessage);
       setPassword(''); // Clear password field on error
     } finally {
       setLoading(false);
-      // Optionally clear email field on error, or leave it
-      // if (error) setEmail('');
     }
   };
+
+  // ... Rest of the component remains the same ...
 
   return (
     // Use flex container, remove custom background, adjust padding

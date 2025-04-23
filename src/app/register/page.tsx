@@ -14,6 +14,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { motion } from "framer-motion"; // Import motion
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { app } from '@/lib/firebase/config'; // Đảm bảo đường dẫn này đúng
 
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
@@ -34,38 +36,42 @@ const RegisterPage = () => {
     }
 
     setLoading(true);
-    setError(null); // Clear previous errors
+    const auth = getAuth(app);
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, pseudonym }),
-      });
+      // Sử dụng Firebase để tạo người dùng
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle errors from the API (e.g., email already exists)
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      // (Tùy chọn) Cập nhật hồ sơ người dùng với pseudonym
+      if (pseudonym && user) {
+        await updateProfile(user, {
+          displayName: pseudonym,
+        });
       }
 
-      // Registration successful
-      console.log('Registration successful:', data);
-      alert('Registration successful! Please log in.'); // Simple feedback for demo
-      router.push('/login'); // Redirect to login page
+      console.log('Registration successful:', user);
+      alert('Registration successful! Please log in.'); // Hoặc thông báo tốt hơn
+      router.push('/login'); // Chuyển hướng đến trang đăng nhập
 
     } catch (err: any) {
       console.error('Registration failed:', err);
-      setError(err.message || 'An unexpected error occurred.');
+      // Xử lý các lỗi cụ thể của Firebase
+      let errorMessage = 'An unexpected error occurred.';
+      if (err.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email address is already in use.';
+      } else if (err.code === 'auth/weak-password') {
+        errorMessage = 'Password should be at least 6 characters.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
-      // Clear password fields regardless of outcome for security
+      // Xóa các trường mật khẩu bất kể kết quả
       setPassword('');
       setConfirmPassword('');
-      // Optionally clear email/pseudonym on error, or leave them for correction
+      // Tùy chọn xóa email/pseudonym khi có lỗi hoặc để lại để sửa
       // if (!error) { setEmail(''); setPseudonym(''); }
     }
   };
