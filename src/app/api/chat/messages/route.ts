@@ -76,28 +76,72 @@ const model = new ChatGoogleGenerativeAI({
 // POST handler to add a new 1-on-1 chat message and get AI response
 export async function POST(request: Request) {
   try {
-    const userMessageInput: Omit<Message, 'id' | 'timestamp' | 'sender'> & { sender: 'user' } = await request.json();
+    const formData = await request.formData();
+    const text = formData.get('text') as string | null;
+    const sender = formData.get('sender') as string | null;
+    const file = formData.get('file') as File | null;
 
-    if (!userMessageInput || !userMessageInput.text || userMessageInput.sender !== 'user') {
-      return NextResponse.json({ message: 'Invalid message format, expected user message' }, { status: 400 });
+    // Basic validation
+    if (sender !== 'user') {
+      return NextResponse.json({ message: 'Invalid sender' }, { status: 400 });
+    }
+    if (!text && !file) {
+        return NextResponse.json({ message: 'No text or file provided' }, { status: 400 });
+    }
+
+    let fileContent: string | null = null;
+    let userMessageText = text || ""; // Use empty string if no text but file exists
+
+    // 1. Process File (if exists)
+    if (file) {
+      console.log(`Received file: ${file.name}, type: ${file.type}, size: ${file.size}`);
+      // Basic check for text file type (can be expanded)
+      if (file.type === 'text/plain') {
+        try {
+          const buffer = Buffer.from(await file.arrayBuffer());
+          fileContent = buffer.toString('utf-8');
+          console.log(`Successfully read content from ${file.name}`);
+        } catch (err) {
+          console.error(`Error reading file ${file.name}:`, err);
+          // Optionally return an error or just proceed without file content
+          // return NextResponse.json({ message: `Error reading file: ${file.name}` }, { status: 500 });
+        }
+      } else {
+        console.warn(`Unsupported file type: ${file.type}. Only text/plain is currently supported.`);
+        // Optionally inform the user via the AI response later or return an error
+      }
     }
 
     const db = await readDb();
 
-    // 1. Save User Message
+    // 2. Save User Message
+    // The frontend optimistically adds "[Attached: filename]", so we save the original text
     const userMessage: Message = {
-      ...userMessageInput,
       id: crypto.randomUUID(),
+      text: userMessageText, // Save the original text message
+      sender: 'user',
       timestamp: Date.now(),
+      // chatId: userMessageInput.chatId // If you need to associate with a specific chat thread
     };
     db.chats.one_on_one.push(userMessage);
-    // We write later after getting the AI response to make it slightly more atomic
+    // We write later after getting the AI response
 
-    // 2. Call AI Model
-    console.log(`Invoking Gemini with: ${userMessage.text}`);
+    // 3. Prepare AI Input (Combine text and file content)
+    let promptText = userMessageText;
+    if (fileContent) {
+      // Simple prefixing strategy
+      promptText = `[Content from file: ${file?.name || 'uploaded file'}]:\n${fileContent}\n\n[User message]:\n${userMessageText}`;
+      console.log(`Combined prompt includes content from ${file?.name}`);
+    } else if (file && !fileContent) {
+        // If file was present but not readable/supported
+        promptText += `\n\n[System note: A file named "${file.name}" was attached but could not be read or is not a supported format (currently only .txt). Please inform the user if relevant.]`;
+    }
+
+    // 4. Call AI Model
+    console.log(`Invoking Gemini with combined prompt (length: ${promptText.length})`);
     const aiResponse = await model.invoke([
         // TODO: Add chat history for context later
-        new HumanMessage(userMessage.text),
+        new HumanMessage(promptText), // Use the potentially combined prompt
     ]);
     console.log(`Gemini response: ${aiResponse.content}`);
 
@@ -114,12 +158,12 @@ export async function POST(request: Request) {
       timestamp: Date.now(),
       chatId: userMessage.chatId // Keep the same chat ID if provided
     };
-    db.chats.one_on_one.push(aiMessage);
+    db.chats.one_on_one.push(aiMessage); // Add AI message to the array
 
-    // 4. Write both messages to DB
+    // 6. Write both messages to DB
     await writeDb(db);
 
-    // 5. Return AI message to frontend
+    // 7. Return AI message to frontend
     return NextResponse.json(aiMessage, { status: 201 });
 
   } catch (error: any) {

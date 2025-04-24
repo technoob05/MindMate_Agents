@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles } from 'lucide-react';
+import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle } from 'lucide-react'; // Added FileText, XCircle
 import {
   Tooltip,
   TooltipContent,
@@ -51,6 +51,8 @@ export default function ChatPage() {
   const [typingEffect, setTypingEffect] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageUpdate, setMessageUpdate] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); // State for selected file
+  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
 
   // Scroll to bottom effect
   useEffect(() => {
@@ -93,36 +95,44 @@ export default function ChatPage() {
 
   const handleSendMessage = async (messageText?: string) => {
     const textToSend = messageText || inputMessage;
-    if (textToSend.trim() === '' || isLoading) return;
+    // Allow sending only a file without text
+    if (textToSend.trim() === '' && !selectedFile || isLoading) return;
 
-    setInputMessage(''); // Clear input regardless of source
+    setInputMessage(''); // Clear input
+    const fileToSend = selectedFile; // Capture file before clearing
+    setSelectedFile(null); // Clear selected file state
     setIsLoading(true);
     setError(null);
     setShowEmptyState(false);
-    // Removed duplicate declaration below
-
-    // const textToSend = inputMessage; // This was the duplicate
-    // setInputMessage(''); // Already cleared above
-    // setIsLoading(true); // Already set above
-    // setError(null); // Already cleared above
-    setShowEmptyState(false);
 
     // Optimistically add user message to UI
+    // Include file name in optimistic message if present
+    let optimisticText = textToSend;
+    if (fileToSend) {
+      optimisticText += `\n[Attached: ${fileToSend.name}]`;
+    }
     const optimisticUserMessage: Message = {
       id: `temp-${crypto.randomUUID()}`,
-      text: textToSend,
+      text: optimisticText.trim(), // Trim in case only file was sent
       sender: "user",
       timestamp: Date.now(),
     };
     setMessages((prevMessages) => [...prevMessages, optimisticUserMessage]);
 
+    // Prepare FormData
+    const formData = new FormData();
+    formData.append('text', textToSend);
+    formData.append('sender', 'user');
+    if (fileToSend) {
+      formData.append('file', fileToSend);
+    }
+
     try {
+      // Send FormData instead of JSON
       const response = await fetch('/api/chat/messages', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: textToSend, sender: 'user' }),
+        // No 'Content-Type' header needed for FormData, browser sets it
+        body: formData,
       });
 
       if (!response.ok) {
@@ -196,12 +206,31 @@ export default function ChatPage() {
         prevMessages.filter((msg) => msg.id !== optimisticUserMessage.id)
       );
     } finally {
+      // Ensure loading is set to false even if typing effect is interrupted
+      setIsLoading(false);
       setMessageUpdate(prev => prev + 1);
     }
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(event.target.value);
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset file input value
+    }
   };
 
   // Removed handleTranscript - handled by VoiceInteraction component directly
@@ -580,8 +609,41 @@ export default function ChatPage() {
 
       {/* Message input area */}
       <footer className="p-3 border-t border-border/60 bg-background/95 backdrop-blur-sm sticky bottom-0">
+        {/* Selected file display */}
+        {selectedFile && (
+          <div className="max-w-4xl mx-auto mb-2 flex items-center justify-between bg-muted/50 border border-border/30 rounded-lg px-3 py-1.5 text-sm">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <FileText size={16} className="text-muted-foreground flex-shrink-0" />
+              <span className="text-foreground truncate" title={selectedFile.name}>
+                {selectedFile.name}
+              </span>
+              <span className="text-muted-foreground text-xs flex-shrink-0">
+                ({(selectedFile.size / 1024).toFixed(1)} KB)
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+              onClick={removeSelectedFile}
+              aria-label="Remove attached file"
+            >
+              <XCircle size={16} />
+            </Button>
+          </div>
+        )}
+
         {/* Styled input container */}
         <div className="flex items-center gap-2 max-w-4xl mx-auto rounded-xl border border-input bg-background/80 shadow-sm px-2 py-1.5 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-1 focus-within:border-primary/50 transition-all duration-200 ease-in-out">
+          {/* Hidden File Input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+            // Add accept attribute if you want to limit file types
+            // accept=".pdf,.doc,.docx,.txt"
+          />
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -590,7 +652,7 @@ export default function ChatPage() {
                   size="icon"
                   className="h-8 w-8 flex-shrink-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
                   aria-label="Attach file"
-                  // onClick={() => alert("Attach file TBD")} // Add functionality later
+                  onClick={triggerFileInput} // Trigger file input click
                 >
                   <Paperclip size={18} />
                 </Button>
@@ -622,7 +684,8 @@ export default function ChatPage() {
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => handleSendMessage()}
-                    disabled={ (isLoading && !typingEffect) || inputMessage.trim() === ''} // Disable if loading OR input empty
+                    // Disable if loading OR (input empty AND no file selected)
+                    disabled={ (isLoading && !typingEffect) || (inputMessage.trim() === '' && !selectedFile)}
                     size="icon"
                     variant="gradient" // Use gradient for send
                     className="h-8 w-8 rounded-lg flex-shrink-0" // Adjusted size/rounding
