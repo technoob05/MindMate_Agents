@@ -49,11 +49,11 @@ export default function ChatPage() {
   const [showEmptyState, setShowEmptyState] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [typingEffect, setTypingEffect] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null); // Ref for ScrollArea viewport
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [messageUpdate, setMessageUpdate] = useState(0);
 
   // Scroll to bottom effect
   useEffect(() => {
-    // Use timeout to allow DOM update before scrolling
     setTimeout(() => {
       const viewport = scrollAreaRef.current?.querySelector(
         '[data-radix-scroll-area-viewport]'
@@ -89,9 +89,9 @@ export default function ChatPage() {
     };
 
     fetchMessages();
-  }, []);
+  }, [messageUpdate]);
 
-  const handleSendMessage = async (messageText?: string) => { // Allow passing message text directly
+  const handleSendMessage = async (messageText?: string) => {
     const textToSend = messageText || inputMessage;
     if (textToSend.trim() === '' || isLoading) return;
 
@@ -196,7 +196,7 @@ export default function ChatPage() {
         prevMessages.filter((msg) => msg.id !== optimisticUserMessage.id)
       );
     } finally {
-      // setIsLoading(false); // Loading state is handled by typing effect now
+      setMessageUpdate(prev => prev + 1);
     }
   };
 

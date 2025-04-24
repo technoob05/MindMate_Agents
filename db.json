@@ -98,6 +98,30 @@
         "text": "Hello! How can I help you today?\n",
         "sender": "ai",
         "timestamp": 1745155079286
+      },
+      {
+        "text": "Chào cậu",
+        "sender": "user",
+        "id": "0a8ed8c7-38a9-4697-86c4-52498bdb1f87",
+        "timestamp": 1745509002812
+      },
+      {
+        "id": "e0293431-0e9b-4a63-a256-b05ef830fe9e",
+        "text": "Chào bạn! Mình có thể giúp gì cho bạn hôm nay?\n",
+        "sender": "ai",
+        "timestamp": 1745509003984
+      },
+      {
+        "text": "helo",
+        "sender": "user",
+        "id": "e8645475-ed88-4bb8-9b20-4bcb5e9e34d3",
+        "timestamp": 1745509166996
+      },
+      {
+        "id": "ad58c4c9-24a1-43df-bfb9-9491d670838f",
+        "text": "Hello! How can I help you today?\n",
+        "sender": "ai",
+        "timestamp": 1745509168188
       }
     ],
     "ai_team": [
