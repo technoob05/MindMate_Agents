@@ -101,6 +101,10 @@ export default function ChatPage() {
     setInputMessage(''); // Clear input
     const fileToSend = selectedFile; // Capture file before clearing
     setSelectedFile(null); // Clear selected file state
+    // Reset the actual file input element so the same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
     setIsLoading(true);
     setError(null);
     setShowEmptyState(false);
