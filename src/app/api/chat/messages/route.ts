@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage } from "@langchain/core/messages";
+import { processFileForRag, getEnhancedPrompt } from '@/ai/rag/vector-store';
 
 // Define the path to the JSON database file
 const dbPath = path.resolve(process.cwd(), 'db.json');
@@ -13,6 +14,10 @@ interface Message {
   sender: 'user' | 'ai';
   timestamp: number;
   chatId?: string; // Optional: To group messages belonging to the same conversation
+  sourceDocs?: Array<{
+    pageContent: string;
+    metadata: Record<string, any>;
+  }>;
 }
 
 interface DbData {
@@ -89,33 +94,39 @@ export async function POST(request: Request) {
         return NextResponse.json({ message: 'No text or file provided' }, { status: 400 });
     }
 
-    let fileContent: string | null = null;
     let userMessageText = text || ""; // Use empty string if no text but file exists
+    let fileProcessed = false;
+    let fileMetadata: {
+      fileName?: string;
+      fileType?: string;
+      fileSize?: number;
+      chunksStored?: number;
+    } = {};
 
-    // 1. Process File (if exists)
+    // 1. Process File (if exists) - Add to vector database
     if (file) {
       console.log(`Received file: ${file.name}, type: ${file.type}, size: ${file.size}`);
-      // Basic check for text file type (can be expanded)
-      if (file.type === 'text/plain') {
-        try {
-          const buffer = Buffer.from(await file.arrayBuffer());
-          fileContent = buffer.toString('utf-8');
-          console.log(`Successfully read content from ${file.name}`);
-        } catch (err) {
-          console.error(`Error reading file ${file.name}:`, err);
-          // Optionally return an error or just proceed without file content
-          // return NextResponse.json({ message: `Error reading file: ${file.name}` }, { status: 500 });
-        }
-      } else {
-        console.warn(`Unsupported file type: ${file.type}. Only text/plain is currently supported.`);
-        // Optionally inform the user via the AI response later or return an error
+      try {
+        // Process file for RAG - this now chunks and stores in vector DB
+        const chunkCount = await processFileForRag(file, file.name);
+        fileProcessed = true;
+        fileMetadata = {
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          chunksStored: chunkCount
+        };
+        console.log(`Successfully processed file ${file.name} into ${chunkCount} chunks`);
+      } catch (err) {
+        console.error(`Error processing file ${file.name} for RAG:`, err);
+        // Continue with chat but inform about file processing error
+        userMessageText += `\n[Error processing attached file: ${file.name}]`;
       }
     }
 
     const db = await readDb();
 
     // 2. Save User Message
-    // The frontend optimistically adds "[Attached: filename]", so we save the original text
     const userMessage: Message = {
       id: crypto.randomUUID(),
       text: userMessageText, // Save the original text message
@@ -124,39 +135,40 @@ export async function POST(request: Request) {
       // chatId: userMessageInput.chatId // If you need to associate with a specific chat thread
     };
     db.chats.one_on_one.push(userMessage);
-    // We write later after getting the AI response
 
-    // 3. Prepare AI Input (Combine text and file content)
-    let promptText = userMessageText;
-    if (fileContent) {
-      // Simple prefixing strategy
-      promptText = `[Content from file: ${file?.name || 'uploaded file'}]:\n${fileContent}\n\n[User message]:\n${userMessageText}`;
-      console.log(`Combined prompt includes content from ${file?.name}`);
-    } else if (file && !fileContent) {
-        // If file was present but not readable/supported
-        promptText += `\n\n[System note: A file named "${file.name}" was attached but could not be read or is not a supported format (currently only .txt). Please inform the user if relevant.]`;
+    // 3. Get enhanced prompt with relevant context, if any
+    const enhancedPromptData = await getEnhancedPrompt(userMessageText);
+    
+    let promptToUse = enhancedPromptData.prompt;
+    
+    // If file was just uploaded but not yet in context, add a note for the AI
+    if (fileProcessed) {
+      promptToUse = `${promptToUse}\n\n[System: The user has just uploaded a file named "${file?.name}" which has been processed into ${fileMetadata.chunksStored} chunks with embeddings. You can now answer questions about its contents. Remember to never explicitly mention if information is not found in the file - just answer directly from your knowledge when needed.]`;
     }
 
-    // 4. Call AI Model
-    console.log(`Invoking Gemini with combined prompt (length: ${promptText.length})`);
+    // 4. Call AI Model with enhanced prompt (includes relevant chunks if available)
+    console.log(`Invoking Gemini ${enhancedPromptData.hasContext ? 'with RAG context from ' + enhancedPromptData.sourceDocs.length + ' relevant chunks' : 'without context'}`);
+    // Add a last reminder before sending to model
+    promptToUse = `${promptToUse}\n\nImportant: If the question is not about the file content, just answer it directly without mentioning the file or context at all.`;
     const aiResponse = await model.invoke([
-        // TODO: Add chat history for context later
-        new HumanMessage(promptText), // Use the potentially combined prompt
+        new HumanMessage(promptToUse),
     ]);
-    console.log(`Gemini response: ${aiResponse.content}`);
+    console.log(`Gemini response received`);
 
     if (typeof aiResponse.content !== 'string') {
         console.error("AI response content is not a string:", aiResponse.content);
         return NextResponse.json({ message: 'Error processing AI response' }, { status: 500 });
     }
 
-    // 3. Create and Save AI Message
+    // 5. Create and Save AI Message
     const aiMessage: Message = {
       id: crypto.randomUUID(),
       text: aiResponse.content,
       sender: 'ai',
       timestamp: Date.now(),
-      chatId: userMessage.chatId // Keep the same chat ID if provided
+      chatId: userMessage.chatId, // Keep the same chat ID if provided
+      // Include source documents if RAG was used and they're actually relevant
+      sourceDocs: enhancedPromptData.hasContext ? enhancedPromptData.sourceDocs : undefined
     };
     db.chats.one_on_one.push(aiMessage); // Add AI message to the array
 

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle } from 'lucide-react'; // Added FileText, XCircle
+import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info } from 'lucide-react'; // Added FileText, XCircle, Info
 import {
   Tooltip,
   TooltipContent,
@@ -38,6 +38,10 @@ interface Message {
   chatId?: string;
   feedback?: 'like' | 'dislike' | null;
   saved?: boolean;
+  sourceDocs?: Array<{
+    pageContent: string;
+    metadata: Record<string, any>;
+  }>;
 }
 
 export default function ChatPage() {
@@ -476,6 +480,43 @@ export default function ChatPage() {
                               <span className="inline-block w-0.5 h-4 bg-primary ml-1 animate-pulse"></span>
                             )}
                         </p>
+                        
+                        {/* Source documents indicator - only show when typing is complete and message has sources */}
+                        {!typingEffect && message.sourceDocs && message.sourceDocs.length > 0 && (
+                          <div className="mt-3 pt-3 border-t border-border/30">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <button className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors">
+                                  <Info size={12} className="text-primary/70" />
+                                  <span>Sources: {message.sourceDocs.length} document{message.sourceDocs.length > 1 ? 's' : ''}</span>
+                                </button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-3xl">
+                                <DialogHeader>
+                                  <DialogTitle>Source Documents</DialogTitle>
+                                  <DialogDescription>
+                                    The AI response was enhanced with information from these documents
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="mt-4 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                                  {message.sourceDocs.map((doc, i) => (
+                                    <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50">
+                                      <div className="flex items-center gap-2 mb-2 pb-1 border-b border-border/30">
+                                        <FileText size={14} className="text-primary/70" />
+                                        <div className="text-sm font-medium">
+                                          {doc.metadata.source || `Document ${i + 1}`}
+                                        </div>
+                                      </div>
+                                      <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                                        {doc.pageContent}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
+                        )}
                       </div>
                       {/* Actions on hover */}
                       <div className="flex items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">

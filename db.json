@@ -16,22 +16,452 @@
   "chats": {
     "one_on_one": [
       {
-        "id": "f1675643-eb36-4651-b369-9d1a55ba547d",
+        "id": "22a5b00c-4203-4ab0-be96-2e98420b5d8e",
         "text": "",
         "sender": "user",
-        "timestamp": 1745514855530
+        "timestamp": 1745651767990
       },
       {
-        "id": "2948cff5-48f7-4e21-99cf-b79338045572",
-        "text": "",
-        "sender": "user",
-        "timestamp": 1745514907840
-      },
-      {
-        "id": "d49b61cd-6c89-4810-afd2-8475731dabaa",
-        "text": "Okay, I see the content of the file `checkchatbot.txt` is \"xinchaobantengi\".\n\nYou haven't provided a specific question or instruction. To give you a helpful response, I need to understand what you want me to do with this information.\n\nHere are some possibilities, and please tell me if one of them is what you're looking for:\n\n*   **\"What language is 'xinchaobantengi'?\"** I can try to identify the language.\n*   **\"Is 'xinchaobantengi' a valid word?\"** I can try to determine if it's a real word or perhaps a misspelling.\n*   **\"Translate 'xinchaobantengi'.\"** I can attempt to translate it if it's a recognizable phrase.\n*   **\"Use 'xinchaobantengi' in a sentence.\"** I can create a sentence using the phrase.\n*   **\"Is this related to a chatbot in some way?\"** I can try to infer if there's a connection to the user's intention of checking the chatbot.\n\n**Please clarify your question or instruction.** What do you want me to do with \"xinchaobantengi\"?\n",
+        "id": "684c8765-1576-477a-bc31-fb85a1aad0a9",
+        "text": "Creating a warm, friendly atmosphere is important to make clients feel comfortable sharing and to build trust and cooperation. Cognitive behavioral therapy and relaxation techniques are used. For aggression disorders with or without agoraphobia, desensitization therapy, cognitive behavioral therapy, and aggression control therapy are options. For obsessive-compulsive disorder.\n",
         "sender": "ai",
-        "timestamp": 1745514910394
+        "timestamp": 1745651769836,
+        "sourceDocs": [
+          {
+            "pageContent": "nhấn mạnh và cần chú ý là xây dựng bầu không khí gần gũi, ấm áp, một không gian, một nơi mà có thể tạo cho thân chủ sự thoải mái để chia sẻ, một sự tương tác, mối quan hệ an toàn, xây dựng niềm tin tưởng cũng như mối quan hệ hợp tác.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:13:24.843Z",
+              "loc": {
+                "lines": {
+                  "from": 83,
+                  "to": 83
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "nhấn mạnh và cần chú ý là xây dựng bầu không khí gần gũi, ấm áp, một không gian, một nơi mà có thể tạo cho thân chủ sự thoải mái để chia sẻ, một sự tương tác, mối quan hệ an toàn, xây dựng niềm tin tưởng cũng như mối quan hệ hợp tác.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:16:04.192Z",
+              "loc": {
+                "lines": {
+                  "from": 83,
+                  "to": 83
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "Liệu pháp nhận thức hành vi. 2. Áp dụng các kỹ thuật thư giãn. Rối nhiễu công kích có hoặc không có ám ảnh sợ khoảng trống 1. Liệu pháp giải cảm ứng. 2. Liệu pháp nhận thức hành vi. 3. Liệu pháp kiểm soát công kích. Rối nhiễu ám ảnh cưỡng bức",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:13:24.843Z",
+              "loc": {
+                "lines": {
+                  "from": 21,
+                  "to": 21
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "2c59759b-0183-4ccb-9a97-2147aa657a33",
+        "text": "Liệu pháp nhận thức hành vi",
+        "sender": "user",
+        "timestamp": 1745651790133
+      },
+      {
+        "id": "8b6cac2e-f155-4fae-a03f-0d0b00289df4",
+        "text": "Liệu pháp nhận thức hành vi (CBT) là một loại hình trị liệu tâm lý tập trung vào việc xác định và thay đổi những suy nghĩ, cảm xúc và hành vi tiêu cực hoặc không hữu ích. Mục tiêu của CBT là giúp mọi người phát triển các cơ chế đối phó lành mạnh hơn để giải quyết các vấn đề và cải thiện chất lượng cuộc sống của họ. Nó thường được sử dụng để điều trị một loạt các vấn đề sức khỏe tâm thần, chẳng hạn như trầm cảm, lo âu, rối loạn ám ảnh cưỡng chế và rối loạn căng thẳng sau chấn thương.\n",
+        "sender": "ai",
+        "timestamp": 1745651792462,
+        "sourceDocs": [
+          {
+            "pageContent": "Liệu pháp nhận thức hành vi. 2. Áp dụng các kỹ thuật thư giãn. Rối nhiễu công kích có hoặc không có ám ảnh sợ khoảng trống 1. Liệu pháp giải cảm ứng. 2. Liệu pháp nhận thức hành vi. 3. Liệu pháp kiểm soát công kích. Rối nhiễu ám ảnh cưỡng bức",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:13:24.843Z",
+              "loc": {
+                "lines": {
+                  "from": 21,
+                  "to": 21
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "Liệu pháp nhận thức hành vi. 2. Áp dụng các kỹ thuật thư giãn. Rối nhiễu công kích có hoặc không có ám ảnh sợ khoảng trống 1. Liệu pháp giải cảm ứng. 2. Liệu pháp nhận thức hành vi. 3. Liệu pháp kiểm soát công kích. Rối nhiễu ám ảnh cưỡng bức",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:16:04.192Z",
+              "loc": {
+                "lines": {
+                  "from": 21,
+                  "to": 21
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "liệu pháp nhận thức là dạng liệu pháp dùng để kiểm tra tiến trình nhận thức như là một chỉ báo về sức khỏe tinh thần hoặc các bệnh tinh thần, chính suy nghĩ và niềm tin của chúng ta chi phối chúng ta.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:13:24.843Z",
+              "loc": {
+                "lines": {
+                  "from": 16,
+                  "to": 16
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "f2d1f1fa-13d3-418f-ba74-b66a981c555c",
+        "text": "",
+        "sender": "user",
+        "timestamp": 1745653800411
+      },
+      {
+        "id": "f162d6b8-2473-4599-a28d-24c5ec9d1e54",
+        "text": "Cognitive behavioral therapy (CBT) is a widely used and effective form of psychotherapy that helps individuals identify and change negative thinking patterns and behaviors. It is used to treat a variety of mental health conditions and has been adapted for diverse populations and settings. CBT techniques can be applied individually, in group settings, and with families.\n",
+        "sender": "ai",
+        "timestamp": 1745653802245,
+        "sourceDocs": [
+          {
+            "pageContent": "xem như bị tiêu cực quá mức trong các niềm tin của họ và chịu đựng đau đớn từ việc sử dụng thông tin kém thích nghi trong quá trình xây dựng các chiến lược.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 33,
+                  "to": 33
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "mạnh và cần chú ý là xây dựng bầu không khí gần gũi, ấm áp, một không gian, một nơi mà có thể tạo cho thân chủ sự thoải mái để chia sẻ, một sự tương tác, mối quan hệ an toàn, xây dựng niềm tin tưởng cũng như mối quan hệ hợp tác.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 83,
+                  "to": 83
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "tuyên bố này gây nên một hậu quả khó khăn về mặt cảm xúc mà Cúc phải chịu đựng, từ đó ảnh hưởng đến việc xây dựng mối quan hệ với những người xung quanh em và cho chính bản thân em.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 45,
+                  "to": 45
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "rỡ: dù bất kỳ giá nào, khổ cực như thế nào bà cũng chịu để có thể cứu được con bà, bà sẽ làm tất cả vì con.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 40,
+                  "to": 40
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "trị các vấn đề về sức khỏe tinh thần và được áp dụng rộng rãi. Trị liệu nhận thức hành vi đã được điều chỉnh cho phù hợp với đa dạng đối tượng thân chủ khác nhau về trình độ học vấn, thu nhập, văn hóa, giới tính, áp dụng từ trẻ em cho đến người lớn tuổi; được vận dụng trong trị liệu với cá nhân, với nhóm và với gia đình.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 18,
+                  "to": 18
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "cf09be58-8400-4be3-a42d-dc3f5e7670cc",
+        "text": "khuyến khích bạn không chỉ đọc những từ ngữ trên trang giấy mà còn làm gì",
+        "sender": "user",
+        "timestamp": 1745653825915
+      },
+      {
+        "id": "6963df77-56c9-4dd7-80b1-650ca82e2645",
+        "text": "Chủ động nỗ lực ngẫm nghĩ, phản ảnh qua kinh nghiệm của bản thân và mang những ý tưởng vào trong cuộc sống.\n",
+        "sender": "ai",
+        "timestamp": 1745653828096,
+        "sourceDocs": [
+          {
+            "pageContent": "tuyên bố này gây nên một hậu quả khó khăn về mặt cảm xúc mà Cúc phải chịu đựng, từ đó ảnh hưởng đến việc xây dựng mối quan hệ với những người xung quanh em và cho chính bản thân em.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 45,
+                  "to": 45
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "Trong trường hợp nhà tham vấn đang có chuyện buồn hay có vấn đề về sức khỏe mà không thể làm việc trong phiên tham vấn đó thì họ cần nghỉ ngơi, thông báo hoãn hay chuyển đổi thời gian tham vấn. Trong trường hợp tham vấn khẩn cấp mà sức khỏe không cho phép họ cần chuyển hoặc nhờ nhà giám sát chuyên môn hay đồng nghiệp trợ giúp.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 77,
+                  "to": 77
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "khuyến khích bạn không chỉ đọc những từ ngữ trên trang giấy mà còn chủ động nỗ lực ngẫm nghĩ, phản ảnh qua kinh nghiệm của bản thân - nguồn sinh động nhất của học tập - mang những ý tưởng ở đây vào trong cuộc sống. Khi đọc cuốn sách này bạn có lẽ sẽ tự hỏi bản thân, điều này áp dụng cho tôi hoặc bệnh nhân/thân chủ của tôi như thế nào? Làm thế nào mà các ý tưởng hay các triết lý trên có thể giúp tôi trong công việc hoặc cho chính vấn đề của tôi và tôi có thể vận dụng nó trong thực hành theo cách",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 1,
+                  "to": 1
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "bản thân chúng trong hầu hết các giả định khái quát về bản thân chúng ta và thế giới bên trong chúng ta. Không phải niềm tin cốt lõi nào cũng gây nên vấn đề của chúng ta, chỉ có một số niềm tin cốt lõi mang tính hủy hoại mới ảnh hưởng đến tâm trí và sức khỏe chúng ta. Dưới đây là một vài ví dụ về niềm tin cốt lõi mang tính hủy hoại - Tôi không được yêu",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 50,
+                  "to": 50
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "chủ nhận được từ nhà tham vấn, thể hiện qua tín hiệu bằng lời hoặc ngôn ngữ không lời, thể hiện sự chấp nhận và nhận thức sâu sắc, ví dụ như cái gật đầu, cái mỉm cười biểu lộ sự hài hước hay bày tỏ bạn đang rất hứng thú với việc trò chuyện với thân chủ.",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 76,
+                  "to": 76
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "608f67e0-dd5d-47ac-b77e-94509cf39048",
+        "text": "Nếu tôi bị trầm cảm tôi cần làm gì",
+        "sender": "user",
+        "timestamp": 1745653866251
+      },
+      {
+        "id": "cda5104a-40b0-442a-b5bf-65b88e1ce127",
+        "text": "Nếu bạn bị trầm cảm, có một số điều bạn có thể làm để giúp bản thân cảm thấy tốt hơn. Đầu tiên, hãy tìm kiếm sự giúp đỡ từ chuyên gia sức khỏe tâm thần như bác sĩ tâm thần hoặc nhà tâm lý học. Họ có thể đánh giá tình trạng của bạn và đề xuất phương pháp điều trị phù hợp, có thể bao gồm liệu pháp tâm lý, thuốc men, hoặc cả hai.\n\nNgoài ra, hãy chú ý đến sức khỏe thể chất của bạn bằng cách ăn uống lành mạnh, tập thể dục thường xuyên và ngủ đủ giấc. Tránh sử dụng rượu và các chất kích thích khác vì chúng có thể làm trầm trọng thêm các triệu chứng trầm cảm.\n\nKết nối với bạn bè và gia đình, chia sẻ cảm xúc của bạn với những người bạn tin tưởng. Tham gia các hoạt động bạn yêu thích và tìm kiếm những hoạt động mới để giúp bạn giải tỏa căng thẳng và mang lại niềm vui. Đặt ra những mục tiêu nhỏ và thực tế để bạn có thể đạt được và cảm thấy thành công. Hãy kiên nhẫn với bản thân và nhớ rằng việc hồi phục từ trầm cảm cần thời gian và sự cố gắng.\n",
+        "sender": "ai",
+        "timestamp": 1745653869660,
+        "sourceDocs": [
+          {
+            "pageContent": "em có sẵn sàng làm việc như thế để thay đổi bản thân chưa? Và trong khi làm việc nếu có gì chưa rõ hay thắc mắc thì em cứ mạnh dạn trao đổi và chia sẻ với tôi, em đồng ý chứ?",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 75,
+                  "to": 75
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "đến việc cá nhân đó hành động ra bên ngoài và hành động đó, suy nghĩ đó, cảm xúc đó tác động lên thể lý của cá nhân đó. Đôi khi chúng ta bị bệnh thực thể cũng tác động đến cảm xúc và suy nghĩ và hành",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 15,
+                  "to": 15
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "lạ từ trên trời rớt xuống, nó mang niềm vui cho làng nhưng đồng thời nó cũng mang những xui xẻo cho làng, có thể cái này đã bị quỷ",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 36,
+                  "to": 36
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "nhưng cần hết sức cẩn thận khi chia sẻ, thể hiện sự thấu cảm theo kiểu này, bởi vì lúc này bạn đã chuyển vai từ một người lắng nghe sang người nói chuyện, bạn đang phản ứng theo cách đặt giá trị và quan điểm của bạn lên thân chủ, có khi bạn cho rằng thời gian sẽ qua cùng nỗi đau nhưng với họ có thể là không, có khi bạn tin rằng người yêu cũ của bạn không xứng đáng, nhưng họ tin rằng người đó vẫn xứng đáng còn người có lỗi trong cuộc chia tay có thể là chính họ... Có khi thân chủ khác bạn nhiều",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 78,
+                  "to": 78
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "gì cũng bị thất bại hết vậy cô? Em vừa biết mình rớt một môn học, mà cũng không phải rớt chỉ vừa đủ điểm trung bình thôi. Ba mẹ em không bao giờ vui với kết quả học tập của em hết. Ba mẹ em thất vọng về em nhiều quá, em thất bại quá, em là đứa không ra",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 46,
+                  "to": 46
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "4f233565-9bd7-4d07-8133-e086d4fbfd5f",
+        "text": "QUY TRÌNH TIẾP NHẬN THÂN CHỦ, ĐÁNH GIÁ VẤN ĐỀ, LỰA CHỌN PHƯƠNG PHÁP TIẾP CẬN, KỸ THUẬT CAN THIỆP VÀ PHÒNG NGỪA Quy trình tiếp nhận, đánh giá vấn đề và lựa chọn kỹ thuật là một cẩm nang hay nói xa hơn đó là một phác đồ hỗ trợ cho công việc của nhà tham vấn và trị liệu tâm lý đi đúng hướng. Không ít người còn có những thắc mắc và nghi ngờ trong việc áp dụng hướng tiếp cận tham vấn và trị liệu nhận thức hành vi trong hoàn cảnh văn hóa Việt Nam: “Liệu lý thuyết này nó có “Tây” quá hay thuộc chương mấy",
+        "sender": "user",
+        "timestamp": 1745653953182
+      },
+      {
+        "id": "bab0f050-d6e7-4437-ab79-c57ec804b433",
+        "text": "Chương 7.\n",
+        "sender": "ai",
+        "timestamp": 1745653954966,
+        "sourceDocs": [
+          {
+            "pageContent": "84. Chương 7. QUY TRÌNH TIẾP NHẬN THÂN CHỦ, ĐÁNH GIÁ VẤN ĐỀ, LỰA CHỌN PHƯƠNG PHÁP TIẾP CẬN, KỸ THUẬT CAN THIỆP VÀ PHÒNG NGỪA Quy trình tiếp nhận, đánh giá vấn đề và lựa chọn kỹ thuật là một cẩm nang hay nói xa hơn đó là một phác đồ hỗ trợ cho công việc của nhà tham vấn và trị liệu tâm lý đi đúng hướng. Không ít người còn có những thắc mắc và nghi ngờ trong việc áp dụng hướng tiếp cận tham vấn và trị liệu nhận thức hành vi trong hoàn cảnh văn hóa Việt Nam: “Liệu lý thuyết này nó có “Tây” quá hay",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 84,
+                  "to": 84
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "liệu nhận thức hành vi trong hoàn cảnh văn hóa Việt Nam: “Liệu lý thuyết này nó có “Tây” quá hay không?”, “Quy trình làm việc cũng như tiến trình của một phiên tham vấn và trị liệu như thế nào?”... Quy trình tiếp nhận và hướng tiếp cận tham vấn trị liệu được xây dựng như là một bảng hướng dẫn hay cẩm nang dành cho nhà chuyên môn, dưới đây là quy trình đã được tác giả tham khảo, tổng hợp và ứng dụng thường xuyên trong công việc tham vấn tâm lý, làm việc với giới trẻ dưới quan điểm tiếp cận nhận",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 84,
+                  "to": 84
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "và thôi thúc tôi cầm bút. Tập huấn trị liệu nhận thức hành vi như là một đòn bẩy để tôi phác thảo, thiết kế và xây dựng cuốn tài liệu này. Tháng 04 năm 2011, sau nhiều tháng ấp ủ, Trung tâm Tham vấn - Thực hành Công Tác Xã Hội, Bộ môn Công tác Xã hội thuộc Đại Học Khoa Học Xã Hội Nhân Văn Thành Phố Hồ Chí Minh đã tổ chức rất thành công lớp huấn luyện cơ bản về “Liệu pháp nhận thức hành vi”. Trong quá trình tập huấn sau phần thảo luận về lý thuyết, quý anh chị học viên đặt nhiều câu hỏi về cách",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 12,
+                  "to": 12
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "quá trình tập huấn sau phần thảo luận về lý thuyết, quý anh chị học viên đặt nhiều câu hỏi về cách áp dụng lý thuyết vào thực tế: - Liệu lý thuyết này nó có “Tây” quá hay không? - Chúng tôi muốn nhìn, quan sát cách làm việc của nhà tham vấn áp dụng Trị liệu nhận thức hành vi và thân chủ? - Tiến trình của nó như thế nào, đặc biệt là trong phiên đầu tiên và các phiên trị liệu tiếp theo?",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 12,
+                  "to": 12
+                }
+              }
+            }
+          },
+          {
+            "pageContent": "và đưa ra lời nhận xét “Tên này hám danh, làm vậy để lên báo nổi tiếng, rảnh quá đi lo chuyện thiên hạ”. A lướt qua thật nhanh thông tin đó, A tập trung hơn vào tin việc tên sát nhân, A cập nhật thông tin hàng ngày về đối tượng này và những thông tin có liên quan đến anh ta như: hoàn cảnh, tiểu sử gia đình anh ta... A đưa ra lời nhận xét: “Thế giới này loạn hết rồi, toàn là những kẻ dã tâm ác độc, vô nhân tính, cái xã hội này toàn là những tên vô dụng”. Niềm tin tiêu cực về xã hội và cuộc sống",
+            "metadata": {
+              "source": "checkchatbot.txt",
+              "fileType": "txt",
+              "createdAt": "2025-04-26T07:49:56.257Z",
+              "loc": {
+                "lines": {
+                  "from": 52,
+                  "to": 52
+                }
+              }
+            }
+          }
+        ]
       }
     ],
     "ai_team": [
