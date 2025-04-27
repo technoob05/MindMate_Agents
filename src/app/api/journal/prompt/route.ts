@@ -33,15 +33,24 @@ Chỉ trả về DUY NHẤT câu hỏi gợi ý, không có lời dẫn hay gi�
 export async function GET() {
   try {
     console.log("Generating new journal prompt...");
-    const messages = [
-      new SystemMessage(systemPrompt),
-      new HumanMessage("Hãy tạo một câu hỏi nhật ký cho hôm nay."), // Simple trigger
-    ];
+    
+    // Add a fallback prompt in case generation fails
+    let promptText = "Điều gì mang lại cho bạn niềm vui nhỏ bé hôm nay?";
+    
+    try {
+      const messages = [
+        new SystemMessage(systemPrompt),
+        new HumanMessage("Hãy tạo một câu hỏi nhật ký cho hôm nay."), // Simple trigger
+      ];
 
-    const response = await model.invoke(messages);
+      const response = await model.invoke(messages);
 
-    // Ensure response.content is a string
-    const promptText = typeof response.content === 'string' ? response.content.trim() : "Hôm nay bạn cảm thấy thế nào về chính mình?"; // Fallback prompt
+      // Ensure response.content is a string
+      promptText = typeof response.content === 'string' ? response.content.trim() : promptText;
+    } catch (modelError) {
+      console.error("Error with Gemini model:", modelError);
+      // Use fallback prompt already defined
+    }
 
     console.log("Generated prompt:", promptText);
 
@@ -54,8 +63,6 @@ export async function GET() {
     console.error("Error generating journal prompt:", error);
     // Provide a generic fallback prompt on error
     const fallbackPrompt = "Điều gì mang lại cho bạn niềm vui nhỏ bé hôm nay?";
-    return NextResponse.json({ prompt: fallbackPrompt }, { status: 500 });
-    // Or return a more specific error message:
-    // return NextResponse.json({ error: "Failed to generate prompt", details: error.message }, { status: 500 });
+    return NextResponse.json({ prompt: fallbackPrompt });
   }
 }

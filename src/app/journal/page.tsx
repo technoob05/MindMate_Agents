@@ -123,7 +123,7 @@ const JournalPage = () => {
     setAnalysisResult(null); // Clear previous results
 
     try {
-      console.log("Submitting journal to /api/journal/analyze");
+      console.log("Submitting journal to /api/journal/analyze:", { length: journalEntry.length });
       const response = await fetch('/api/journal/analyze', {
         method: 'POST',
         headers: {
@@ -136,19 +136,33 @@ const JournalPage = () => {
         let errorDetails = `HTTP error! status: ${response.status}`;
         try {
           const errorData = await response.json();
+          console.error("API error details:", errorData);
           errorDetails = errorData.error || errorData.details || errorDetails;
-        } catch (jsonError) { /* Ignore */ }
+        } catch (jsonError) { 
+          console.error("Failed to parse error response:", jsonError);
+        }
         throw new Error(errorDetails);
       }
 
-      const result = await response.json();
+      // Read the response as text first for debugging
+      const responseText = await response.text();
+      console.log("Raw API response:", responseText);
+      
+      // Parse the response text to JSON
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (jsonError) {
+        console.error("Failed to parse API response:", jsonError);
+        throw new Error("Invalid JSON response from API");
+      }
 
       // Check for required fields and optional fields
-      if (result.emotion && result.response && result.audioDataUrl) {
+      if (result.emotion && result.response) {
         const newAnalysisResult: AnalysisResultState = {
           emotion: result.emotion,
           response: result.response,
-          audioUrl: result.audioDataUrl,
+          audioUrl: result.audioDataUrl || '',  // Handle missing audio URL
           insight: result.insight, // Store optional fields
           action: result.action,
           quote: result.quote,
@@ -176,6 +190,7 @@ const JournalPage = () => {
         }
 
       } else {
+        console.error("Invalid response structure:", result);
         throw new Error("Invalid response structure received from analysis API.");
       }
 
@@ -192,18 +207,23 @@ const JournalPage = () => {
   const playAudio = () => {
     if (analysisResult?.audioUrl) {
       try {
-        const audio = new Audio(analysisResult.audioUrl); // Directly use the data URL
+        // Check if we have a valid audio URL (empty string would be invalid)
+        if (!analysisResult.audioUrl.startsWith('data:audio')) {
+          setError("Định dạng URL âm thanh không hợp lệ");
+          return;
+        }
+        
+        const audio = new Audio(analysisResult.audioUrl);
         audio.play().catch(e => {
-            console.error("Error playing audio:", e);
-            setError("Không thể phát âm thanh phản hồi. Trình duyệt có thể không hỗ trợ định dạng.");
+          console.error("Error playing audio:", e);
+          setError("Không thể phát âm thanh. " + (e instanceof Error ? e.message : "Lỗi không xác định"));
         });
       } catch (e) {
-         console.error("Error creating audio object:", e);
-         setError("Lỗi khi chuẩn bị phát âm thanh.");
+        console.error("Error creating audio object:", e);
+        setError("Lỗi khi chuẩn bị phát âm thanh.");
       }
     } else {
-       setError("Không tìm thấy dữ liệu âm thanh để phát.");
-       // Removed extra }); here
+      setError("Không tìm thấy dữ liệu âm thanh để phát.");
     }
   };
 
@@ -279,8 +299,8 @@ const JournalPage = () => {
                     value={journalEntry}
                     onChange={(e) => setJournalEntry(e.target.value)}
                     rows={10}
-                    className="w-full p-3 rounded-md focus:ring-primary" // Use themed focus
-                    disabled={isSubmitting || isLoadingPrompt}
+                    className="w-full p-3 rounded-md focus:ring-primary"
+                    disabled={isSubmitting}
                   />
                   {/* Display submission error - Use themed text */}
                   {error && (
@@ -289,8 +309,8 @@ const JournalPage = () => {
                   {/* Use themed Button */}
                   <Button
                     onClick={handleSubmitJournal}
-                    disabled={ isSubmitting || isLoadingPrompt || !prompt || !!promptError || journalEntry.trim() === '' } // Also disable if entry is empty
-                    variant="gradient" // Use gradient for primary action
+                    disabled={isSubmitting || !journalEntry.trim()}
+                    variant="gradient"
                     className="mt-4 w-full"
                   >
                     {isSubmitting ? (
@@ -379,13 +399,15 @@ const JournalPage = () => {
                           onClick={playAudio}
                           variant="outline"
                           size="sm"
-                          disabled={!analysisResult.audioUrl}
+                          disabled={!analysisResult?.audioUrl || analysisResult.audioUrl === ''}
                           className="mt-2"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.858 15.858a5 5 0 010-7.072m2.828 9.9a9 9 0 010-12.728M12 12a3 3 0 100-6 3 3 0 000 6z" />
                           </svg>
-                          Listen to Reflection
+                          {!analysisResult?.audioUrl || analysisResult.audioUrl === '' ? 
+                            "Không có âm thanh" : 
+                            "Nghe Phản Hồi"}
                         </Button>
                       </CardContent>
                     </Card>

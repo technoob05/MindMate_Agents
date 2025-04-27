@@ -8,20 +8,49 @@ import { z } from 'zod';
 // e.g., GOOGLE_APPLICATION_CREDENTIALS=./google-credentials.json
 // Alternatively, ensure the environment has Application Default Credentials configured.
 
-// Initialize Gemini Model
-const model = new ChatGoogleGenerativeAI({
-  model: "gemini-1.5-flash", // Reverted to 1.5-flash for consistency
-  temperature: 0.7,
-  // topP: 0.95, // Optional: Adjust parameters as needed
-  // topK: 40,
-});
+// Check if Google AI credentials are configured
+const isGoogleAIConfigured = !!process.env.GOOGLE_API_KEY;
 
-// Initialize Google Text-to-Speech Client
-const ttsClient = new textToSpeech.TextToSpeechClient();
+// Initialize Gemini Model if credentials are available
+let model;
+try {
+  if (isGoogleAIConfigured) {
+    model = new ChatGoogleGenerativeAI({
+      model: "gemini-1.5-flash", // Reverted to 1.5-flash for consistency
+      temperature: 0.7,
+      // topP: 0.95, // Optional: Adjust parameters as needed
+      // topK: 40,
+    });
+    console.log("Google AI model initialized successfully");
+  } else {
+    console.warn("Google AI API key not configured, will use fallback mode");
+  }
+} catch (error) {
+  console.error("Failed to initialize Google AI model:", error);
+  // Continue without AI model
+}
+
+// Check if credentials are properly configured
+const isTTSCredentialsConfigured = !!process.env.GOOGLE_APPLICATION_CREDENTIALS || 
+                                 (process.env.GOOGLE_API_KEY && process.env.GOOGLE_PROJECT_ID);
+
+// Initialize Google Text-to-Speech Client only if credentials are available
+let ttsClient;
+try {
+  if (isTTSCredentialsConfigured) {
+    ttsClient = new textToSpeech.TextToSpeechClient();
+    console.log("TTS client initialized successfully");
+  } else {
+    console.warn("Google TTS credentials not configured properly, audio generation will be skipped");
+  }
+} catch (error) {
+  console.error("Failed to initialize TTS client:", error);
+  // Continue without TTS
+}
 
 // Define expected input schema
 const journalSchema = z.object({
-  journalEntry: z.string().min(10, { message: "Journal entry must be at least 10 characters long." }), // Basic validation
+  journalEntry: z.string().min(1, { message: "Journal entry cannot be empty." }), // Reduce minimum length requirement
 });
 
 // Define the structure for the enhanced analysis result
@@ -58,36 +87,62 @@ Nhật ký người dùng sẽ được cung cấp sau.
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    // Validate request body can be parsed as JSON
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error("Failed to parse request body as JSON:", parseError);
+      return NextResponse.json({ 
+        error: "Invalid JSON in request body", 
+        details: parseError instanceof Error ? parseError.message : "Unknown parse error" 
+      }, { status: 400 });
+    }
 
-    // Validate input
+    // Validate input schema
     const validation = journalSchema.safeParse(body);
     if (!validation.success) {
+      console.error("Journal schema validation failed:", validation.error.errors);
       return NextResponse.json({ error: "Invalid input", details: validation.error.errors }, { status: 400 });
     }
 
     const { journalEntry } = validation.data;
 
-    console.log("Analyzing journal entry...");
+    // Safety check for empty entries after trimming
+    if (!journalEntry.trim()) {
+      return NextResponse.json({ error: "Journal entry cannot be empty" }, { status: 400 });
+    }
 
-    // --- Step 1: Analyze Emotion and Generate Enhanced Response using Gemini ---
-    const messages = [
-      new SystemMessage(enhancedAnalysisSystemPrompt), // Use the new enhanced prompt
-      new HumanMessage(`Đây là nhật ký của tôi:\n\n${journalEntry}`),
-    ];
+    console.log("Analyzing journal entry, length:", journalEntry.length);
 
-    const llmResponse = await model.invoke(messages);
-    let analysisResult: EnhancedAnalysisResult; // Use the enhanced type
+    // --- Step 1: Analyze Emotion and Generate Enhanced Response using AI or fallback ---
+    let analysisResult: EnhancedAnalysisResult;
+    
+    if (model && isGoogleAIConfigured) {
+      try {
+        // Use AI model
+        const messages = [
+          new SystemMessage(enhancedAnalysisSystemPrompt),
+          new HumanMessage(`Đây là nhật ký của tôi:\n\n${journalEntry}`),
+        ];
 
-    // Attempt to parse the JSON response from the model
-    try {
+        const llmResponse = await model.invoke(messages);
+        
         // Clean potential markdown code block fences and ensure it's valid JSON
         const rawContent = typeof llmResponse.content === 'string' ? llmResponse.content : '';
+        console.log("Raw LLM response:", rawContent);
+        
         const cleanedContent = rawContent.replace(/```json\n?|\n?```/g, '').trim();
 
         // Basic check if it looks like JSON before parsing
         if (cleanedContent.startsWith('{') && cleanedContent.endsWith('}')) {
-            analysisResult = JSON.parse(cleanedContent);
+            try {
+                analysisResult = JSON.parse(cleanedContent);
+            } catch (jsonParseError) {
+                console.error("Failed to parse LLM response as JSON:", jsonParseError, "Raw:", cleanedContent);
+                throw new Error("Invalid JSON returned from AI model");
+            }
+            
             // Validate required fields
             if (!analysisResult.emotion || !analysisResult.response) {
                 console.warn("LLM response missing required fields (emotion/response). Raw:", rawContent);
@@ -101,47 +156,58 @@ export async function POST(request: Request) {
                  if (analysisResult.insight) { analysisResult.action = undefined; analysisResult.quote = undefined; }
                  else if (analysisResult.action) { analysisResult.quote = undefined; }
             }
-
         } else {
              console.warn("LLM response doesn't look like JSON. Raw:", rawContent);
              throw new Error("Invalid response format received from LLM (not JSON).");
         }
-
-    } catch (parseError: any) {
-        console.error("Failed to parse or validate LLM response:", parseError.message, "Raw response:", llmResponse.content);
-        // Fallback mechanism
-        analysisResult = {
-            emotion: "Không xác định",
-            response: "Cảm ơn bạn đã chia sẻ. Đôi khi chỉ cần viết ra là đã nhẹ lòng hơn rồi.",
-        };
+      } catch (aiError) {
+        console.error("Error using AI model:", aiError);
+        // Fall back to simple analysis
+        analysisResult = generateFallbackAnalysis(journalEntry);
+      }
+    } else {
+      // Use fallback without AI
+      console.log("Using fallback analysis mode (no AI)");
+      analysisResult = generateFallbackAnalysis(journalEntry);
     }
 
     console.log("Analysis result:", analysisResult);
 
     // --- Step 2: Generate Text-to-Speech Audio (only for the main response) ---
     console.log("Generating TTS audio for main response...");
-    const ttsRequest = {
-      input: { text: analysisResult.response }, // Use only the main response for TTS
-      // Voice selection (Vietnamese Female)
-      voice: { languageCode: 'vi-VN', name: 'vi-VN-Wavenet-C' },
-      // Corrected audioEncoding to use the specific literal type expected by the library
-      audioConfig: { audioEncoding: 'MP3' as const },
-    };
+    
+    let audioDataUrl = '';
+    
+    // Skip TTS if client not available
+    if (ttsClient) {
+      try {
+        const ttsRequest = {
+          input: { text: analysisResult.response }, // Use only the main response for TTS
+          // Voice selection (Vietnamese Female)
+          voice: { languageCode: 'vi-VN', name: 'vi-VN-Wavenet-C' },
+          // Corrected audioEncoding to use the specific literal type expected by the library
+          audioConfig: { audioEncoding: 'MP3' as const },
+        };
 
-    // Correctly await the promise and access the first element of the result array
-    const ttsResponses = await ttsClient.synthesizeSpeech(ttsRequest);
-    const ttsResponse = ttsResponses[0];
+        // Correctly await the promise and access the first element of the result array
+        const ttsResponses = await ttsClient.synthesizeSpeech(ttsRequest);
+        const ttsResponse = ttsResponses[0];
 
-
-    if (!ttsResponse || !ttsResponse.audioContent) {
-        throw new Error("TTS generation failed, no audio content received.");
+        if (!ttsResponse || !ttsResponse.audioContent) {
+            console.warn("TTS generation failed, no audio content received.");
+        } else {
+            // Convert audio buffer to base64 string
+            const audioBase64 = Buffer.from(ttsResponse.audioContent).toString('base64');
+            audioDataUrl = `data:audio/mp3;base64,${audioBase64}`;
+            console.log("TTS audio generated successfully.");
+        }
+      } catch (ttsError) {
+        console.error("Error generating text-to-speech:", ttsError);
+        // Continue without audio - don't fail the whole request
+      }
+    } else {
+      console.log("Skipping TTS generation (client unavailable)");
     }
-
-    // Convert audio buffer to base64 string
-    const audioBase64 = Buffer.from(ttsResponse.audioContent).toString('base64');
-    const audioDataUrl = `data:audio/mp3;base64,${audioBase64}`;
-
-    console.log("TTS audio generated successfully.");
 
     // --- Step 3: Return Combined Enhanced Result ---
     return NextResponse.json({
@@ -155,6 +221,30 @@ export async function POST(request: Request) {
 
   } catch (error: any) {
     console.error("Error processing journal entry:", error);
-    return NextResponse.json({ error: "Failed to process journal entry", details: error.message || "Unknown error" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Failed to process journal entry", 
+      details: error.message || "Unknown error",
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    }, { status: 500 });
   }
+}
+
+// Simple function to generate a fallback analysis without AI
+function generateFallbackAnalysis(journalEntry: string): EnhancedAnalysisResult {
+  // Simple heuristic to determine sentiment/emotion from text length
+  let emotion = "Không xác định";
+  let response = "Cảm ơn bạn đã chia sẻ suy nghĩ của mình. Việc viết nhật ký thường xuyên là một cách tuyệt vời để tự chăm sóc bản thân.";
+  
+  // Maybe add an insight based on text length
+  let insight: string | undefined;
+  
+  if (journalEntry.length > 500) {
+    insight = "Bạn đã viết khá nhiều, điều này cho thấy bạn có nhiều điều muốn chia sẻ và khám phá.";
+  }
+  
+  return {
+    emotion,
+    response,
+    insight
+  };
 }
