@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Volume2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // --- Helper types for Web Speech API ---
 // (Keep the type definitions as they were correctly defined before)
@@ -206,30 +208,89 @@ const VoiceInteraction: React.FC<VoiceInteractionProps> = ({
     return (
         <div className="flex items-center gap-1">
             {/* STT Button: Show only if supported AND onTranscript is provided */}
-            {isSpeechRecognitionSupported && onTranscript && (
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={toggleListening}
-                    aria-label={isListening ? 'Stop listening' : 'Start listening'}
-                    title={isListening ? 'Stop listening' : 'Start listening'}
-                    disabled={!recognitionInstance} // Disable if instance isn't ready
-                >
-                    {isListening ? <MicOff className="h-5 w-5 text-red-500" /> : <Mic className="h-5 w-5" />}
-                </Button>
-            )}
+            <AnimatePresence mode="wait">
+                {isSpeechRecognitionSupported && onTranscript && (
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <motion.div
+                                    initial={{ scale: 0.95, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.95, opacity: 0 }}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={toggleListening}
+                                        className={`relative h-8 w-8 rounded-lg transition-all duration-200 ${
+                                            isListening 
+                                                ? 'bg-destructive/10 text-destructive hover:bg-destructive/20' 
+                                                : 'hover:bg-primary/10 hover:text-primary'
+                                        }`}
+                                        disabled={!recognitionInstance}
+                                    >
+                                        {isListening && (
+                                            <motion.div 
+                                                className="absolute inset-0 rounded-lg bg-destructive/5"
+                                                animate={{
+                                                    scale: [1, 1.2, 1],
+                                                    opacity: [0.5, 0.2, 0.5]
+                                                }}
+                                                transition={{
+                                                    duration: 2,
+                                                    repeat: Infinity,
+                                                    ease: "easeInOut"
+                                                }}
+                                            />
+                                        )}
+                                        {isListening ? (
+                                            <MicOff className="h-4 w-4 relative z-10" />
+                                        ) : (
+                                            <Mic className="h-4 w-4 relative z-10" />
+                                        )}
+                                    </Button>
+                                </motion.div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="glass-morphism">
+                                {isListening ? 'Stop listening' : 'Start voice input'}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                )}
+            </AnimatePresence>
+
             {/* TTS Button: Show only if supported AND textToSpeak is provided AND not speaking on mount */}
-            {isSpeechSynthesisSupported && textToSpeak && !speakOnMount && (
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => speakText(textToSpeak)}
-                    aria-label="Speak text"
-                    title="Speak text"
-                >
-                    <Volume2 className="h-5 w-5" />
-                </Button>
-            )}
+            <AnimatePresence mode="wait">
+                {isSpeechSynthesisSupported && textToSpeak && !speakOnMount && (
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <motion.div
+                                    initial={{ scale: 0.95, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.95, opacity: 0 }}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => speakText(textToSpeak)}
+                                        className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-all"
+                                    >
+                                        <Volume2 className="h-4 w-4" />
+                                    </Button>
+                                </motion.div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="glass-morphism">
+                                Read message aloud
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google"; // Import Inter
 import "./globals.css";
 import { initializeApp } from "firebase/app";
-import { AppLayout } from "@/components/layout/app-layout"; // Import the new layout
 import { ThemeProvider } from "@/components/theme-provider"; // Import ThemeProvider
 import { cn } from "@/lib/utils"; // Import cn utility
+import AppLayout from "@/components/layout/app-layout";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -25,15 +25,9 @@ const inter = Inter({
   variable: "--font-sans", // Use standard --font-sans variable
 });
 
-// Keep Geist Mono for code if needed, or remove if not used extensively
-// const geistMono = Geist_Mono({
-//   variable: '--font-geist-mono',
-//   subsets: ['latin'],
-// });
-
 export const metadata: Metadata = {
-  title: "MindMate", // Update title to MindMate
-  description: "Your AI companion for mental wellness and support.", // Updated description slightly
+  title: "MindMate Agents",
+  description: "Your AI-powered mental wellness companion",
 };
 
 export default function RootLayout({
@@ -43,21 +37,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* Apply Inter font variable and antialiasing */}
-      <body
-        className={cn(
-          "font-sans antialiased", // Base font style
-          inter.variable // Apply Inter font variable
-          // geistMono.variable // Add mono font if kept
-        )}
-      >
-        {/* Use props compatible with the custom ThemeProvider */}
+      <body className={`${inter.className} min-h-screen bg-gradient-radial from-background via-background/95 to-background/90`}>
         <ThemeProvider
-          defaultTheme="light" // Revert to compatible default
-          storageKey="mindmate-theme" // Keep updated storage key
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          {/* Wrap children with the AppLayout */}
-          <AppLayout>{children}</AppLayout>
+          <AppLayout>
+            <main className="relative min-h-screen backdrop-blur-sm">
+              {/* Decorative elements */}
+              <div className="fixed inset-0 -z-10 overflow-hidden">
+                <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-conic from-primary/10 via-primary/5 to-primary/10 animate-slow-spin" />
+                <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-conic from-secondary/10 via-secondary/5 to-secondary/10 animate-slow-spin-reverse" />
+              </div>
+              
+              {/* Main content */}
+              <div className="relative z-10">
+                {children}
+              </div>
+            </main>
+          </AppLayout>
         </ThemeProvider>
       </body>
     </html>
