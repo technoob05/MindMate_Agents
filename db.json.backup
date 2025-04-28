@@ -1,0 +1,65 @@
+{
+  "users": [],
+  "chats": {
+    "one_on_one": [
+      {
+        "id": "c04da8c3-2f7f-48b3-b62c-267051c46f82",
+        "text": "hi",
+        "sender": "user",
+        "timestamp": 1745769851194,
+        "userId": "bf105534-29d9-4d1f-ba7a-b0822ac676fb"
+      },
+      {
+        "id": "67e0ee80-921c-44fe-a8e7-74ed9917681f",
+        "text": "Hi there!\n",
+        "sender": "ai",
+        "timestamp": 1745769853393,
+        "userId": "bf105534-29d9-4d1f-ba7a-b0822ac676fb"
+      }
+    ],
+    "multi_user": [],
+    "multi_user_rooms": {
+      "general": []
+    },
+    "ai_team": [
+      {
+        "text": "sd",
+        "sender": "user",
+        "id": "7bdd1302-92a2-43dd-8288-638208ecd3e3",
+        "timestamp": 1745769937239,
+        "conversationId": "ebb6adef-9942-454c-9ffd-0778e517684a",
+        "type": "insideOut"
+      },
+      {
+        "id": "8e409c92-9279-452c-9156-454ab97cadd9",
+        "text": "I don't have enough information to react meaningfully.  Could you please share something more with me?",
+        "sender": "ai",
+        "agentName": "Joy",
+        "timestamp": 1745769938709,
+        "conversationId": "ebb6adef-9942-454c-9ffd-0778e517684a",
+        "type": "insideOut",
+        "avatar": "😊"
+      },
+      {
+        "id": "8515edf8-ad15-461a-bd5e-a143db4b72a8",
+        "text": "It sounds like there's something unsaid;  the silence feels heavy.",
+        "sender": "ai",
+        "agentName": "Sadness",
+        "timestamp": 1745769939594,
+        "conversationId": "ebb6adef-9942-454c-9ffd-0778e517684a",
+        "type": "insideOut",
+        "avatar": "😢"
+      },
+      {
+        "id": "e11faa91-f768-4547-8a39-075b658c0edc",
+        "text": "This silence is unacceptable.  What needs to be said, needs to be said now; fairness demands it.",
+        "sender": "ai",
+        "agentName": "Anger",
+        "timestamp": 1745769940618,
+        "conversationId": "ebb6adef-9942-454c-9ffd-0778e517684a",
+        "type": "insideOut",
+        "avatar": "😠"
+      }
+    ]
+  }
+}

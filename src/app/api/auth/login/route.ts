@@ -66,9 +66,9 @@ export async function POST(request: Request) {
     }
 
     // Login successful
-    // In a real app, you would generate a session token (e.g., JWT) here
-    // For this demo, just return success and user info (without password)
     const { hashedPassword: _, ...userToReturn } = user;
+
+    // Return success and user info (without password)
     return NextResponse.json({ message: 'Login successful', user: userToReturn }, { status: 200 });
 
   } catch (error: any) {

@@ -13,15 +13,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { motion } from "framer-motion"; // Import motion
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { app } from '@/lib/firebase/config'; // Đảm bảo đường dẫn này đúng
+import { motion } from "framer-motion";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [pseudonym, setPseudonym] = useState(""); // Optional pseudonym
+  const [pseudonym, setPseudonym] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -36,43 +34,38 @@ const RegisterPage = () => {
     }
 
     setLoading(true);
-    const auth = getAuth(app);
 
     try {
-      // Sử dụng Firebase để tạo người dùng
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      // Use the API route instead of Firebase
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          pseudonym: pseudonym || undefined,
+        }),
+      });
 
-      // (Tùy chọn) Cập nhật hồ sơ người dùng với pseudonym
-      if (pseudonym && user) {
-        await updateProfile(user, {
-          displayName: pseudonym,
-        });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed');
       }
 
-      console.log('Registration successful:', user);
-      alert('Registration successful! Please log in.'); // Hoặc thông báo tốt hơn
-      router.push('/login'); // Chuyển hướng đến trang đăng nhập
+      console.log('Registration successful:', data);
+      alert('Registration successful! Please log in.');
+      router.push('/login');
 
     } catch (err: any) {
       console.error('Registration failed:', err);
-      // Xử lý các lỗi cụ thể của Firebase
-      let errorMessage = 'An unexpected error occurred.';
-      if (err.code === 'auth/email-already-in-use') {
-        errorMessage = 'This email address is already in use.';
-      } else if (err.code === 'auth/weak-password') {
-        errorMessage = 'Password should be at least 6 characters.';
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      setError(errorMessage);
+      setError(err.message || 'An unexpected error occurred.');
     } finally {
       setLoading(false);
-      // Xóa các trường mật khẩu bất kể kết quả
       setPassword('');
       setConfirmPassword('');
-      // Tùy chọn xóa email/pseudonym khi có lỗi hoặc để lại để sửa
-      // if (!error) { setEmail(''); setPseudonym(''); }
     }
   };
 

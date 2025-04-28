@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info } from 'lucide-react'; // Added FileText, XCircle, Info
+import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info, LogOut } from 'lucide-react'; // Added FileText, XCircle, Info, LogOut
 import {
   Tooltip,
   TooltipContent,
@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import VoiceInteraction from "@/components/voice-interaction";
 import { motion, AnimatePresence } from "framer-motion"; // Import motion
+import { useRouter } from 'next/navigation';
 
 interface Message {
   id: string;
@@ -42,6 +43,7 @@ interface Message {
     pageContent: string;
     metadata: Record<string, any>;
   }>;
+  userId?: string;
 }
 
 export default function ChatPage() {
@@ -57,6 +59,7 @@ export default function ChatPage() {
   const [messageUpdate, setMessageUpdate] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // State for selected file
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
+  const router = useRouter();
 
   // Scroll to bottom effect
   useEffect(() => {
@@ -75,8 +78,23 @@ export default function ChatPage() {
     const fetchMessages = async () => {
       setIsLoading(true);
       setError(null);
+      
+      // Check if user is logged in via session storage
+      const userStr = sessionStorage.getItem('user');
+      if (!userStr) {
+        setMessages([]);
+        setShowEmptyState(true);
+        setIsLoading(false);
+        return;
+      }
+      
       try {
-        const response = await fetch('/api/chat/messages');
+        // Parse user data from session storage
+        const userData = JSON.parse(userStr);
+        const userId = userData.id;
+        
+        // Include user ID as a query parameter
+        const response = await fetch(`/api/chat/messages?userId=${userId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -113,6 +131,18 @@ export default function ChatPage() {
     setError(null);
     setShowEmptyState(false);
 
+    // Get user ID from session storage
+    const userStr = sessionStorage.getItem('user');
+    let userId = null;
+    if (userStr) {
+      try {
+        const userData = JSON.parse(userStr);
+        userId = userData.id;
+      } catch (err) {
+        console.error("Failed to parse user data:", err);
+      }
+    }
+
     // Optimistically add user message to UI
     // Include file name in optimistic message if present
     let optimisticText = textToSend;
@@ -124,6 +154,7 @@ export default function ChatPage() {
       text: optimisticText.trim(), // Trim in case only file was sent
       sender: "user",
       timestamp: Date.now(),
+      userId: userId || undefined
     };
     setMessages((prevMessages) => [...prevMessages, optimisticUserMessage]);
 
@@ -131,6 +162,9 @@ export default function ChatPage() {
     const formData = new FormData();
     formData.append('text', textToSend);
     formData.append('sender', 'user');
+    if (userId) {
+      formData.append('userId', userId);
+    }
     if (fileToSend) {
       formData.append('file', fileToSend);
     }
@@ -290,6 +324,28 @@ export default function ChatPage() {
      // }
    };
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        // Clear client-side session and state
+        sessionStorage.removeItem('user');
+        setMessages([]);
+        setShowEmptyState(true);
+        
+        // Redirect to login page
+        router.push('/login');
+      } else {
+        console.error('Failed to logout');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
   const suggestedPrompts = [
     "How can mindfulness help with anxiety?",
     "What are some quick stress relief techniques?",
@@ -353,6 +409,13 @@ export default function ChatPage() {
               <DropdownMenuItem onClick={clearChat} className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm">
                 <RefreshCw className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span>Clear Chat</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleLogout} 
+                className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4 text-destructive" />
+                <span>Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

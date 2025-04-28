@@ -13,9 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { motion } from "framer-motion"; // Import motion
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"; // Import Firebase Auth functions
-import { app } from '@/lib/firebase/config'; // Đảm bảo đường dẫn này đúng
+import { motion } from "framer-motion";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -27,38 +25,41 @@ const LoginPage = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null); // Clear previous errors
-    const auth = getAuth(app); // Get Firebase Auth instance
+    setError(null);
 
     try {
-      // Sử dụng Firebase để đăng nhập
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      // Use the API route instead of Firebase
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      // Store user info in sessionStorage
+      sessionStorage.setItem('user', JSON.stringify(data.user));
+      
       // Login successful
-      console.log('Login successful:', user);
-      // TODO: Implement proper session management if needed beyond Firebase's handling
-      router.push('/'); // Redirect to the home/root page on successful login
+      console.log('Login successful:', data.user);
+      router.push('/');
 
     } catch (err: any) {
-      // console.error('Login failed:', err); // Commented out to prevent console logging
-      // Xử lý các lỗi cụ thể của Firebase
-      let errorMessage = 'An unexpected error occurred.';
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-        errorMessage = 'Invalid email or password.';
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email format.';
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      setError(errorMessage);
-      setPassword(''); // Clear password field on error
+      setError(err.message || 'Invalid email or password.');
+      setPassword('');
     } finally {
       setLoading(false);
     }
   };
-
-  // ... Rest of the component remains the same ...
 
   return (
     // Use flex container, remove custom background, adjust padding
@@ -134,13 +135,6 @@ const LoginPage = () => {
                 Register here
               </Link>
             </p>
-            {/* Optional: Add anonymous/pseudonym login later if needed */}
-            {/*
-           <p className="text-gray-500 dark:text-gray-500">or</p>
-           <Button variant="outline" className="w-full" onClick={() => alert('Anonymous login TBD')}>
-             Continue Anonymously
-           </Button>
-           */}
           </CardFooter>
         </Card>
       </motion.div>

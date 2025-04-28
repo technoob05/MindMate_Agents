@@ -13,6 +13,7 @@ interface Message {
   text: string;
   sender: 'user' | 'ai';
   timestamp: number;
+  userId?: string; // Add userId to associate messages with specific users
   chatId?: string; // Optional: To group messages belonging to the same conversation
   sourceDocs?: Array<{
     pageContent: string;
@@ -58,12 +59,26 @@ async function writeDb(data: DbData): Promise<void> {
   }
 }
 
-// GET handler to fetch 1-on-1 chat messages
-export async function GET() {
+// GET handler to fetch 1-on-1 chat messages for the current user
+export async function GET(request: Request) {
   try {
+    // Extract user ID from the query parameter
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId');
+    
+    // If no user ID provided, return empty array
+    if (!userId) {
+      return NextResponse.json([]);
+    }
+
     const db = await readDb();
-    // For now, return all 1-on-1 messages. Add filtering/pagination later.
-    return NextResponse.json(db.chats.one_on_one);
+    
+    // Filter messages to only return those belonging to the current user
+    const userMessages = db.chats.one_on_one.filter(message => 
+      !message.userId || message.userId === userId
+    );
+    
+    return NextResponse.json(userMessages);
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: 'Error fetching messages' }, { status: 500 });
@@ -85,6 +100,7 @@ export async function POST(request: Request) {
     const text = formData.get('text') as string | null;
     const sender = formData.get('sender') as string | null;
     const file = formData.get('file') as File | null;
+    const userId = formData.get('userId') as string | null;
 
     // Basic validation
     if (sender !== 'user') {
@@ -132,6 +148,7 @@ export async function POST(request: Request) {
       text: userMessageText, // Save the original text message
       sender: 'user',
       timestamp: Date.now(),
+      userId: userId || undefined, // Associate message with user ID if available
       // chatId: userMessageInput.chatId // If you need to associate with a specific chat thread
     };
     db.chats.one_on_one.push(userMessage);
@@ -166,6 +183,7 @@ export async function POST(request: Request) {
       text: aiResponse.content,
       sender: 'ai',
       timestamp: Date.now(),
+      userId: userId || undefined, // Associate message with user ID if available
       chatId: userMessage.chatId, // Keep the same chat ID if provided
       // Include source documents if RAG was used and they're actually relevant
       sourceDocs: enhancedPromptData.hasContext ? enhancedPromptData.sourceDocs : undefined
