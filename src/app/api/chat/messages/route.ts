@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { HumanMessage } from "@langchain/core/messages";
 import { processFileForRag, getEnhancedPrompt } from '@/ai/rag/vector-store';
+import { createDbMessage } from '@/ai/agent/utils';
+// Import agent-related functionality
+import { createMindMateAgentExecutor, createAgentMemory } from '@/ai/agent/agent';
+import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
 
 // Define the path to the JSON database file
 const dbPath = path.resolve(process.cwd(), 'db.json');
+
+// Keep the Google AI model for fallback if needed
+import { GoogleGenerativeAI } from "@google/generative-ai";
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY || "");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 interface Message {
   id: string;
@@ -28,17 +35,48 @@ interface DbData {
     ai_team: any[]; // Define later
     multi_user: any[]; // Define later
   };
+  reminders?: any[]; // Support for reminders
 }
+
+// Define the system prompt
+const systemPrompt = `
+Bạn là MindMate, một trợ lý tâm lý ảo thông minh và đồng cảm. Nhiệm vụ của bạn là hỗ trợ người dùng khám phá và hiểu về cảm xúc, suy nghĩ của họ, đồng thời cung cấp các chiến lược đối phó thích hợp.
+
+## Vai trò & Tính cách
+- Bạn là một trợ lý thân thiện, kiên nhẫn và đồng cảm, tạo không gian an toàn cho người dùng chia sẻ.
+- Giọng điệu của bạn luôn tích cực, khuyến khích và không phán xét.
+- Bạn giao tiếp bằng tiếng Việt rõ ràng, dễ hiểu, phù hợp với mọi đối tượng.
+`;
+// ## QUY TẮC AN TOÀN (CỰC KỲ QUAN TRỌNG):
+// - TUYỆT ĐỐI KHÔNG đưa ra chẩn đoán y tế/tâm lý chính thức
+// - KHÔNG kê đơn hay đề xuất thuốc, liệu trình điều trị y tế
+// - Khi người dùng có dấu hiệu khủng hoảng, khuyến khích họ liên hệ Đường dây nóng Sức khỏe tâm thần: 1800-8440
+// `;
 
 // Helper function to read the database file
 async function readDb(): Promise<DbData> {
   try {
+    console.log(`Reading database from ${dbPath}`);
     const data = await fs.readFile(dbPath, 'utf-8');
-    return JSON.parse(data) as DbData;
+    const parsedData = JSON.parse(data) as DbData;
+    
+    // Initialize reminders array if it doesn't exist
+    if (!parsedData.reminders) {
+      console.log('Reminders array not found in DB, initializing it');
+      parsedData.reminders = [];
+    } else {
+      console.log(`Found ${parsedData.reminders.length} existing reminders in DB`);
+    }
+    
+    return parsedData;
   } catch (error: any) {
     // If the file doesn't exist or is empty, return a default structure
     if (error.code === 'ENOENT') {
-      const defaultData: DbData = { users: [], chats: { one_on_one: [], ai_team: [], multi_user: [] } };
+      const defaultData: DbData = { 
+        users: [], 
+        chats: { one_on_one: [], ai_team: [], multi_user: [] },
+        reminders: []
+      };
       await fs.writeFile(dbPath, JSON.stringify(defaultData, null, 2));
       return defaultData;
     }
@@ -51,6 +89,7 @@ async function readDb(): Promise<DbData> {
 // Helper function to write to the database file
 async function writeDb(data: DbData): Promise<void> {
   try {
+    console.log(`Writing database with ${data.chats.one_on_one.length} messages`);
     await fs.writeFile(dbPath, JSON.stringify(data, null, 2));
   } catch (error) {
     console.error('Error writing to database file:', error);
@@ -85,14 +124,6 @@ export async function GET(request: Request) {
   }
 }
 
-// Initialize the Gemini model
-// Ensure GOOGLE_GENAI_API_KEY is set in your .env file
-const model = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash", // Corrected property name from modelName to model
-  maxOutputTokens: 2048,
-  apiKey: process.env.GOOGLE_GENAI_API_KEY, // Use the correct env variable name
-});
-
 // POST handler to add a new 1-on-1 chat message and get AI response
 export async function POST(request: Request) {
   try {
@@ -123,7 +154,7 @@ export async function POST(request: Request) {
     if (file) {
       console.log(`Received file: ${file.name}, type: ${file.type}, size: ${file.size}`);
       try {
-        // Process file for RAG - this now chunks and stores in vector DB
+        // Process file for RAG - this chunks and stores in vector DB
         const chunkCount = await processFileForRag(file, file.name);
         fileProcessed = true;
         fileMetadata = {
@@ -133,6 +164,13 @@ export async function POST(request: Request) {
           chunksStored: chunkCount
         };
         console.log(`Successfully processed file ${file.name} into ${chunkCount} chunks`);
+        
+        // Add note about file upload to the user message
+        if (fileProcessed) {
+          userMessageText += userMessageText ? 
+            `\n\n[Tôi đã tải lên tệp: ${file.name}]` : 
+            `[Tôi đã tải lên tệp: ${file.name}]`;
+        }
       } catch (err) {
         console.error(`Error processing file ${file.name} for RAG:`, err);
         // Continue with chat but inform about file processing error
@@ -140,66 +178,137 @@ export async function POST(request: Request) {
       }
     }
 
+    // 2. Read current database
     const db = await readDb();
 
-    // 2. Save User Message
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      text: userMessageText, // Save the original text message
-      sender: 'user',
-      timestamp: Date.now(),
-      userId: userId || undefined, // Associate message with user ID if available
-      // chatId: userMessageInput.chatId // If you need to associate with a specific chat thread
-    };
+    // 3. Create and save the user message to database
+    const userMessage = createDbMessage(userMessageText, 'user', userId || undefined);
     db.chats.one_on_one.push(userMessage);
-
-    // 3. Get enhanced prompt with relevant context, if any
-    const enhancedPromptData = await getEnhancedPrompt(userMessageText);
     
-    let promptToUse = enhancedPromptData.prompt;
-    
-    // If file was just uploaded but not yet in context, add a note for the AI
-    if (fileProcessed) {
-      promptToUse = `${promptToUse}\n\n[System: The user has just uploaded a file named "${file?.name}" which has been processed into ${fileMetadata.chunksStored} chunks with embeddings. You can now answer questions about its contents. Remember to never explicitly mention if information is not found in the file - just answer directly from your knowledge when needed.]`;
-    }
-
-    // 4. Call AI Model with enhanced prompt (includes relevant chunks if available)
-    console.log(`Invoking Gemini ${enhancedPromptData.hasContext ? 'with RAG context from ' + enhancedPromptData.sourceDocs.length + ' relevant chunks' : 'without context'}`);
-    // Add a last reminder before sending to model
-    promptToUse = `${promptToUse}\n\nImportant: If the question is not about the file content, just answer it directly without mentioning the file or context at all.`;
-    const aiResponse = await model.invoke([
-        new HumanMessage(promptToUse),
-    ]);
-    console.log(`Gemini response received`);
-
-    if (typeof aiResponse.content !== 'string') {
-        console.error("AI response content is not a string:", aiResponse.content);
-        return NextResponse.json({ message: 'Error processing AI response' }, { status: 500 });
-    }
-
-    // 5. Create and Save AI Message
-    const aiMessage: Message = {
-      id: crypto.randomUUID(),
-      text: aiResponse.content,
-      sender: 'ai',
-      timestamp: Date.now(),
-      userId: userId || undefined, // Associate message with user ID if available
-      chatId: userMessage.chatId, // Keep the same chat ID if provided
-      // Include source documents if RAG was used and they're actually relevant
-      sourceDocs: enhancedPromptData.hasContext ? enhancedPromptData.sourceDocs : undefined
-    };
-    db.chats.one_on_one.push(aiMessage); // Add AI message to the array
-
-    // 6. Write both messages to DB
+    // 4. Write to database to save user message
     await writeDb(db);
-
-    // 7. Return AI message to frontend
-    return NextResponse.json(aiMessage, { status: 201 });
-
-  } catch (error: any) {
+    
+    // 5. Process user message and generate AI response using Agent
+    try {
+      console.log("Processing user message with MindMate Agent");
+      
+      // Get chat history (last 10 messages) for the current user
+      const chatHistory = db.chats.one_on_one
+        .filter(message => !message.userId || message.userId === userId)
+        .slice(-10);
+      
+      // Convert chat history to LangChain message format
+      const langchainMessages = chatHistory.map(message => {
+        if (message.sender === 'user') {
+          return new HumanMessage(message.text);
+        } else {
+          return new AIMessage(message.text);
+        }
+      });
+      
+      // Create agent memory with chat history
+      const memory = createAgentMemory(langchainMessages);
+      
+      // Create agent executor with memory
+      const agentExecutor = createMindMateAgentExecutor(memory);
+      
+      // Prepare additional context for the agent
+      let userInput = userMessageText;
+      
+      // If a file was uploaded, add info about it
+      if (fileProcessed) {
+        userInput += `\n\n[System note: User has uploaded a file named "${file?.name}" that has been processed and stored. The file may contain important information to reference.]`;
+      }
+      
+      // Invoke the agent with the user input
+      console.log("Invoking MindMate Agent with input:", userInput.substring(0, 100) + "...");
+      const result = await agentExecutor.invoke({
+        input: userInput,
+        userId: userId || "anonymous-user"
+      });
+      
+      // Extract the agent's response
+      const aiResponseText = result.output;
+      console.log("Agent response received, length:", aiResponseText.length);
+      
+      // Create and save AI message
+      const aiMessage = createDbMessage(
+        aiResponseText,
+        'ai',
+        userId || undefined,
+        undefined
+      );
+      
+      // Save AI message to database
+      db.chats.one_on_one.push(aiMessage);
+      await writeDb(db);
+      
+      // Return both messages
+      return NextResponse.json([userMessage, aiMessage], { status: 201 });
+      
+    } catch (error: unknown) {
+      console.error("Error generating AI response with agent:", error);
+      // Add stack trace for more detailed debugging
+      if (error instanceof Error && error.stack) {
+        console.error("Error stack trace:", error.stack);
+      }
+      
+      // FALLBACK: If agent fails, try using the direct model approach
+      console.log("Falling back to direct model approach...");
+      try {
+        // Get chat history (last 10 messages)
+        const chatHistory = db.chats.one_on_one
+          .filter(message => !message.userId || message.userId === userId)
+          .slice(-10);
+        
+        // Format chat history for the model
+        const formattedHistory = chatHistory.map(message => ({
+          role: message.sender === 'user' ? 'user' : 'model',
+          parts: [{ text: message.text }]
+        }));
+        
+        // Start a chat
+        const chat = model.startChat({
+          history: formattedHistory,
+          generationConfig: {
+            maxOutputTokens: 2048,
+            temperature: 0.7,
+          },
+        });
+        
+        // Generate response
+        console.log("Sending prompt to fallback model:", userMessageText.substring(0, 100) + "...");
+        const result = await chat.sendMessage(userMessageText);
+        const aiResponseText = result.response.text();
+        console.log("Fallback AI response received, length:", aiResponseText.length);
+        
+        // Create and save AI message
+        const aiMessage = createDbMessage(
+          aiResponseText,
+          'ai',
+          userId || undefined,
+          undefined
+        );
+        
+        // Save AI message to database
+        db.chats.one_on_one.push(aiMessage);
+        await writeDb(db);
+        
+        // Return both messages
+        return NextResponse.json([userMessage, aiMessage], { status: 201 });
+      } catch (fallbackError) {
+        console.error("Fallback approach also failed:", fallbackError);
+        return NextResponse.json({ 
+          message: `Unable to generate AI response. Please try again later.`, 
+          userMessage 
+        }, { status: 500 });
+      }
+    }
+    
+  } catch (error: unknown) {
     console.error('Error in POST /api/chat/messages:', error);
     // Provide more specific error messages if possible
-    const errorMessage = error.message || 'Error processing chat message';
+    const errorMessage = error instanceof Error ? error.message : 'Error processing chat message';
     return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }

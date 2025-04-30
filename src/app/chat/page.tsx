@@ -47,6 +47,26 @@ interface Message {
 }
 
 export default function ChatPage() {
+  // Typing effect configuration
+  const typingConfig = {
+    baseSpeed: 20, // milliseconds per character (lower = faster)
+    randomVariation: 3, // random variation in characters per step
+    minCharsPerStep: 1, // minimum characters per step
+    burstProbability: 0.15, // probability of typing a burst of characters at once
+    burstSize: { min: 3, max: 8 }, // burst size range when it happens
+    pauseProbability: 0.05, // probability of a natural pause in typing
+    pauseDuration: { min: 200, max: 800 }, // range of pause duration in ms
+    punctuationPause: {
+      ',': 250,
+      '.': 500,
+      '!': 500,
+      '?': 500,
+      ';': 300,
+      ':': 300,
+      '\n': 700, // pause after new line
+    } as Record<string, number>
+  };
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -182,75 +202,176 @@ export default function ChatPage() {
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
-      const aiMessage: Message = await response.json();
-
-      // Replace optimistic user message and add AI message with typing effect
-      setMessages((prevMessages) => {
-        const newMessages = prevMessages.filter(
-          (msg) => msg.id !== optimisticUserMessage.id
-        );
-        // Ensure the final user message has the correct ID if available from AI response context
-        const finalUserMessage = {
-          ...optimisticUserMessage,
-          id: aiMessage.chatId || optimisticUserMessage.id,
-        };
-        newMessages.push(finalUserMessage);
-
-        // Add AI message with empty text initially
-        newMessages.push({
-          ...aiMessage,
-          text: "", // Start with empty text for typing effect
-        });
-
-        return newMessages;
-      });
-
-      // Simulate typing effect for the *last* message if it's AI
-      setTypingEffect(true);
-      let currentIndex = 0;
-      const intervalId = setInterval(() => {
+      // API now returns array with both user and AI messages
+      const messages = await response.json();
+      
+      if (Array.isArray(messages) && messages.length === 2) {
+        const userMessage = messages[0];
+        const aiMessage = messages[1];
+        
+        // First, replace the optimistic user message with the confirmed user message
         setMessages((prevMessages) => {
-          const lastMessageIndex = prevMessages.length - 1;
-          if (lastMessageIndex < 0 || prevMessages[lastMessageIndex].sender !== 'ai') {
-             clearInterval(intervalId);
-             setTypingEffect(false);
-             return prevMessages;
-          }
-
-          const currentAiMessageText = aiMessage.text; // Use full text from response
-          const newMessages = [...prevMessages];
-
-          if (currentIndex <= currentAiMessageText.length) {
-            newMessages[lastMessageIndex] = {
-              ...newMessages[lastMessageIndex],
-              text: currentAiMessageText.substring(0, currentIndex),
-            };
-            currentIndex += 1 + Math.floor(Math.random() * 2); // Adjusted speed
-            return newMessages;
-          } else {
-            // Ensure the full message text is set at the end
-            newMessages[lastMessageIndex] = {
-              ...newMessages[lastMessageIndex],
-              text: currentAiMessageText,
-            };
-            clearInterval(intervalId);
-            setTypingEffect(false);
-            return newMessages;
-          }
+          const filteredMessages = prevMessages.filter(
+            (msg) => msg.id !== optimisticUserMessage.id
+          );
+          return [...filteredMessages, userMessage];
         });
-      }, 30); // Slightly slower interval
-
+        
+        // Then add AI message with empty text initially
+        setMessages((prevMessages) => {
+          return [...prevMessages, {
+            ...aiMessage,
+            text: "", // Start with empty text for typing effect
+          }];
+        });
+        
+        // Simulate typing effect
+        setTypingEffect(true);
+        let currentIndex = 0;
+        let lastChar = '';
+        let typingInterval = setInterval(() => {
+          setMessages((prevMessages) => {
+            const lastMessageIndex = prevMessages.length - 1;
+            if (lastMessageIndex < 0 || prevMessages[lastMessageIndex].sender !== 'ai') {
+              clearInterval(typingInterval);
+              setTypingEffect(false);
+              return prevMessages;
+            }
+            
+            const fullAiMessageText = aiMessage.text;
+            const newMessages = [...prevMessages];
+            
+            if (currentIndex <= fullAiMessageText.length) {
+              // Calculate dynamic delay for the next iteration
+              const punctuationDelay = lastChar && typingConfig.punctuationPause[lastChar] || 0;
+              
+              // Random natural pause (like someone thinking while typing)
+              const shouldPause = Math.random() < typingConfig.pauseProbability;
+              
+              if (shouldPause || punctuationDelay > 0) {
+                clearInterval(typingInterval);
+                
+                // Calculate pause duration
+                const pauseDuration = shouldPause ? 
+                  typingConfig.pauseDuration.min + Math.floor(Math.random() * (typingConfig.pauseDuration.max - typingConfig.pauseDuration.min)) : 
+                  punctuationDelay;
+                
+                setTimeout(() => {
+                  typingInterval = setInterval(() => {
+                    setMessages((prevMsgs) => {
+                      // We need to reuse the existing interval callback logic
+                      const lastMsgIndex = prevMsgs.length - 1;
+                      if (lastMsgIndex < 0 || prevMsgs[lastMsgIndex].sender !== 'ai') {
+                        clearInterval(typingInterval);
+                        setTypingEffect(false);
+                        return prevMsgs;
+                      }
+                      
+                      const fullText = aiMessage.text;
+                      const newMsgs = [...prevMsgs];
+                      
+                      // Continue processing for next characters
+                      // Calculate how many characters to add in this step
+                      let charsToAdd = typingConfig.minCharsPerStep + Math.floor(Math.random() * typingConfig.randomVariation);
+                      
+                      // Sometimes add a burst of characters (simulates fast typing)
+                      if (Math.random() < typingConfig.burstProbability) {
+                        charsToAdd = typingConfig.burstSize.min + 
+                          Math.floor(Math.random() * (typingConfig.burstSize.max - typingConfig.burstSize.min));
+                      }
+                      
+                      // Make sure we don't exceed the full message length
+                      const nextIndex = Math.min(currentIndex + charsToAdd, fullText.length);
+                      
+                      // Update with new text
+                      if (currentIndex < fullText.length) {
+                        newMsgs[lastMsgIndex] = {
+                          ...newMsgs[lastMsgIndex],
+                          text: fullText.substring(0, nextIndex),
+                        };
+                        
+                        // Store the last character for next time
+                        lastChar = fullText[nextIndex - 1] || '';
+                        currentIndex = nextIndex;
+                        
+                        return newMsgs;
+                      }
+                      
+                      // If we've reached the end of the text
+                      if (currentIndex >= fullText.length) {
+                        newMsgs[lastMsgIndex] = {
+                          ...newMsgs[lastMsgIndex],
+                          text: fullText,
+                        };
+                        clearInterval(typingInterval);
+                        setTypingEffect(false);
+                      }
+                      
+                      // Always return a valid Messages[] array
+                      return newMsgs;
+                    });
+                  }, typingConfig.baseSpeed);
+                }, pauseDuration);
+                
+                return newMessages;
+              }
+              
+              // Calculate how many characters to add in this step
+              let charsToAdd = typingConfig.minCharsPerStep + Math.floor(Math.random() * typingConfig.randomVariation);
+              
+              // Sometimes add a burst of characters (simulates fast typing)
+              if (Math.random() < typingConfig.burstProbability) {
+                charsToAdd = typingConfig.burstSize.min + 
+                  Math.floor(Math.random() * (typingConfig.burstSize.max - typingConfig.burstSize.min));
+              }
+              
+              // Make sure we don't exceed the full message length
+              const nextIndex = Math.min(currentIndex + charsToAdd, fullAiMessageText.length);
+              
+              // Update the last message with incrementally more text
+              newMessages[lastMessageIndex] = {
+                ...newMessages[lastMessageIndex],
+                text: fullAiMessageText.substring(0, nextIndex),
+              };
+              
+              // Store the last character for potential punctuation delay
+              lastChar = fullAiMessageText[nextIndex - 1] || '';
+              currentIndex = nextIndex;
+              
+              return newMessages;
+            } else {
+              // Ensure the full message text is set at the end
+              newMessages[lastMessageIndex] = {
+                ...newMessages[lastMessageIndex],
+                text: fullAiMessageText,
+              };
+              clearInterval(typingInterval);
+              setTypingEffect(false);
+              return newMessages;
+            }
+          });
+        }, typingConfig.baseSpeed);
+      } else if (messages.userMessage) {
+        // Fallback for error case where only user message was saved
+        setMessages((prevMessages) => {
+          const filteredMessages = prevMessages.filter(
+            (msg) => msg.id !== optimisticUserMessage.id
+          );
+          return [...filteredMessages, messages.userMessage];
+        });
+        
+        // Show error
+        setError(messages.message || "Không thể nhận phản hồi từ AI");
+      }
     } catch (err: any) {
       console.error("Failed to send message:", err);
-      setError(`Failed to get AI response: ${err.message}`);
+      setError(`Failed to send message: ${err.message}`);
       // Remove the optimistic message on error
       setMessages((prevMessages) =>
         prevMessages.filter((msg) => msg.id !== optimisticUserMessage.id)
       );
     } finally {
-      // Ensure loading is set to false even if typing effect is interrupted
       setIsLoading(false);
-      setMessageUpdate(prev => prev + 1);
     }
   };
 
@@ -309,20 +430,21 @@ export default function ChatPage() {
   };
 
   const clearChat = async () => {
-     // Add confirmation dialog later if needed
-     setMessages([]);
-     setShowEmptyState(true);
-     setError(null);
-     // Here you would also call an API endpoint to clear the chat
-     console.log("Clearing chat...");
-     // Example API call (replace with actual endpoint)
-     // try {
-     //   await fetch('/api/chat/clear', { method: 'POST' });
-     // } catch (err) {
-     //   console.error("Failed to clear chat on server:", err);
-     //   setError("Failed to clear chat history.");
-     // }
-   };
+    // Add confirmation dialog later if needed
+    setMessages([]);
+    setShowEmptyState(true);
+    setError(null);
+    
+    // Here you would also call an API endpoint to clear the chat
+    console.log("Clearing chat...");
+    // Example API call (replace with actual endpoint)
+    // try {
+    //   await fetch('/api/chat/clear', { method: 'POST' });
+    // } catch (err) {
+    //   console.error("Failed to clear chat on server:", err);
+    //   setError("Failed to clear chat history.");
+    // }
+  };
 
   const handleLogout = async () => {
     try {
@@ -537,10 +659,10 @@ export default function ChatPage() {
                       <div className="relative flex flex-col rounded-xl rounded-tl-sm bg-card/80 backdrop-blur-sm border border-border/50 p-3 shadow-sm">
                         <p className="text-sm leading-relaxed whitespace-pre-wrap text-card-foreground">
                           {message.text}
-                          {/* Blinking cursor for typing effect */}
+                          {/* Thêm hiệu ứng nhấp nháy con trỏ khi đang gõ */}
                           {typingEffect &&
                             messages[messages.length - 1].id === message.id && (
-                              <span className="inline-block w-0.5 h-4 bg-primary ml-1 animate-pulse"></span>
+                              <span className="inline-block w-1.5 h-5 ml-0.5 bg-primary/80 animate-pulse"></span>
                             )}
                         </p>
                         
@@ -671,12 +793,14 @@ export default function ChatPage() {
                           {message.text}
                         </p>
                       </div>
-                      <time className="text-xs text-muted-foreground/80 mt-1 mr-1">
-                        {new Date(message.timestamp).toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}
-                      </time>
+                      <div className="flex items-center mt-1 mr-1">
+                        <time className="text-xs text-muted-foreground/80">
+                          {new Date(message.timestamp).toLocaleTimeString([], {
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })}
+                        </time>
+                      </div>
                     </div>
                     <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0"> {/* Smaller avatar */}
                       {/* Add user avatar image if available */}
@@ -690,24 +814,24 @@ export default function ChatPage() {
             ))}
           </AnimatePresence>
 
-          {/* Loading indicator */}
-          {isLoading && messages.length > 0 && messages[messages.length - 1].sender === 'user' && !typingEffect && (
-             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-start gap-3"
-             >
-               <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0">
-                 <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
-                 <AvatarFallback className="bg-primary/20 text-primary font-semibold">MM</AvatarFallback>
-               </Avatar>
-               {/* Loading dots */}
-               <div className="flex items-center space-x-1.5 rounded-xl rounded-tl-sm bg-card/80 border border-border/50 p-3 shadow-sm">
-                 <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.3s]"></div>
-                 <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.15s]"></div>
-                 <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce"></div>
-               </div>
-             </motion.div>
+          {/* Thêm chỉ báo loading khi đang xử lý tin nhắn */}
+          {isLoading && !typingEffect && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-start gap-3"
+            >
+              <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0">
+                <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
+                <AvatarFallback className="bg-primary/20 text-primary font-semibold">MM</AvatarFallback>
+              </Avatar>
+              {/* Loading dots */}
+              <div className="flex items-center space-x-1.5 rounded-xl rounded-tl-sm bg-card/80 border border-border/50 p-3 shadow-sm">
+                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce"></div>
+              </div>
+            </motion.div>
           )}
 
           {/* This div is to help with scrolling to the bottom */}
@@ -793,7 +917,7 @@ export default function ChatPage() {
                   <Button
                     onClick={() => handleSendMessage()}
                     // Disable if loading OR (input empty AND no file selected)
-                    disabled={ (isLoading && !typingEffect) || (inputMessage.trim() === '' && !selectedFile)}
+                    disabled={isLoading || (inputMessage.trim() === '' && !selectedFile)}
                     size="icon"
                     variant="gradient" // Use gradient for send
                     className="h-8 w-8 rounded-lg flex-shrink-0" // Adjusted size/rounding
@@ -817,3 +941,4 @@ export default function ChatPage() {
     </div>
   );
 }
+

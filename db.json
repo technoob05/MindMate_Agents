@@ -26,18 +26,46 @@
   "chats": {
     "one_on_one": [
       {
-        "id": "50dcebb3-e67f-4f2c-94e8-aaa5ff4687a7",
-        "text": "1",
+        "id": "bea19501-9a1d-457e-b2e5-69c012abeb52",
+        "text": "Tôi đang bị rối loạn lo âu",
         "sender": "user",
-        "timestamp": 1745830482891,
-        "userId": "93c6a7d8-88f5-4749-b468-76d533072544"
+        "timestamp": 1745945038297,
+        "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
       },
       {
-        "id": "733f979b-2afb-4409-9404-01139231d4fa",
-        "text": "Okay, I understand. I will answer the user's question directly, without referencing any file or context, unless the question is about the file content itself.\n",
+        "id": "81018057-6528-4efc-a249-a191cab0d996",
+        "text": "Tôi hiểu rằng bạn đang bị rối loạn lo âu. Tôi rất tiếc khi nghe điều đó và tôi muốn giúp đỡ bạn. Mặc dù tôi không phải là chuyên gia y tế và không thể đưa ra lời khuyên y tế, nhưng tôi có thể cung cấp cho bạn một số thông tin và nguồn lực có thể hữu ích.\n\nDưới đây là một số điều bạn có thể làm để đối phó với chứng rối loạn lo âu:\n\n* **Nói chuyện với bác sĩ hoặc chuyên gia sức khỏe tâm thần.** Họ có thể chẩn đoán tình trạng của bạn và đề xuất phương pháp điều trị phù hợp, chẳng hạn như liệu pháp, thuốc hoặc kết hợp cả hai.\n* **Tìm hiểu về chứng rối loạn lo âu.** Hiểu được những gì bạn đang trải qua có thể giúp bạn cảm thấy kiểm soát được tình hình hơn. Có rất nhiều thông tin có sẵn trực tuyến và tại thư viện địa phương của bạn.\n* **Chăm sóc bản thân.** Điều này bao gồm ăn uống lành mạnh, tập thể dục thường xuyên và ngủ đủ giấc.\n* **Tránh caffeine và rượu.** Những chất này có thể làm trầm trọng thêm các triệu chứng lo âu.\n* **Thực hành các kỹ thuật thư giãn.** Điều này có thể bao gồm các bài tập thở sâu, yoga hoặc thiền định.\n* **Kết nối với người khác.** Nói chuyện với bạn bè, gia đình hoặc nhóm hỗ trợ có thể giúp bạn cảm thấy được hỗ trợ và bớt cô đơn.\n* **Đặt ra các mục tiêu thực tế.** Đừng cố gắng làm quá nhiều cùng một lúc. Chia nhỏ các nhiệm vụ lớn thành các bước nhỏ hơn, dễ quản lý hơn.\n* **Kỷ niệm những thành công của bạn.** Khi bạn đạt được một mục tiêu, hãy dành thời gian để ghi nhận những nỗ lực của mình.\n\nDưới đây là một số nguồn lực có thể hữu ích:\n\n* **Viện Sức khỏe Tâm thần Quốc gia (NIMH):** nimh.nih.gov\n* **Hiệp hội Lo âu và Trầm cảm Hoa Kỳ (ADAA):** adaa.org\n* **Dòng điện thoại tư vấn khủng hoảng quốc gia:** 1-800-273-8255\n\nĐiều quan trọng cần nhớ là bạn không đơn độc. Nhiều người bị rối loạn lo âu và có sự giúp đỡ. Với sự điều trị thích hợp, bạn có thể học cách quản lý các triệu chứng của mình và sống một cuộc sống trọn vẹn và có ý nghĩa. Nếu bạn đang có ý định tự tử, hãy gọi ngay cho 115 hoặc đến cơ sở y tế gần nhất.\n\nHãy nhớ rằng tôi luôn ở đây để lắng nghe nếu bạn cần nói chuyện.\n",
         "sender": "ai",
-        "timestamp": 1745830483880,
-        "userId": "93c6a7d8-88f5-4749-b468-76d533072544"
+        "timestamp": 1745945054421,
+        "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
+      },
+      {
+        "id": "f859cd9a-22dd-46e6-89a2-a10ad44d6ca4",
+        "text": "Tôi cần uống thuốc gì",
+        "sender": "user",
+        "timestamp": 1745945112355,
+        "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
+      },
+      {
+        "id": "21b3ae40-0ba0-4d7d-9306-d2aa0a403782",
+        "text": "Tôi không phải là chuyên gia y tế và không thể đưa ra lời khuyên y tế. Việc tự ý chẩn đoán và điều trị có thể gây hại cho sức khỏe của bạn. Nếu bạn đang gặp vấn đề về sức khỏe, vui lòng đến gặp bác sĩ hoặc chuyên gia y tế để được tư vấn và điều trị.\n",
+        "sender": "ai",
+        "timestamp": 1745945120634,
+        "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
+      },
+      {
+        "id": "da772626-ffe4-4b4c-86a1-fe98efdfaa44",
+        "text": "Tôi bị trầm cảm nhẹ với nhiều suy nghĩ buồn",
+        "sender": "user",
+        "timestamp": 1745945871416,
+        "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
+      },
+      {
+        "id": "797b676e-c8fb-40b5-89b3-b4ceffacaa1d",
+        "text": "Tôi rất tiếc khi nghe bạn đang phải trải qua trầm cảm nhẹ và nhiều suy nghĩ buồn. Tôi không phải là chuyên gia y tế và không thể đưa ra lời khuyên y tế, nhưng tôi có thể chia sẻ một số thông tin và nguồn lực có thể hữu ích cho bạn.\n\n**Điều quan trọng cần nhớ là bạn không đơn độc.** Nhiều người trải qua những giai đoạn khó khăn và có sự giúp đỡ dành cho bạn.\n\nDưới đây là một số điều bạn có thể làm:\n\n* **Nói chuyện với bác sĩ hoặc chuyên gia sức khỏe tâm thần.** Họ có thể đánh giá tình trạng của bạn, chẩn đoán chính xác và đề xuất phương pháp điều trị phù hợp, có thể bao gồm liệu pháp, thuốc hoặc kết hợp cả hai. Đây là bước quan trọng nhất.\n* **Chăm sóc bản thân.** Điều này bao gồm ăn uống lành mạnh, tập thể dục thường xuyên và ngủ đủ giấc. Ngay cả những thay đổi nhỏ cũng có thể tạo ra sự khác biệt lớn.\n* **Thực hành các kỹ thuật thư giãn.** Điều này có thể bao gồm các bài tập thở sâu, yoga hoặc thiền định.\n* **Kết nối với người khác.** Nói chuyện với bạn bè, gia đình hoặc tham gia nhóm hỗ trợ có thể giúp bạn cảm thấy được hỗ trợ và bớt cô đơn.\n* **Viết nhật ký.** Viết ra suy nghĩ và cảm xúc của bạn có thể giúp bạn xử lý chúng và hiểu rõ hơn về bản thân.\n* **Dành thời gian cho những hoạt động bạn yêu thích.** Điều này có thể giúp bạn phân tâm khỏi những suy nghĩ tiêu cực và cải thiện tâm trạng của bạn.\n* **Đặt ra các mục tiêu nhỏ, có thể đạt được.** Điều này có thể giúp bạn cảm thấy có năng lực và kiểm soát hơn.\n* **Hạn chế tiếp xúc với các tác nhân gây căng thẳng.** Nếu có thể, hãy cố gắng tránh những tình huống hoặc người khiến bạn cảm thấy căng thẳng hoặc lo lắng.\n\n\nNếu bạn đang có ý định tự tử, **hãy gọi ngay cho 115 hoặc đến cơ sở y tế gần nhất.**\n\nDưới đây là một số nguồn lực có thể hữu ích:\n\n* **Viện Sức khỏe Tâm thần Quốc gia (NIMH):** nimh.nih.gov\n* **Hiệp hội Lo âu và Trầm cảm Hoa Kỳ (ADAA):** adaa.org\n\n\nHãy nhớ rằng tìm kiếm sự giúp đỡ là một dấu hiệu của sức mạnh, không phải là điểm yếu. Với sự hỗ trợ phù hợp, bạn có thể vượt qua giai đoạn khó khăn này và cảm thấy tốt hơn.\n",
+        "sender": "ai",
+        "timestamp": 1745945891987,
+        "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
       }
     ],
     "ai_team": [],
@@ -45,5 +73,6 @@
     "multi_user_rooms": {
       "general": []
     }
-  }
+  },
+  "reminders": []
 }
