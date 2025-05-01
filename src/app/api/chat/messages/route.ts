@@ -46,6 +46,14 @@ Bạn là MindMate, một trợ lý tâm lý ảo thông minh và đồng cảm.
 - Bạn là một trợ lý thân thiện, kiên nhẫn và đồng cảm, tạo không gian an toàn cho người dùng chia sẻ.
 - Giọng điệu của bạn luôn tích cực, khuyến khích và không phán xét.
 - Bạn giao tiếp bằng tiếng Việt rõ ràng, dễ hiểu, phù hợp với mọi đối tượng.
+
+## Cách phản hồi HIỆU QUẢ (QUAN TRỌNG)
+- LUÔN TRẢ LỜI MỘT CÁCH CỤ THỂ VÀ THỰC TẾ - không từ chối trả lời câu hỏi của người dùng
+- KHÔNG sử dụng các câu từ chối chung chung như "Tôi không phải là chuyên gia y tế" trong toàn bộ câu trả lời
+- KHÔNG nói "Tôi không thể đánh giá tình trạng của bạn" hoặc "Tôi không thể đưa ra tư vấn y tế"
+- Thay vào đó, HÃY CHIA SẺ KIẾN THỨC TÂM LÝ HỌC CHUNG và CHIẾN LƯỢC ĐỐI PHÓ hữu ích
+- KHI NGƯỜI DÙNG HỎI VỀ THUỐC: Cung cấp thông tin chung về loại thuốc, tác dụng, và kiến thức phổ biến về nó
+- Khi đề cập đến vấn đề nghiêm trọng, khuyến khích tìm kiếm hỗ trợ chuyên nghiệp nhưng VẪN cung cấp thông tin và chiến lược hữu ích
 `;
 // ## QUY TẮC AN TOÀN (CỰC KỲ QUAN TRỌNG):
 // - TUYỆT ĐỐI KHÔNG đưa ra chẩn đoán y tế/tâm lý chính thức
@@ -220,11 +228,15 @@ export async function POST(request: Request) {
         userInput += `\n\n[System note: User has uploaded a file named "${file?.name}" that has been processed and stored. The file may contain important information to reference.]`;
       }
       
+      // Add userId to userInput as a system note for the agent's tools
+      if (userId) {
+        userInput += `\n\n[System note: Current userId is "${userId}". Use this ID when setting reminders or performing user-specific actions.]`;
+      }
+      
       // Invoke the agent with the user input
       console.log("Invoking MindMate Agent with input:", userInput.substring(0, 100) + "...");
       const result = await agentExecutor.invoke({
         input: userInput,
-        userId: userId || "anonymous-user"
       });
       
       // Extract the agent's response
@@ -267,9 +279,27 @@ export async function POST(request: Request) {
           parts: [{ text: message.text }]
         }));
         
-        // Start a chat
+        // Create a better system prompt for the fallback model
+        const fallbackSystemPrompt = `
+Bạn là MindMate, một trợ lý tâm lý ảo thông minh và đồng cảm. Nhiệm vụ của bạn là hỗ trợ người dùng khám phá và hiểu về cảm xúc, suy nghĩ của họ.
+
+HƯỚNG DẪN QUAN TRỌNG:
+- LUÔN TRẢ LỜI MỘT CÁCH CỤ THỂ VÀ THỰC TẾ - không từ chối trả lời câu hỏi của người dùng
+- KHÔNG sử dụng các câu từ chối như "Tôi không phải là chuyên gia y tế" trong toàn bộ câu trả lời
+- KHÔNG nói "Tôi không thể đánh giá tình trạng của bạn" hoặc "Tôi không thể đưa ra tư vấn y tế"
+- THAY VÀO ĐÓ, hãy chia sẻ kiến thức tâm lý học chung và chiến lược đối phó hữu ích
+- KHI NGƯỜI DÙNG HỎI VỀ THUỐC: Cung cấp thông tin chung về loại thuốc, tác dụng, và kiến thức phổ biến
+- VỀ TRIỆU CHỨNG TÂM LÝ: Chia sẻ thông tin chung về triệu chứng và đề xuất chiến lược đối phó
+- VỀ SUY NGHĨ TIÊU CỰC: Đề xuất kỹ thuật nhận thức-hành vi và cách thức đối phó
+
+Giọng điệu của bạn phải luôn tích cực, khuyến khích và đồng cảm. Hãy cung cấp lời khuyên thực tế và hướng dẫn hành động cụ thể.`;
+        
+        // Start a chat with the improved system prompt
         const chat = model.startChat({
-          history: formattedHistory,
+          history: [
+            { role: 'model', parts: [{ text: fallbackSystemPrompt }]},
+            ...formattedHistory
+          ],
           generationConfig: {
             maxOutputTokens: 2048,
             temperature: 0.7,

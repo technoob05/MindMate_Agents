@@ -186,16 +186,23 @@ function parseScheduledTime(timeString: string): string | null {
  */
 export const scheduleReminderTool = new DynamicStructuredTool({
   name: "schedule_activity_reminder",
-  description: "Đặt lịch nhắc nhở cho người dùng. Chỉ sử dụng công cụ này khi người dùng yêu cầu rõ ràng về việc đặt nhắc nhở, lên lịch, hoặc nhắc nhở họ về một hoạt động cụ thể vào thời điểm nào đó.",
+  description: "Đặt lịch nhắc nhở cho người dùng. Chỉ sử dụng công cụ này khi người dùng yêu cầu rõ ràng về việc đặt nhắc nhở, lên lịch, hoặc nhắc nhở họ về một hoạt động cụ thể vào thời điểm nào đó. userId PHẢI được lấy từ System note trong tin nhắn - không tự tạo hoặc đoán.",
   schema: z.object({
-    userId: z.string().describe("ID của người dùng cần đặt nhắc nhở."),
+    userId: z.string().describe("ID của người dùng cần đặt nhắc nhở. PHẢI lấy từ System note trong tin nhắn, định dạng '[System note: Current userId is \"xxx\"...]'."),
     title: z.string().describe("Tiêu đề ngắn gọn cho nhắc nhở."),
     description: z.string().describe("Mô tả chi tiết về nhắc nhở, bao gồm thông tin về hoạt động."),
     scheduledTime: z.string().describe("Thời gian lên lịch cho nhắc nhở. Có thể là định dạng ISO (ví dụ: '2024-07-30T10:00:00') hoặc mô tả tự nhiên như '8 giờ sáng mai', '15:30 ngày 20/7/2024'."),
   }),
   func: async ({ userId, title, description, scheduledTime }) => {
     console.log(`Schedule reminder tool called with params: userId=${userId}, title=${title}, scheduledTime=${scheduledTime}`);
+    
     try {
+      // Kiểm tra userId có hợp lệ không
+      if (!userId || userId.trim() === '') {
+        console.error('INVALID userId provided: empty or undefined');
+        return "Không thể tạo nhắc nhở vì userId không hợp lệ. Vui lòng cung cấp userId từ System note.";
+      }
+      
       // Parse the timestamp using our enhanced parser
       console.log(`Parsing timestamp: ${scheduledTime}`);
       const parsedTime = parseScheduledTime(scheduledTime);
@@ -219,8 +226,11 @@ export const scheduleReminderTool = new DynamicStructuredTool({
       const db = await readDb();
       
       // Create new reminder
+      const reminderId = crypto.randomUUID();
+      console.log(`Generated new reminder ID: ${reminderId}`);
+      
       const reminder: Reminder = {
-        id: crypto.randomUUID(),
+        id: reminderId,
         userId,
         title,
         description,
@@ -228,10 +238,29 @@ export const scheduleReminderTool = new DynamicStructuredTool({
         createdAt: new Date().toISOString(),
       };
       
+      // Log the full reminder object for debugging
+      console.log('New reminder object:', JSON.stringify(reminder, null, 2));
+      
       // Add to database
-      console.log(`Adding new reminder with ID: ${reminder.id}`);
+      console.log(`Adding new reminder with ID: ${reminder.id} for user ${reminder.userId}`);
       db.reminders.push(reminder);
+      
+      // Log database state before saving
+      console.log(`Database now has ${db.reminders.length} reminders total`);
+      
+      // Save to database
       await writeDb(db);
+      console.log('Database successfully updated with new reminder');
+      
+      // Store userId in localStorage as backup
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('mindmate_last_user_id', userId);
+          console.log(`Stored userId ${userId} in localStorage for backup`);
+        }
+      } catch (e) {
+        console.warn('Could not store userId in localStorage:', e);
+      }
       
       // Return confirmation with user-friendly date formatting
       const formattedDate = new Date(parsedTime).toLocaleString('vi-VN', {

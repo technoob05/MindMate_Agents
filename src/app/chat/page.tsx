@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info, LogOut } from 'lucide-react'; // Added FileText, XCircle, Info, LogOut
+import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info, LogOut, Calendar } from 'lucide-react'; // Added FileText, XCircle, Info, LogOut, Calendar
 import {
   Tooltip,
   TooltipContent,
@@ -30,6 +30,7 @@ import {
 import VoiceInteraction from "@/components/voice-interaction";
 import { motion, AnimatePresence } from "framer-motion"; // Import motion
 import { useRouter } from 'next/navigation';
+import RemindersWidget from '@/components/RemindersWidget';
 
 interface Message {
   id: string;
@@ -524,6 +525,13 @@ export default function ChatPage() {
                 <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span>Conversation History</span>
               </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => router.push('/reminders')} 
+                className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm"
+              >
+                <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                <span>Reminders & Schedule</span>
+              </DropdownMenuItem>
               <DropdownMenuItem className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm">
                 <Share2 className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span>Share Conversation</span>
@@ -545,299 +553,307 @@ export default function ChatPage() {
       </header>
 
       {/* Main chat area */}
-      <ScrollArea className="flex-grow" ref={scrollAreaRef}>
-        <div className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto"> {/* Increased max-width */}
-          {/* Error notification */}
-          <AnimatePresence>
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="bg-destructive/10 border border-destructive/30 text-destructive rounded-lg p-3 mb-4 flex items-center gap-3 mx-auto"
-              >
-                <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                <p className="text-sm flex-grow">{error}</p>
-                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/20" onClick={() => setError(null)}>
-                  <X size={16} />
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Empty state */}
-          <AnimatePresence>
-            {showEmptyState && !isLoading && !error && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4"
-              >
+      <div className="flex flex-grow overflow-hidden">
+        {/* Messages column */}
+        <ScrollArea className="flex-grow" ref={scrollAreaRef}>
+          <div className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto"> {/* Increased max-width */}
+            {/* Error notification */}
+            <AnimatePresence>
+              {error && (
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 15 }}
-                  className="bg-primary/10 p-5 rounded-full mb-6 shadow-inner"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="bg-destructive/10 border border-destructive/30 text-destructive rounded-lg p-3 mb-4 flex items-center gap-3 mx-auto"
                 >
-                  <Sparkles className="h-10 w-10 text-primary" />
+                  <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                  <p className="text-sm flex-grow">{error}</p>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/20" onClick={() => setError(null)}>
+                    <X size={16} />
+                  </Button>
                 </motion.div>
-                <h2 className="text-2xl font-semibold mb-3 text-foreground">Welcome to MindMate</h2>
-                <p className="text-muted-foreground max-w-md mb-8 text-base">
-                  Your AI companion for mental wellness. How can I help you today?
-                </p>
+              )}
+            </AnimatePresence>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
-                  {suggestedPrompts.map((prompt, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 + index * 0.05 }}
-                    >
-                      {/* Use updated Button style */}
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start text-left h-auto py-3 px-4 text-sm hover:bg-accent/70 hover:border-primary/30"
-                        onClick={() => handleSendMessage(prompt)} // Send message directly on click
+            {/* Empty state */}
+            <AnimatePresence>
+              {showEmptyState && !isLoading && !error && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4"
+                >
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 15 }}
+                    className="bg-primary/10 p-5 rounded-full mb-6 shadow-inner"
+                  >
+                    <Sparkles className="h-10 w-10 text-primary" />
+                  </motion.div>
+                  <h2 className="text-2xl font-semibold mb-3 text-foreground">Welcome to MindMate</h2>
+                  <p className="text-muted-foreground max-w-md mb-8 text-base">
+                    Your AI companion for mental wellness. How can I help you today?
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
+                    {suggestedPrompts.map((prompt, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 + index * 0.05 }}
                       >
-                        <span>{prompt}</span>
-                      </Button>
-                    </motion.div>
-                  ))}
+                        {/* Use updated Button style */}
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left h-auto py-3 px-4 text-sm hover:bg-accent/70 hover:border-primary/30"
+                          onClick={() => handleSendMessage(prompt)} // Send message directly on click
+                        >
+                          <span>{prompt}</span>
+                        </Button>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Loading indicator for initial load */}
+            {isLoading && messages.length === 0 && !error && (
+              <div className="flex flex-col gap-4 max-w-4xl mx-auto pt-10">
+                {/* Simplified skeleton */}
+                <div className="flex items-start gap-3 animate-pulse">
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-16 w-56" />
+                  </div>
                 </div>
-              </motion.div>
+                <div className="flex items-start gap-3 justify-end animate-pulse">
+                  <div className="flex flex-col gap-2 items-end">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-10 w-40" />
+                  </div>
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                </div>
+              </div>
             )}
-          </AnimatePresence>
 
-          {/* Loading indicator for initial load */}
-          {isLoading && messages.length === 0 && !error && (
-            <div className="flex flex-col gap-4 max-w-4xl mx-auto pt-10">
-              {/* Simplified skeleton */}
-              <div className="flex items-start gap-3 animate-pulse">
-                <Skeleton className="h-9 w-9 rounded-full" />
-                <div className="flex flex-col gap-2">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-16 w-56" />
-                </div>
-              </div>
-              <div className="flex items-start gap-3 justify-end animate-pulse">
-                <div className="flex flex-col gap-2 items-end">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-10 w-40" />
-                </div>
-                <Skeleton className="h-9 w-9 rounded-full" />
-              </div>
-            </div>
-          )}
-
-          {/* Message list */}
-          <AnimatePresence initial={false}>
-            {messages.map((message) => (
-              <motion.div
-                key={message.id}
-                layout // Enable layout animation
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className={`group flex items-start gap-3 ${ // Reduced gap
-                  message.sender === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                {/* AI message */}
-                {message.sender === "ai" && (
-                  <>
-                    <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0"> {/* Smaller avatar */}
-                      <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
-                      <AvatarFallback className="bg-primary/20 text-primary font-semibold">
-                        MM
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col items-start max-w-[85%]"> {/* Increased max-width slightly */}
-                      {/* Styled bubble */}
-                      <div className="relative flex flex-col rounded-xl rounded-tl-sm bg-card/80 backdrop-blur-sm border border-border/50 p-3 shadow-sm">
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap text-card-foreground">
-                          {message.text}
-                          {/* Thêm hiệu ứng nhấp nháy con trỏ khi đang gõ */}
-                          {typingEffect &&
-                            messages[messages.length - 1].id === message.id && (
-                              <span className="inline-block w-1.5 h-5 ml-0.5 bg-primary/80 animate-pulse"></span>
-                            )}
-                        </p>
-                        
-                        {/* Source documents indicator - only show when typing is complete and message has sources */}
-                        {!typingEffect && message.sourceDocs && message.sourceDocs.length > 0 && (
-                          <div className="mt-3 pt-3 border-t border-border/30">
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <button className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors">
-                                  <Info size={12} className="text-primary/70" />
-                                  <span>Sources: {message.sourceDocs.length} document{message.sourceDocs.length > 1 ? 's' : ''}</span>
-                                </button>
-                              </DialogTrigger>
-                              <DialogContent className="max-w-3xl">
-                                <DialogHeader>
-                                  <DialogTitle>Source Documents</DialogTitle>
-                                  <DialogDescription>
-                                    The AI response was enhanced with information from these documents
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <div className="mt-4 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                                  {message.sourceDocs.map((doc, i) => (
-                                    <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50">
-                                      <div className="flex items-center gap-2 mb-2 pb-1 border-b border-border/30">
-                                        <FileText size={14} className="text-primary/70" />
-                                        <div className="text-sm font-medium">
-                                          {doc.metadata.source || `Document ${i + 1}`}
+            {/* Message list */}
+            <AnimatePresence initial={false}>
+              {messages.map((message) => (
+                <motion.div
+                  key={message.id}
+                  layout // Enable layout animation
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className={`group flex items-start gap-3 ${ // Reduced gap
+                    message.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {/* AI message */}
+                  {message.sender === "ai" && (
+                    <>
+                      <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0"> {/* Smaller avatar */}
+                        <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
+                        <AvatarFallback className="bg-primary/20 text-primary font-semibold">
+                          MM
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col items-start max-w-[85%]"> {/* Increased max-width slightly */}
+                        {/* Styled bubble */}
+                        <div className="relative flex flex-col rounded-xl rounded-tl-sm bg-card/80 backdrop-blur-sm border border-border/50 p-3 shadow-sm">
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap text-card-foreground">
+                            {message.text}
+                            {/* Thêm hiệu ứng nhấp nháy con trỏ khi đang gõ */}
+                            {typingEffect &&
+                              messages[messages.length - 1].id === message.id && (
+                                <span className="inline-block w-1.5 h-5 ml-0.5 bg-primary/80 animate-pulse"></span>
+                              )}
+                          </p>
+                          
+                          {/* Source documents indicator - only show when typing is complete and message has sources */}
+                          {!typingEffect && message.sourceDocs && message.sourceDocs.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-border/30">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <button className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors">
+                                    <Info size={12} className="text-primary/70" />
+                                    <span>Sources: {message.sourceDocs.length} document{message.sourceDocs.length > 1 ? 's' : ''}</span>
+                                  </button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-3xl">
+                                  <DialogHeader>
+                                    <DialogTitle>Source Documents</DialogTitle>
+                                    <DialogDescription>
+                                      The AI response was enhanced with information from these documents
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="mt-4 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                                    {message.sourceDocs.map((doc, i) => (
+                                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50">
+                                        <div className="flex items-center gap-2 mb-2 pb-1 border-b border-border/30">
+                                          <FileText size={14} className="text-primary/70" />
+                                          <div className="text-sm font-medium">
+                                            {doc.metadata.source || `Document ${i + 1}`}
+                                          </div>
+                                        </div>
+                                        <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+                                          {doc.pageContent}
                                         </div>
                                       </div>
-                                      <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                                        {doc.pageContent}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          </div>
-                        )}
-                      </div>
-                      {/* Actions on hover */}
-                      <div className="flex items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <div className="flex items-center gap-0.5 mr-2"> {/* Reduced gap */}
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                                  onClick={() => handleFeedback(message.id, "like")}
-                                >
-                                  <ThumbsUp size={14} className={message.feedback === 'like' ? 'text-primary fill-primary/50' : ''} />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Like</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                                  onClick={() => handleFeedback(message.id, "dislike")}
-                                >
-                                  <ThumbsDown size={14} className={message.feedback === 'dislike' ? 'text-destructive fill-destructive/50' : ''} />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Dislike</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                                    ))}
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex items-center gap-0.5">
-                           <TooltipProvider>
-                             <Tooltip>
-                               <TooltipTrigger asChild>
-                                 <Button
-                                   variant="ghost"
-                                   size="icon"
-                                   className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                                   onClick={() => toggleSaveMessage(message.id)}
-                                 >
-                                   <Bookmark size={14} className={message.saved ? 'text-primary fill-primary/50' : ''} />
-                                 </Button>
-                               </TooltipTrigger>
-                               <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">{message.saved ? 'Unsave' : 'Save'}</TooltipContent>
-                             </Tooltip>
-                             {/* Removed invalid buttonSize prop */}
-                             <VoiceInteraction textToSpeak={message.text} />
-                             <Dialog>
+                        {/* Actions on hover */}
+                        <div className="flex items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <div className="flex items-center gap-0.5 mr-2"> {/* Reduced gap */}
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                    onClick={() => handleFeedback(message.id, "like")}
+                                  >
+                                    <ThumbsUp size={14} className={message.feedback === 'like' ? 'text-primary fill-primary/50' : ''} />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Like</TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                    onClick={() => handleFeedback(message.id, "dislike")}
+                                  >
+                                    <ThumbsDown size={14} className={message.feedback === 'dislike' ? 'text-destructive fill-destructive/50' : ''} />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Dislike</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                          <div className="flex items-center gap-0.5">
+                             <TooltipProvider>
                                <Tooltip>
                                  <TooltipTrigger asChild>
-                                   <DialogTrigger asChild>
-                                     <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10">
-                                       <Share2 size={14} />
-                                     </Button>
-                                   </DialogTrigger>
+                                   <Button
+                                     variant="ghost"
+                                     size="icon"
+                                     className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                     onClick={() => toggleSaveMessage(message.id)}
+                                   >
+                                     <Bookmark size={14} className={message.saved ? 'text-primary fill-primary/50' : ''} />
+                                   </Button>
                                  </TooltipTrigger>
-                                 <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Share</TooltipContent>
+                                 <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">{message.saved ? 'Unsave' : 'Save'}</TooltipContent>
                                </Tooltip>
-                               <DialogContent>
-                                 <DialogHeader>
-                                   <DialogTitle>Share this message</DialogTitle>
-                                   <DialogDescription>
-                                     Copy this message or share it with someone.
-                                   </DialogDescription>
-                                 </DialogHeader>
-                                 <div className="bg-muted p-4 rounded-md text-sm my-4 max-h-60 overflow-y-auto">
-                                   {message.text}
-                                 </div>
-                                 <Button variant="gradient" className="w-full" onClick={() => navigator.clipboard.writeText(message.text)}>Copy to clipboard</Button>
-                               </DialogContent>
-                             </Dialog>
-                           </TooltipProvider>
+                               {/* Removed invalid buttonSize prop */}
+                               <VoiceInteraction textToSpeak={message.text} />
+                               <Dialog>
+                                 <Tooltip>
+                                   <TooltipTrigger asChild>
+                                     <DialogTrigger asChild>
+                                       <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10">
+                                         <Share2 size={14} />
+                                       </Button>
+                                     </DialogTrigger>
+                                   </TooltipTrigger>
+                                   <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Share</TooltipContent>
+                                 </Tooltip>
+                                 <DialogContent>
+                                   <DialogHeader>
+                                     <DialogTitle>Share this message</DialogTitle>
+                                     <DialogDescription>
+                                       Copy this message or share it with someone.
+                                     </DialogDescription>
+                                   </DialogHeader>
+                                   <div className="bg-muted p-4 rounded-md text-sm my-4 max-h-60 overflow-y-auto">
+                                     {message.text}
+                                   </div>
+                                   <Button variant="gradient" className="w-full" onClick={() => navigator.clipboard.writeText(message.text)}>Copy to clipboard</Button>
+                                 </DialogContent>
+                               </Dialog>
+                             </TooltipProvider>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
 
-                {/* User message */}
-                {message.sender === "user" && (
-                  <>
-                    <div className="flex flex-col items-end max-w-[85%]">
-                      {/* Styled bubble */}
-                      <div className="flex flex-col rounded-xl rounded-tr-sm bg-primary/90 text-primary-foreground p-3 shadow-sm border border-primary/20">
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                          {message.text}
-                        </p>
+                  {/* User message */}
+                  {message.sender === "user" && (
+                    <>
+                      <div className="flex flex-col items-end max-w-[85%]">
+                        {/* Styled bubble */}
+                        <div className="flex flex-col rounded-xl rounded-tr-sm bg-primary/90 text-primary-foreground p-3 shadow-sm border border-primary/20">
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                            {message.text}
+                          </p>
+                        </div>
+                        <div className="flex items-center mt-1 mr-1">
+                          <time className="text-xs text-muted-foreground/80">
+                            {new Date(message.timestamp).toLocaleTimeString([], {
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })}
+                          </time>
+                        </div>
                       </div>
-                      <div className="flex items-center mt-1 mr-1">
-                        <time className="text-xs text-muted-foreground/80">
-                          {new Date(message.timestamp).toLocaleTimeString([], {
-                            hour: "numeric",
-                            minute: "2-digit",
-                          })}
-                        </time>
-                      </div>
-                    </div>
-                    <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0"> {/* Smaller avatar */}
-                      {/* Add user avatar image if available */}
-                      <AvatarFallback className="bg-muted font-semibold">
-                        You
-                      </AvatarFallback>
-                    </Avatar>
-                  </>
-                )}
+                      <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0"> {/* Smaller avatar */}
+                        {/* Add user avatar image if available */}
+                        <AvatarFallback className="bg-muted font-semibold">
+                          You
+                        </AvatarFallback>
+                      </Avatar>
+                    </>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            {/* Thêm chỉ báo loading khi đang xử lý tin nhắn */}
+            {isLoading && !typingEffect && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-start gap-3"
+              >
+                <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0">
+                  <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
+                  <AvatarFallback className="bg-primary/20 text-primary font-semibold">MM</AvatarFallback>
+                </Avatar>
+                {/* Loading dots */}
+                <div className="flex items-center space-x-1.5 rounded-xl rounded-tl-sm bg-card/80 border border-border/50 p-3 shadow-sm">
+                  <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.3s]"></div>
+                  <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.15s]"></div>
+                  <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce"></div>
+                </div>
               </motion.div>
-            ))}
-          </AnimatePresence>
+            )}
 
-          {/* Thêm chỉ báo loading khi đang xử lý tin nhắn */}
-          {isLoading && !typingEffect && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-start gap-3"
-            >
-              <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0">
-                <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
-                <AvatarFallback className="bg-primary/20 text-primary font-semibold">MM</AvatarFallback>
-              </Avatar>
-              {/* Loading dots */}
-              <div className="flex items-center space-x-1.5 rounded-xl rounded-tl-sm bg-card/80 border border-border/50 p-3 shadow-sm">
-                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.3s]"></div>
-                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.15s]"></div>
-                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce"></div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* This div is to help with scrolling to the bottom */}
-          <div ref={messagesEndRef} className="h-1" />
+            {/* This div is to help with scrolling to the bottom */}
+            <div ref={messagesEndRef} className="h-1" />
+          </div>
+        </ScrollArea>
+        
+        {/* Reminders column - only visible on larger screens */}
+        <div className="hidden lg:block w-80 p-4 border-l border-border/60 overflow-y-auto">
+          <RemindersWidget userId={sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user') || '{}').id : null} />
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Message input area */}
       <footer className="p-3 border-t border-border/60 bg-background/95 backdrop-blur-sm sticky bottom-0">

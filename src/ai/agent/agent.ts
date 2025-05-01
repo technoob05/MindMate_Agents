@@ -103,19 +103,69 @@ export function createMindMateAgentExecutor(memory?: BufferMemory) {
     console.log("Creating MindMate Agent Executor");
     const agent = createMindMateAgent();
     
-    // Create the agent executor with more debugging
-    const agentExecutor = new AgentExecutor({
-      agent,
-      tools: agentTools,
-      verbose: true, // Always show verbose output for debugging
-      returnIntermediateSteps: true, // Show the agent's thought process for debugging
-      memory: memory || createAgentMemory(), // Use provided memory or create a new one
-      maxIterations: 10, // Increase max iterations to allow for more tool usage
-      handleParsingErrors: true, // Handle parsing errors gracefully
-    });
+    // Create a custom wrapper to handle the memory properly
+    const executor = {
+      async invoke({input}: {input: string}) {
+        try {
+          console.log(`Agent executor processing input: ${input.substring(0, 50)}...`);
+          
+          // Create an empty chat history if none exists
+          let chatHistory = [];
+          
+          // If memory exists, try to get chat history from it
+          if (memory) {
+            try {
+              // Get the chat history from memory
+              const memoryVariables = await memory.loadMemoryVariables({});
+              chatHistory = memoryVariables.chat_history || [];
+              console.log(`Loaded ${chatHistory.length} messages from memory`);
+            } catch (memError) {
+              console.warn("Could not load chat history from memory:", memError);
+              // Continue with empty chat history
+            }
+          }
+          
+          // Use the agent directly with chat_history and agent_scratchpad
+          const agentExecutor = new AgentExecutor({
+            agent,
+            tools: agentTools,
+            verbose: true,
+            returnIntermediateSteps: true,
+            maxIterations: 10,
+            handleParsingErrors: true,
+          });
+          
+          // Execute the agent with input and chat_history
+          const result = await agentExecutor.invoke({
+            input: input,
+            chat_history: chatHistory,
+            agent_scratchpad: []
+          });
+          
+          // If we have memory, manually try to update it - wrapped in try/catch to prevent errors
+          if (memory) {
+            try {
+              console.log("Manually updating memory with conversation");
+              await memory.saveContext(
+                {input: input}, 
+                {output: result.output}
+              );
+            } catch (memoryError) {
+              console.warn("Non-critical error updating memory:", memoryError);
+              // Continue execution even if memory update fails
+            }
+          }
+          
+          return {output: result.output};
+        } catch (error) {
+          console.error("Error in agent execution:", error);
+          throw error;
+        }
+      }
+    };
     
-    console.log("Agent executor created successfully");
-    return agentExecutor;
+    console.log("Custom agent executor created successfully");
+    return executor;
   } catch (error) {
     console.error("Error creating MindMate agent executor:", error);
     throw new Error(`Failed to create agent executor: ${error instanceof Error ? error.message : String(error)}`);
