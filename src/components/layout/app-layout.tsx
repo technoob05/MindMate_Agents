@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, MessageSquare, Users, Bot, Settings, Smile, User, LogOut, BookHeart, Menu } from 'lucide-react';
+import { Home, MessageSquare, Users, Bot, Settings, Smile, User, LogOut, BookHeart, Menu, Lightbulb, Newspaper } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,15 +22,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 
 const navigationItems = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Chat', href: '/chat', icon: MessageSquare },
   { name: 'AI Team Chat', href: '/ai-team-chat', icon: Users },
   { name: 'AI Avatar', href: '/ai-avatar', icon: Bot },
+  { name: 'AI Explainer', href: '/ai-explainer', icon: Lightbulb }, // Added AI Explainer link
   { name: 'Journal', href: '/journal', icon: BookHeart },
   { name: 'Multi-user Chat', href: '/multi-user-chat', icon: MessageSquare },
+  { name: 'News', href: '/news', icon: Newspaper },
 ];
 
 export default function AppLayout({
@@ -49,7 +51,7 @@ export default function AppLayout({
   return (
     <div className="flex h-screen">
       {/* Sidebar - Desktop */}
-      <div className="hidden md:flex flex-col w-64 bg-background border-r">
+      <div className="hidden md:flex flex-col w-64 bg-background border-r fixed top-0 left-0 h-screen">
         <div className="flex flex-col h-full p-4">
           <div className="space-y-4">
             {navigationItems.map((item) => {
@@ -59,9 +61,9 @@ export default function AppLayout({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors",
-                    isActive 
-                      ? "bg-primary text-primary-foreground" 
+                    "flex items-center space-x-3 px-3 py-2 rounded-lg",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
                       : "hover:bg-accent hover:text-accent-foreground"
                   )}
                 >
@@ -119,9 +121,9 @@ export default function AppLayout({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors",
-                    isActive 
-                      ? "bg-primary text-primary-foreground" 
+                    "flex items-center space-x-3 px-3 py-2 rounded-lg",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
                       : "hover:bg-accent hover:text-accent-foreground"
                   )}
                 >
@@ -131,13 +133,12 @@ export default function AppLayout({
               );
             })}
           </div>
+          <SheetClose />
         </SheetContent>
       </Sheet>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
+      <main className="flex-1 h-full p-4 md:ml-64">{children}</main>
     </div>
   );
 }

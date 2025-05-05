@@ -120,6 +120,318 @@
     --sidebar-border: 40 20% 75%; /* Medium Earthy Border */
     --sidebar-ring: 160 40% 75%; /* Soft Teal/Aqua Ring */
   }
+  .outer-space {
+    --background: 240 80% 5%; /* Deep Space Blue */
+    --foreground: 210 50% 95%; /* Star White */
+    --card: 240 70% 8%; /* Darker Space Blue */
+    --card-foreground: 210 50% 95%;
+    --popover: 240 70% 8%;
+    --popover-foreground: 210 50% 95%;
+    --primary: 260 80% 70%; /* Nebula Purple */
+    --primary-foreground: 240 80% 5%;
+    --secondary: 200 70% 60%; /* Cosmic Teal */
+    --secondary-foreground: 240 80% 5%;
+    --muted: 240 60% 15%; /* Muted Space Grey */
+    --muted-foreground: 210 30% 70%; /* Faded Star */
+    --accent: 40 90% 60%; /* Comet Gold */
+    --accent-foreground: 240 80% 5%;
+    --destructive: 0 90% 60%; /* Supernova Red */
+    --destructive-foreground: 210 50% 95%;
+    --border: 240 60% 20%; /* Space Dust Border */
+    --input: 240 60% 20%;
+    --ring: 260 80% 75%; /* Brighter Nebula Ring */
+    --chart-1: 260 80% 70%;
+    --chart-2: 200 70% 60%;
+    --chart-3: 40 90% 60%;
+    --chart-4: 300 80% 70%; /* Galactic Pink */
+    --chart-5: 180 70% 60%; /* Alien Green */
+    --radius: 0.5rem;
+
+    --background-start-rgb: 10, 10, 20; /* Very Dark Blue */
+    --background-end-rgb: 5, 5, 15; /* Even Darker Blue */
+
+    --sidebar-background: 240 75% 6%; /* Darker Sidebar */
+    --sidebar-foreground: 210 50% 95%;
+    --sidebar-primary: 260 80% 75%;
+    --sidebar-primary-foreground: 240 80% 5%;
+    --sidebar-accent: 40 90% 65%;
+    --sidebar-accent-foreground: 240 80% 5%;
+    --sidebar-border: 240 60% 25%;
+    --sidebar-ring: 260 80% 80%;
+  }
+  .pink {
+    --background: 330 100% 98%; /* Very Light Pink */
+    --foreground: 330 60% 20%; /* Dark Pink */
+    --card: 330 100% 96%; /* Light Pink */
+    --card-foreground: 330 60% 20%;
+    --popover: 330 100% 96%;
+    --popover-foreground: 330 60% 20%;
+    --primary: 330 80% 50%; /* Vibrant Pink */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 330 40% 80%; /* Muted Pink */
+    --secondary-foreground: 330 60% 20%;
+    --muted: 330 20% 90%; /* Very Muted Pink */
+    --muted-foreground: 330 30% 60%; /* Medium Pink */
+    --accent: 300 70% 60%; /* Purple-Pink */
+    --accent-foreground: 330 60% 20%;
+    --destructive: 0 80% 60%; /* Red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 330 30% 85%; /* Light Pink Border */
+    --input: 330 30% 85%;
+    --ring: 330 80% 55%; /* Slightly Darker Vibrant Pink */
+    --chart-1: 330 80% 50%;
+    --chart-2: 300 70% 60%;
+    --chart-3: 350 70% 60%; /* Reddish Pink */
+    --chart-4: 280 60% 70%; /* Lavender Pink */
+    --chart-5: 310 70% 55%; /* Magenta Pink */
+    --radius: 0.5rem;
+
+    --background-start-rgb: 255, 240, 245; /* Very Light Pink */
+    --background-end-rgb: 250, 230, 235; /* Slightly Darker Pink */
+
+    --sidebar-background: 330 100% 95%; /* Lighter Sidebar */
+    --sidebar-foreground: 330 60% 20%;
+    --sidebar-primary: 330 80% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 300 70% 65%;
+    --sidebar-accent-foreground: 330 60% 20%;
+    --sidebar-border: 330 30% 80%;
+    --sidebar-ring: 330 80% 60%;
+  }
+  .joy {
+    --background: 45 100% 95%; /* Light Yellow */
+    --foreground: 40 80% 30%; /* Dark Orange-Yellow */
+    --card: 45 90% 90%; /* Slightly Darker Yellow */
+    --card-foreground: 40 80% 30%;
+    --popover: 45 90% 90%;
+    --popover-foreground: 40 80% 30%;
+    --primary: 40 90% 60%; /* Vibrant Orange */
+    --primary-foreground: 45 100% 95%;
+    --secondary: 50 80% 70%; /* Golden Yellow */
+    --secondary-foreground: 40 80% 30%;
+    --muted: 45 50% 85%; /* Muted Yellow */
+    --muted-foreground: 40 60% 50%; /* Medium Orange-Yellow */
+    --accent: 60 90% 50%; /* Bright Yellow */
+    --accent-foreground: 40 80% 30%;
+    --destructive: 0 80% 60%; /* Red */
+    --destructive-foreground: 45 100% 95%;
+    --border: 45 60% 80%; /* Light Yellow Border */
+    --input: 45 60% 80%;
+    --ring: 40 90% 65%; /* Brighter Orange Ring */
+    --chart-1: 40 90% 60%;
+    --chart-2: 50 80% 70%;
+    --chart-3: 60 90% 50%;
+    --chart-4: 30 80% 65%; /* Orange-Yellow */
+    --chart-5: 70 80% 60%; /* Greenish Yellow */
+    --radius: 0.5rem;
+
+    --background-start-rgb: 255, 255, 220; /* Very Light Yellow */
+    --background-end-rgb: 250, 250, 200; /* Slightly Darker Yellow */
+
+    --sidebar-background: 45 95% 92%; /* Lighter Sidebar */
+    --sidebar-foreground: 40 80% 30%;
+    --sidebar-primary: 40 90% 65%;
+    --sidebar-primary-foreground: 45 100% 95%;
+    --sidebar-accent: 60 90% 55%;
+    --sidebar-accent-foreground: 40 80% 30%;
+    --sidebar-border: 45 60% 75%;
+    --sidebar-ring: 40 90% 70%;
+  }
+  .sadness {
+    --background: 220 60% 95%; /* Light Blue */
+    --foreground: 220 80% 20%; /* Dark Blue */
+    --card: 220 50% 90%; /* Slightly Darker Blue */
+    --card-foreground: 220 80% 20%;
+    --popover: 220 50% 90%;
+    --popover-foreground: 220 80% 20%;
+    --primary: 220 70% 50%; /* Medium Blue */
+    --primary-foreground: 220 60% 95%;
+    --secondary: 200 60% 70%; /* Lighter Blue */
+    --secondary-foreground: 220 80% 20%;
+    --muted: 220 30% 85%; /* Muted Blue */
+    --muted-foreground: 220 40% 60%; /* Medium Blue-Grey */
+    --accent: 240 50% 60%; /* Purple-Blue */
+    --accent-foreground: 220 80% 20%;
+    --destructive: 0 80% 60%; /* Red */
+    --destructive-foreground: 220 60% 95%;
+    --border: 220 40% 80%; /* Light Blue Border */
+    --input: 220 40% 80%;
+    --ring: 220 70% 55%; /* Slightly Darker Medium Blue */
+    --chart-1: 220 70% 50%;
+    --chart-2: 200 60% 70%;
+    --chart-3: 240 50% 60%;
+    --chart-4: 210 60% 60%; /* Cyan-Blue */
+    --chart-5: 230 60% 65%; /* Indigo-Blue */
+    --radius: 0.5rem;
+
+    --background-start-rgb: 230, 240, 255; /* Very Light Blue */
+    --background-end-rgb: 220, 230, 245; /* Slightly Darker Blue */
+
+    --sidebar-background: 220 55% 92%; /* Lighter Sidebar */
+    --sidebar-foreground: 220 80% 20%;
+    --sidebar-primary: 220 70% 55%;
+    --sidebar-primary-foreground: 220 60% 95%;
+    --sidebar-accent: 240 50% 65%;
+    --sidebar-accent-foreground: 220 80% 20%;
+    --sidebar-border: 220 40% 75%;
+    --sidebar-ring: 220 70% 60%;
+  }
+  .anger {
+    --background: 0 100% 95%; /* Light Red */
+    --foreground: 0 80% 20%; /* Dark Red */
+    --card: 0 90% 90%; /* Slightly Darker Red */
+    --card-foreground: 0 80% 20%;
+    --popover: 0 90% 90%;
+    --popover-foreground: 0 80% 20%;
+    --primary: 0 90% 60%; /* Vibrant Red */
+    --primary-foreground: 0 100% 95%;
+    --secondary: 10 80% 70%; /* Orange-Red */
+    --secondary-foreground: 0 80% 20%;
+    --muted: 0 50% 85%; /* Muted Red */
+    --muted-foreground: 0 60% 50%; /* Medium Red */
+    --accent: 350 90% 50%; /* Crimson */
+    --accent-foreground: 0 80% 20%;
+    --destructive: 0 90% 40%; /* Darker Red */
+    --destructive-foreground: 0 100% 95%;
+    --border: 0 60% 80%; /* Light Red Border */
+    --input: 0 60% 80%;
+    --ring: 0 90% 65%; /* Brighter Red Ring */
+    --chart-1: 0 90% 60%;
+    --chart-2: 10 80% 70%;
+    --chart-3: 350 90% 50%;
+    --chart-4: 20 80% 65%; /* Red-Orange */
+    --chart-5: 340 80% 60%; /* Rose Red */
+    --radius: 0.5rem;
+
+    --background-start-rgb: 255, 230, 230; /* Very Light Red */
+    --background-end-rgb: 250, 220, 220; /* Slightly Darker Red */
+
+    --sidebar-background: 0 95% 92%; /* Lighter Sidebar */
+    --sidebar-foreground: 0 80% 20%;
+    --sidebar-primary: 0 90% 65%;
+    --sidebar-primary-foreground: 0 100% 95%;
+    --sidebar-accent: 350 90% 55%;
+    --sidebar-accent-foreground: 0 80% 20%;
+    --sidebar-border: 0 60% 75%;
+    --sidebar-ring: 0 90% 70%;
+  }
+  .fear {
+    --background: 260 60% 95%; /* Light Purple */
+    --foreground: 260 80% 20%; /* Dark Purple */
+    --card: 260 50% 90%; /* Slightly Darker Purple */
+    --card-foreground: 260 80% 20%;
+    --popover: 260 50% 90%;
+    --popover-foreground: 260 80% 20%;
+    --primary: 260 70% 50%; /* Medium Purple */
+    --primary-foreground: 260 60% 95%;
+    --secondary: 280 60% 70%; /* Lavender */
+    --secondary-foreground: 260 80% 20%;
+    --muted: 260 30% 85%; /* Muted Purple */
+    --muted-foreground: 260 40% 60%; /* Medium Purple-Grey */
+    --accent: 240 50% 60%; /* Blue-Purple */
+    --accent-foreground: 260 80% 20%;
+    --destructive: 0 80% 60%; /* Red */
+    --destructive-foreground: 260 60% 95%;
+    --border: 260 40% 80%; /* Light Purple Border */
+    --input: 260 40% 80%;
+    --ring: 260 70% 55%; /* Slightly Darker Medium Purple */
+    --chart-1: 260 70% 50%;
+    --chart-2: 280 60% 70%;
+    --chart-3: 240 50% 60%;
+    --chart-4: 250 60% 65%; /* Violet */
+    --chart-5: 270 60% 60%; /* Magenta-Purple */
+    --radius: 0.5rem;
+
+    --background-start-rgb: 240, 230, 255; /* Very Light Purple */
+    --background-end-rgb: 230, 220, 245; /* Slightly Darker Purple */
+
+    --sidebar-background: 260 55% 92%; /* Lighter Sidebar */
+    --sidebar-foreground: 260 80% 20%;
+    --sidebar-primary: 260 70% 55%;
+    --sidebar-primary-foreground: 260 60% 95%;
+    --sidebar-accent: 240 50% 65%;
+    --sidebar-accent-foreground: 260 80% 20%;
+    --sidebar-border: 260 40% 75%;
+    --sidebar-ring: 260 70% 60%;
+  }
+  .disgust {
+    --background: 120 60% 95%; /* Light Green */
+    --foreground: 120 80% 20%; /* Dark Green */
+    --card: 120 50% 90%; /* Slightly Darker Green */
+    --card-foreground: 120 80% 20%;
+    --popover: 120 50% 90%;
+    --popover-foreground: 120 80% 20%;
+    --primary: 120 70% 50%; /* Medium Green */
+    --primary-foreground: 120 60% 95%;
+    --secondary: 140 60% 70%; /* Mint Green */
+    --secondary-foreground: 120 80% 20%;
+    --muted: 120 30% 85%; /* Muted Green */
+    --muted-foreground: 120 40% 60%; /* Medium Green-Grey */
+    --accent: 100 50% 60%; /* Yellow-Green */
+    --accent-foreground: 120 80% 20%;
+    --destructive: 0 80% 60%; /* Red */
+    --destructive-foreground: 120 60% 95%;
+    --border: 120 40% 80%; /* Light Green Border */
+    --input: 120 40% 80%;
+    --ring: 120 70% 55%; /* Slightly Darker Medium Green */
+    --chart-1: 120 70% 50%;
+    --chart-2: 140 60% 70%;
+    --chart-3: 100 50% 60%;
+    --chart-4: 110 60% 65%; /* Lime Green */
+    --chart-5: 130 60% 60%; /* Forest Green */
+    --radius: 0.5rem;
+
+    --background-start-rgb: 230, 255, 230; /* Very Light Green */
+    --background-end-rgb: 220, 245, 220; /* Slightly Darker Green */
+
+    --sidebar-background: 120 55% 92%; /* Lighter Sidebar */
+    --sidebar-foreground: 120 80% 20%;
+    --sidebar-primary: 120 70% 55%;
+    --sidebar-primary-foreground: 120 60% 95%;
+    --sidebar-accent: 100 50% 65%;
+    --sidebar-accent-foreground: 120 80% 20%;
+    --sidebar-border: 120 40% 75%;
+    --sidebar-ring: 120 70% 60%;
+  }
+  .vietnam {
+    --background: 0 100% 50%; /* Vibrant Red */
+    --foreground: 45 100% 50%; /* Vibrant Yellow */
+    --card: 0 90% 45%; /* Slightly Darker Red */
+    --card-foreground: 45 100% 50%;
+    --popover: 0 90% 45%;
+    --popover-foreground: 45 100% 50%;
+    --primary: 45 100% 50%; /* Vibrant Yellow */
+    --primary-foreground: 0 100% 50%; /* Vibrant Red */
+    --secondary: 0 80% 60%; /* Muted Red */
+    --secondary-foreground: 45 100% 50%;
+    --muted: 0 60% 70%; /* Lighter Muted Red */
+    --muted-foreground: 45 80% 60%; /* Muted Yellow */
+    --accent: 45 100% 60%; /* Brighter Yellow */
+    --accent-foreground: 0 100% 50%;
+    --destructive: 0 80% 40%; /* Darker Red */
+    --destructive-foreground: 45 100% 50%;
+    --border: 0 70% 55%; /* Medium Red Border */
+    --input: 0 70% 55%;
+    --ring: 45 100% 55%; /* Slightly Darker Vibrant Yellow */
+    --chart-1: 45 100% 50%;
+    --chart-2: 0 80% 60%;
+    --chart-3: 45 100% 60%;
+    --chart-4: 0 70% 65%; /* Reddish */
+    --chart-5: 45 90% 55%; /* Yellowish */
+    --radius: 0.5rem;
+
+    --background-start-rgb: 255, 0, 0; /* Pure Red */
+    --background-end-rgb: 220, 0, 0; /* Slightly Darker Red */
+
+    --sidebar-background: 0 95% 48%; /* Darker Sidebar Red */
+    --sidebar-foreground: 45 100% 50%;
+    --sidebar-primary: 45 100% 55%;
+    --sidebar-primary-foreground: 0 100% 50%;
+    --sidebar-accent: 45 100% 65%;
+    --sidebar-accent-foreground: 0 100% 50%;
+    --sidebar-border: 0 70% 50%;
+    --sidebar-ring: 45 100% 60%;
+  }
   /* Combined base layers and removed @apply for body/* */
   * {
     @apply border-border transition-colors duration-200 ease-in-out; /* Add default transition */
@@ -134,7 +446,7 @@
   .glass-morphism {
     @apply bg-background/80 backdrop-blur-[8px] border border-border/50 shadow-lg;
   }
-  
+
   .gradient-border {
     @apply border border-transparent bg-gradient-to-r from-primary/20 via-primary/10 to-transparent;
   }
@@ -146,9 +458,49 @@
   .animate-smooth {
     @apply transition-all duration-300 ease-in-out;
   }
-  
+
   .hover-scale {
     @apply hover:scale-105 transition-transform duration-200;
+  }
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 767px) {
+  /* Styles for small screens (phones) */
+  .container {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Styles for medium screens (tablets) */
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Styles for large screens (desktops) */
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

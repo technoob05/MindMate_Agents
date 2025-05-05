@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-type Theme = "dark" | "light" | "ghibli";
+type Theme = "dark" | "light" | "ghibli" | "system" | "outer-space" | "pink" | "joy" | "sadness" | "anger" | "fear" | "disgust" | "vietnam";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -45,17 +45,19 @@ export function ThemeProvider({
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-        const storedTheme = localStorage.getItem(storageKey) as Theme;
-        if (storedTheme && ["light", "dark", "ghibli"].includes(storedTheme)) {
-            setTheme(storedTheme);
+    const storedTheme = localStorage.getItem(storageKey) as Theme;
+    if (storedTheme && ["light", "dark", "ghibli", "system", "outer-space", "pink", "joy", "sadness", "anger", "fear", "disgust", "vietnam"].includes(storedTheme)) {
+        if (storedTheme === "system") {
+            const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            setTheme(systemTheme as Theme);
         } else {
-            // Optional: Check system preference if no stored theme
-            // const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-            // setTheme(systemTheme);
-            setTheme(defaultTheme); // Fallback to default
+          setTheme(storedTheme);
         }
+    } else {
+      setTheme(defaultTheme); // Fallback to default
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only once on mount
 
 

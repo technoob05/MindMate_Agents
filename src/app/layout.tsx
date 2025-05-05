@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google"; // Import Inter
 import "./globals.css";
 import { initializeApp } from "firebase/app";
-import { ThemeProvider } from "@/components/theme-provider"; // Import ThemeProvider
+import { ThemeProvider } from "next-themes"; // Import ThemeProvider from next-themes
 import { cn } from "@/lib/utils"; // Import cn utility
 import AppLayout from "@/components/layout/app-layout";
 
