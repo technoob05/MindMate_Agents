@@ -45,18 +45,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AppLayout>
-            <main className="relative min-h-screen backdrop-blur-sm">
-              {/* Decorative elements */}
-              <div className="fixed inset-0 -z-10 overflow-hidden">
-                <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-conic from-primary/10 via-primary/5 to-primary/10 animate-slow-spin" />
-                <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-conic from-secondary/10 via-secondary/5 to-secondary/10 animate-slow-spin-reverse" />
-              </div>
-              
-              {/* Main content */}
-              <div className="relative z-10">
                 {children}
-              </div>
-            </main>
           </AppLayout>
         </ThemeProvider>
       </body>

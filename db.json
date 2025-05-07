@@ -21,6 +21,18 @@
       "id": "9dbbce27-1b7c-450b-9444-22d7b7118bdd",
       "email": "ttqminh2005@gmail.com",
       "hashedPassword": "$2b$10$gwU1sQDBjDH4rQ1PNLLLMegBlGl9DRqupj1pDRachpBNesT0Mc3LK"
+    },
+    {
+      "id": "95ab3184-218b-4084-830d-7d173c951144",
+      "email": "hoangnguyen.123.dz@gmail.com",
+      "hashedPassword": "$2b$10$jME3Zp6bJKRyjXuwWX1FZedgtY9qwFeaKOlds1Ydn/dEe0cn2cluO",
+      "pseudonym": "Leonard"
+    },
+    {
+      "id": "2199e35a-325f-4976-925d-cb90a4c7787e",
+      "email": "dathu@gmail.com",
+      "hashedPassword": "$2b$10$3ER3qcPNC7FpZQ0TiIHcj.dHrTgtA03mJiFnqhXg1Njr74lZEemaS",
+      "pseudonym": "huyHoang"
     }
   ],
   "chats": {
@@ -52,15 +64,5 @@
     "multi_user_rooms": {
       "general": []
     }
-  },
-  "reminders": [
-    {
-      "id": "71783c3c-4781-4324-ad4c-2f79df3363b1",
-      "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd",
-      "title": "Hẹn gặp bác sĩ Anyway",
-      "description": "Lịch hẹn với bác sĩ Anyway",
-      "scheduledTime": "2025-05-02T08:00:00.000Z",
-      "createdAt": "2025-05-01T14:47:31.258Z"
-    }
-  ]
+  }
 }

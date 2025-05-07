@@ -69,34 +69,32 @@ const RegisterPage = () => {
     }
   };
 
+  // Navigate to login page
+  const goToLogin = () => {
+    router.push('/login');
+  };
+
   return (
-    // Use flex container, remove custom background, adjust padding
-    <div className="flex items-center justify-center min-h-screen p-4">
-      {/* Animate the card */}
+    <main className="min-h-screen flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="w-full max-w-md" // Apply width constraints here
+        className="w-full max-w-md"
       >
-        {/* Use default Card styling */}
         <Card>
-          <CardHeader className="text-center space-y-2"> {/* Added space-y */}
-            {/* Use standard CardTitle, adjust size */}
+          <CardHeader className="text-center space-y-2">
             <CardTitle className="text-2xl font-bold tracking-tight text-primary">
               Join MindMate
             </CardTitle>
-            {/* Use standard CardDescription */}
             <CardDescription>
               Create your account to get started.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            {/* Reduced space-y slightly for tighter form */}
+          <CardContent className="space-y-4">
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                {/* Use default Input styling */}
                 <Input
                   id="email"
                   type="email"
@@ -109,19 +107,17 @@ const RegisterPage = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="pseudonym">Pseudonym (Optional)</Label>
-                 {/* Use default Input styling */}
                 <Input
                   id="pseudonym"
                   type="text"
                   placeholder="Your anonymous name"
                   value={pseudonym}
                   onChange={(e) => setPseudonym(e.target.value)}
-                  autoComplete="username" // Or "nickname"
+                  autoComplete="username"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                 {/* Use default Input styling */}
                 <Input
                   id="password"
                   type="password"
@@ -134,7 +130,6 @@ const RegisterPage = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirm-password">Confirm Password</Label>
-                 {/* Use default Input styling */}
                 <Input
                   id="confirm-password"
                   type="password"
@@ -146,9 +141,8 @@ const RegisterPage = () => {
                 />
               </div>
               {error && (
-                <p className="text-sm text-destructive">{error}</p> // Use destructive color
+                <p className="text-sm text-destructive">{error}</p>
               )}
-              {/* Use gradient Button variant */}
               <Button
                 type="submit"
                 variant="gradient"
@@ -159,20 +153,23 @@ const RegisterPage = () => {
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col items-center space-y-2 text-sm pt-4"> {/* Added padding-top */}
-            <p className="text-muted-foreground"> {/* Use muted foreground color */}
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-medium text-primary hover:underline underline-offset-4" // Use primary color, standard underline
+          <CardFooter className="flex flex-col items-center space-y-4 text-sm pt-4">
+            <div className="w-full text-center">
+              <p className="text-muted-foreground mb-2">
+                Already have an account?
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={goToLogin} 
+                className="w-full"
               >
                 Sign in here
-              </Link>
-            </p>
+              </Button>
+            </div>
           </CardFooter>
         </Card>
       </motion.div>
-    </div>
+    </main>
   );
 };
 

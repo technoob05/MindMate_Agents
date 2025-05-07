@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import fs from 'fs/promises';
 import path from 'path';
+import { generateToken } from '@/lib/auth/jwt';
 
 // Define the path to the db.json file
 const dbPath = path.join(process.cwd(), 'db.json');
@@ -41,36 +42,63 @@ async function readDb(): Promise<Database> {
 
 export async function POST(request: Request) {
   try {
+    console.log('Login API called');
     const { email, password } = await request.json();
+    console.log('Login attempt for email:', email);
 
     // Basic validation
     if (!email || !password) {
+      console.log('Missing email or password');
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
     const db = await readDb();
+    console.log('Database read, found users:', db.users.length);
 
     // Find user by email
     const user = db.users.find(u => u.email === email);
 
     if (!user || !user.hashedPassword) {
       // User not found or doesn't have a password (e.g., legacy data)
+      console.log('User not found or no password');
       return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 }); // 401 Unauthorized
     }
+
+    console.log('User found:', user.email);
 
     // Compare the provided password with the stored hash
     const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
 
     if (!isPasswordValid) {
+      console.log('Invalid password');
       return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 }); // 401 Unauthorized
     }
 
+    // Generate JWT token
+    const token = generateToken({
+      userId: user.id,
+      email: user.email
+    });
+
     // Login successful
     const { hashedPassword: _, ...userToReturn } = user;
+    console.log('Login successful, returning user:', userToReturn);
 
-    // Return success and user info (without password)
-    return NextResponse.json({ message: 'Login successful', user: userToReturn }, { status: 200 });
+    // Create response with the user object
+    const response = NextResponse.json(
+      { message: 'Login successful', user: userToReturn },
+      { status: 200 }
+    );
 
+    // Set JWT token in cookie
+    response.cookies.set('sessionToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 // 24 hours
+    });
+
+    return response;
   } catch (error: any) {
     console.error('Login error:', error);
      if (error.message.includes('database file')) {
