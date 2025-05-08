@@ -51,16 +51,9 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  /*
-   * Match all request paths except for the ones starting with:
-   * - api (API routes) - We handle API auth routes specifically inside the middleware
-   * - _next/static (static files)
-   * - _next/image (image optimization files)
-   * - favicon.ico (favicon file)
-   * - public assets (e.g., /models/*) - Handled by the '.' check or specific path checks if needed
-   */
-   // We will apply the middleware logic more broadly and filter inside the function
-   // This ensures even API routes (except auth) could be protected if needed later.
-   // Let the middleware function handle path logic.
-   matcher: '/((?!_next/static|_next/image|favicon.ico|models/).*)', // Apply broadly, filter inside
+  // Only run middleware on the auth API routes now
+  matcher: [
+    '/api/auth/login',
+    '/api/auth/register'
+  ]
 };
