@@ -56,7 +56,13 @@ const RegisterPage = () => {
       }
 
       console.log('Registration successful:', data);
-      alert('Registration successful! Please log in.');
+      
+      // Ensure onboarding flag is NOT set, so user will be directed to onboarding after first login
+      localStorage.removeItem('onboardingCompleted');
+      
+      // Show success message mentioning the onboarding process
+      alert('Registration successful! Please log in to complete your personalized onboarding.');
+      
       router.push('/login');
 
     } catch (err: any) {
@@ -165,6 +171,9 @@ const RegisterPage = () => {
               >
                 Sign in here
               </Button>
+            </div>
+            <div className="text-xs text-muted-foreground text-center">
+              After registration, you'll complete a short questionnaire to personalize your experience.
             </div>
           </CardFooter>
         </Card>

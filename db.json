@@ -33,6 +33,24 @@
       "email": "dathu@gmail.com",
       "hashedPassword": "$2b$10$3ER3qcPNC7FpZQ0TiIHcj.dHrTgtA03mJiFnqhXg1Njr74lZEemaS",
       "pseudonym": "huyHoang"
+    },
+    {
+      "id": "e0dff7d8-922c-427b-bc04-c0ad7aaacc0d",
+      "email": "a@a.a",
+      "hashedPassword": "$2b$10$haRlz9zwObU2Bb9Utvp9tuVBzfHgm6tRXA7JzKBXML7QItxFT29CS",
+      "pseudonym": "huyHoang"
+    },
+    {
+      "id": "337eb694-e803-491e-a261-4de87217f3a3",
+      "email": "test1@m.c",
+      "hashedPassword": "$2b$10$HhIurKrWe4yoEVJxCDza9ucT7GPo9KI2bgj9RfX2Ml2wuLr7xGTna",
+      "pseudonym": "annguyen.31231025069@st.ueh.edu.vn"
+    },
+    {
+      "id": "2621fd39-1f32-4763-9425-48367c83e136",
+      "email": "nguyenhuyhoang3305@gmail.com",
+      "hashedPassword": "$2b$10$8a/uWjoJ1Oq6MZ6WwTAUD.QxtbawNGzKoMIXSCZXvk1B5H9MctyrK",
+      "pseudonym": "nguyenhuyhoang3305@gmail.com"
     }
   ],
   "chats": {
@@ -57,12 +75,210 @@
         "sender": "ai",
         "timestamp": 1746111132898,
         "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
+      },
+      {
+        "id": "15d92d47-5913-4006-b66c-6860fbe81b16",
+        "text": "What are some quick stress relief techniques?",
+        "sender": "user",
+        "timestamp": 1746886457580
       }
     ],
-    "ai_team": [],
+    "ai_team": [
+      {
+        "text": "e ong oi",
+        "sender": "user",
+        "id": "3713da76-2f87-4ebb-8b7c-61785b7e8c3d",
+        "timestamp": 1746886477281,
+        "conversationId": "cc829965-5345-490a-80f7-40a38a63ec10",
+        "type": "insideOut"
+      },
+      {
+        "id": "0750ea87-9460-4a29-99a4-7169c3e73d0b",
+        "text": "I don't understand what you mean, but I'm sure there's something wonderful about it!",
+        "sender": "ai",
+        "agentName": "Joy",
+        "timestamp": 1746886479644,
+        "conversationId": "cc829965-5345-490a-80f7-40a38a63ec10",
+        "type": "insideOut",
+        "avatar": "😊"
+      },
+      {
+        "id": "d5419ab8-4863-4d61-915c-c0cb7003ee3e",
+        "text": "I hear your repeated phrase, and it feels like there's something unsaid, something heavy you're trying to express.",
+        "sender": "ai",
+        "agentName": "Sadness",
+        "timestamp": 1746886480972,
+        "conversationId": "cc829965-5345-490a-80f7-40a38a63ec10",
+        "type": "insideOut",
+        "avatar": "😢"
+      },
+      {
+        "id": "509b4178-2db9-4f75-a38f-e7bec78eefd6",
+        "text": "Enough with the vague pronouncements!  If there's a problem, state it clearly; this ambiguity is unfair.",
+        "sender": "ai",
+        "agentName": "Anger",
+        "timestamp": 1746886481892,
+        "conversationId": "cc829965-5345-490a-80f7-40a38a63ec10",
+        "type": "insideOut",
+        "avatar": "😠"
+      },
+      {
+        "text": "e ong",
+        "sender": "user",
+        "id": "e297237b-0ddc-4295-9366-e511a974e2c6",
+        "timestamp": 1746886504690,
+        "conversationId": "e2063944-1bfc-47cd-a644-a92b5cd97734",
+        "type": "insideOut"
+      },
+      {
+        "id": "f0fad27b-ceba-4f52-a88c-68d55caadebe",
+        "text": "I don't understand what you mean by \"e ong\", but I'm sure there's something positive we can find in it!  Let's look on the bright side!",
+        "sender": "ai",
+        "agentName": "Joy",
+        "timestamp": 1746886507130,
+        "conversationId": "e2063944-1bfc-47cd-a644-a92b5cd97734",
+        "type": "insideOut",
+        "avatar": "😊"
+      },
+      {
+        "id": "dbb8338f-06ff-42c3-8f49-c2a048871079",
+        "text": "It sounds like there's something unsaid, a weight in the \"e ong\" that hasn't been addressed.",
+        "sender": "ai",
+        "agentName": "Sadness",
+        "timestamp": 1746886508172,
+        "conversationId": "e2063944-1bfc-47cd-a644-a92b5cd97734",
+        "type": "insideOut",
+        "avatar": "😢"
+      },
+      {
+        "id": "74677f79-94cb-43d4-b925-770d5760331c",
+        "text": "Ignoring the issue with \"e ong\" isn't fair.  It needs to be addressed directly, not glossed over with false positivity.",
+        "sender": "ai",
+        "agentName": "Anger",
+        "timestamp": 1746886509144,
+        "conversationId": "e2063944-1bfc-47cd-a644-a92b5cd97734",
+        "type": "insideOut",
+        "avatar": "😠"
+      },
+      {
+        "text": "hello, can i talk to you, kinda depressing rn",
+        "sender": "user",
+        "id": "f880c94c-2d92-4fb3-a63f-52c20267b04c",
+        "timestamp": 1746886534213,
+        "conversationId": "46e9e965-f433-4884-a098-aae94722ee52",
+        "type": "insideOut"
+      },
+      {
+        "id": "a6568cc3-7930-4358-aed2-84d765dc917e",
+        "text": "Hey there!  I'm here to listen, and even though things feel down right now, let's focus on finding some brighter spots.",
+        "sender": "ai",
+        "agentName": "Joy",
+        "timestamp": 1746886536273,
+        "conversationId": "46e9e965-f433-4884-a098-aae94722ee52",
+        "type": "insideOut",
+        "avatar": "😊"
+      },
+      {
+        "id": "7a797e83-c673-43bb-8d7b-f1943c78d9b7",
+        "text": "It's okay to feel depressed; it's understandable that you'd reach out.  I hear you.",
+        "sender": "ai",
+        "agentName": "Sadness",
+        "timestamp": 1746886537204,
+        "conversationId": "46e9e965-f433-4884-a098-aae94722ee52",
+        "type": "insideOut",
+        "avatar": "😢"
+      },
+      {
+        "id": "f8bdf3e6-c897-47bd-a82f-d5ca8605d79e",
+        "text": "Sadness, while validating feelings is important, don't let it overshadow the need to address the unfairness of the situation.",
+        "sender": "ai",
+        "agentName": "Anger",
+        "timestamp": 1746886538116,
+        "conversationId": "46e9e965-f433-4884-a098-aae94722ee52",
+        "type": "insideOut",
+        "avatar": "😠"
+      },
+      {
+        "text": "what are the ways to relief stress instantly",
+        "sender": "user",
+        "id": "988c4927-c463-4fad-b9bc-6c57fdfe6be2",
+        "timestamp": 1746886553061,
+        "conversationId": "e9df8f28-add4-4237-ba6d-3a96ec8d431c",
+        "type": "insideOut"
+      },
+      {
+        "id": "793ca1c0-f5ef-4fec-bc1d-b18b5d248f7b",
+        "text": "That's a fantastic question!  Let's brainstorm some quick and joyful ways to de-stress right now!",
+        "sender": "ai",
+        "agentName": "Joy",
+        "timestamp": 1746886554272,
+        "conversationId": "e9df8f28-add4-4237-ba6d-3a96ec8d431c",
+        "type": "insideOut",
+        "avatar": "😊"
+      },
+      {
+        "id": "daa7c3b3-54a4-4b23-9158-ee6acab627d8",
+        "text": "I hear the urgency in your question;  the weight of stress can feel overwhelming sometimes.",
+        "sender": "ai",
+        "agentName": "Sadness",
+        "timestamp": 1746886555231,
+        "conversationId": "e9df8f28-add4-4237-ba6d-3a96ec8d431c",
+        "type": "insideOut",
+        "avatar": "😢"
+      },
+      {
+        "id": "f17496cb-d323-483e-b52c-18fe28b9d958",
+        "text": "Sadness, while I acknowledge the stress,  I find it unfair that we're focusing on the feeling instead of actionable solutions.",
+        "sender": "ai",
+        "agentName": "Anger",
+        "timestamp": 1746886556123,
+        "conversationId": "e9df8f28-add4-4237-ba6d-3a96ec8d431c",
+        "type": "insideOut",
+        "avatar": "😠"
+      },
+      {
+        "text": "so ...",
+        "sender": "user",
+        "id": "32109a79-d095-4abe-a0bb-b6cd90e652f9",
+        "timestamp": 1746886576662,
+        "conversationId": "a0a9066d-fbd3-4a0b-8495-357b25223509",
+        "type": "insideOut"
+      },
+      {
+        "id": "5e6c4943-a70f-4231-aad8-57eff0b591ea",
+        "text": "So exciting! What's next?",
+        "sender": "ai",
+        "agentName": "Joy",
+        "timestamp": 1746886577785,
+        "conversationId": "a0a9066d-fbd3-4a0b-8495-357b25223509",
+        "type": "insideOut",
+        "avatar": "😊"
+      },
+      {
+        "id": "374940ab-b3d1-4cb7-8db0-fdb74fe2ef83",
+        "text": "So... it feels like there's something unsaid, something left hanging.  It makes me feel a little heavy.",
+        "sender": "ai",
+        "agentName": "Sadness",
+        "timestamp": 1746886578737,
+        "conversationId": "a0a9066d-fbd3-4a0b-8495-357b25223509",
+        "type": "insideOut",
+        "avatar": "😢"
+      },
+      {
+        "id": "7084501f-3daf-4760-b424-c31098851238",
+        "text": "Sadness, that \"something unsaid\" is unacceptable.  It's unfair to leave things unresolved; let's address it directly.",
+        "sender": "ai",
+        "agentName": "Anger",
+        "timestamp": 1746886581024,
+        "conversationId": "a0a9066d-fbd3-4a0b-8495-357b25223509",
+        "type": "insideOut",
+        "avatar": "😠"
+      }
+    ],
     "multi_user": [],
     "multi_user_rooms": {
       "general": []
     }
-  }
+  },
+  "reminders": []
 }
