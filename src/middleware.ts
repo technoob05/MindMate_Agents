@@ -1,59 +1,59 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifyToken } from '@/lib/auth/jwt';
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // --- SIMULATED AUTH CHECK ---
-  // In a real application, you would check for a valid session token (e.g., from a cookie) here.
-  // const isAuthenticated = checkAuthToken(request.cookies.get('sessionToken'));
-  const isAuthenticated = false; // Hardcoded to false for demo purposes to force login redirect
+  // Lấy token từ cookie
+  const token = request.cookies.get('sessionToken')?.value;
+  
+  // Xác thực token
+  const isAuthenticated = token ? !!verifyToken(token) : false;
 
-  // Define public paths that don't require authentication
+  // Định nghĩa các đường dẫn công khai không cần xác thực
   const publicPaths = [
     '/login',
     '/register',
-    // Add other public paths like landing page, about page, etc. if needed
-    // '/', // Let's assume the root page should also be protected for now
+    '/emergency-debug',
+    '/emergency-fix',
+    '/debug',
+    '/api/auth/login',
+    '/api/auth/register',
+    '/_next',
+    '/favicon.ico',
+    '/images',
+    '/models'
   ];
 
-  // Allow requests to API auth routes, static files, and Next.js internals
-  const isPublicApiRoute = pathname.startsWith('/api/auth/');
-  const isStaticAsset = pathname.startsWith('/_next/') || pathname.includes('.'); // Basic check for static files
+  // Kiểm tra xem đường dẫn hiện tại có phải là public path không
+  const isPublicPath = publicPaths.some(path => {
+    if (path === '/debug' && pathname.startsWith('/debug')) {
+      return true;
+    }
+    return pathname.startsWith(path);
+  });
 
-  // Check if the requested path is public
-  const isPublicPath = publicPaths.includes(pathname);
-
-  // --- Temporarily Disabled for Demo ---
-  // The following block redirects unauthenticated users. It's disabled because
-  // we don't have real session management yet, causing a redirect loop after login.
-  /*
-  if (!isAuthenticated && !isPublicPath && !isPublicApiRoute && !isStaticAsset) {
-    // Redirect to the login page
+  // Nếu người dùng chưa đăng nhập và đang cố truy cập trang được bảo vệ
+  if (!isAuthenticated && !isPublicPath) {
+    // Chuyển hướng đến trang login
     const loginUrl = new URL('/login', request.url);
+    // Lưu URL hiện tại để chuyển hướng lại sau khi đăng nhập
+    loginUrl.searchParams.set('redirect', pathname);
     console.log(`Redirecting unauthenticated access from ${pathname} to /login`);
     return NextResponse.redirect(loginUrl);
   }
-  */
-  // --- End Temporarily Disabled Section ---
 
-  // Allow the request to proceed if authenticated or accessing a public path
+  // Cho phép request tiếp tục nếu đã xác thực hoặc đang truy cập đường dẫn công khai
   return NextResponse.next();
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  /*
-   * Match all request paths except for the ones starting with:
-   * - api (API routes) - We handle API auth routes specifically inside the middleware
-   * - _next/static (static files)
-   * - _next/image (image optimization files)
-   * - favicon.ico (favicon file)
-   * - public assets (e.g., /models/*) - Handled by the '.' check or specific path checks if needed
-   */
-   // We will apply the middleware logic more broadly and filter inside the function
-   // This ensures even API routes (except auth) could be protected if needed later.
-   // Let the middleware function handle path logic.
-   matcher: '/((?!_next/static|_next/image|favicon.ico|models/).*)', // Apply broadly, filter inside
+  // Only run middleware on the auth API routes now
+  matcher: [
+    '/api/auth/login',
+    '/api/auth/register'
+  ]
 };

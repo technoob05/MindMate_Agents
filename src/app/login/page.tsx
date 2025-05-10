@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,14 +21,48 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Check if we're already logged in on component mount
+  useEffect(() => {
+    // Reset any redirect counters
+    localStorage.removeItem('redirectCount');
+    console.log('Login page mounted. Pathname:', window.location.pathname + window.location.search);
+    
+    try {
+      const user = localStorage.getItem('user');
+      if (user) {
+        try {
+          const parsedUser = JSON.parse(user);
+          console.log('Login Page: User already in localStorage:', parsedUser.email || parsedUser.id);
+          
+          // Get redirect URL or use the home page (/) as default
+          const redirectPath = searchParams.get('redirect') || '/';
+          console.log('Login Page: Redirecting to (already logged in):', redirectPath);
+          router.push(redirectPath);
+        } catch (e) {
+          console.error('Login Page: Invalid user data in storage, clearing:', e);
+          localStorage.removeItem('user');
+        }
+      } else {
+        console.log('Login Page: No user in localStorage, showing login form.');
+      }
+    } catch (e) {
+      console.error('Login Page: Error checking localStorage:', e);
+    }
+  }, [searchParams, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    console.log('Login attempt with email:', email);
 
+    // Reset redirect counter
+    localStorage.removeItem('redirectCount');
+    
     try {
-      // Use the API route instead of Firebase
+      // Gửi yêu cầu đăng nhập đến API
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -41,19 +75,48 @@ const LoginPage = () => {
       });
 
       const data = await response.json();
-
+      
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }
 
-      // Store user info in sessionStorage
-      sessionStorage.setItem('user', JSON.stringify(data.user));
-      
-      // Login successful
-      console.log('Login successful:', data.user);
-      router.push('/');
+      if (!data.user || !data.user.id) {
+        throw new Error('Invalid user data received from server');
+      }
 
+      // Lưu thông tin người dùng vào localStorage
+      console.log('Storing user data in localStorage:', data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      // Also store authentication time to help with validation
+      localStorage.setItem('lastAuthTime', Date.now().toString());
+      
+      // IMPROVED: More robust navigation with proper delays
+      console.log('Login successful, redirecting to home page');
+      
+      // Add a longer delay to ensure localStorage is properly updated
+      setTimeout(() => {
+        // First clear any potential redirect loop counters
+        localStorage.removeItem('redirectCount');
+        
+        try {
+          // Try to navigate using Next.js router first
+          router.push('/');
+          
+          // Fallback to direct location change after a short delay if router doesn't work
+          setTimeout(() => {
+            console.log('Fallback navigation to home page');
+            window.location.href = '/';
+          }, 500);
+        } catch (e) {
+          console.error('Navigation error:', e);
+          // Direct fallback if router throws an error
+          window.location.href = '/';
+        }
+      }, 300);  // Increased delay for more reliable localStorage updates
+      
     } catch (err: any) {
+      console.error('Login error:', err);
       setError(err.message || 'Invalid email or password.');
       setPassword('');
     } finally {
@@ -61,9 +124,17 @@ const LoginPage = () => {
     }
   };
 
+  // Navigate to register page
+  const goToRegister = () => {
+    // Get current redirect URL if any and pass it to the register page
+    const redirectParam = searchParams.get('redirect');
+    const registerUrl = redirectParam ? `/register?redirect=${redirectParam}` : '/register';
+    router.push(registerUrl);
+  };
+
   return (
-    // Use flex container, remove custom background, adjust padding
-    <div className="flex items-center justify-center min-h-screen p-4">
+    // Add a main container to take the full screen height
+    <main className="min-h-screen flex items-center justify-center p-4">
       {/* Animate the card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -125,20 +196,23 @@ const LoginPage = () => {
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col items-center space-y-2 text-sm pt-4"> {/* Added padding-top */}
-            <p className="text-muted-foreground"> {/* Use muted foreground color */}
-              Don't have an account?{" "}
-              <Link
-                href="/register"
-                className="font-medium text-primary hover:underline underline-offset-4" // Use primary color, standard underline
+          <CardFooter className="flex flex-col items-center space-y-4 text-sm pt-4"> {/* Added padding-top */}
+            <div className="w-full text-center">
+              <p className="text-muted-foreground mb-2"> {/* Use muted foreground color */}
+                Don't have an account?
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={goToRegister} 
+                className="w-full"
               >
                 Register here
-              </Link>
-            </p>
+              </Button>
+            </div>
           </CardFooter>
         </Card>
       </motion.div>
-    </div>
+    </main>
   );
 };
 

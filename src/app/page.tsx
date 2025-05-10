@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -33,6 +34,66 @@ const itemVariants = {
 
 export default function HomePage() {
   const [runTour, setRunTour] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    // Chỉ chạy một lần
+    if (authChecked) return;
+    setAuthChecked(true);
+    
+    try {
+      // Kiểm tra xem người dùng đã đăng nhập chưa
+      const storedUser = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+      
+      if (storedUser) {
+        try {
+          // Phân tích dữ liệu người dùng
+          const parsedUser = JSON.parse(storedUser);
+          console.log('Found user:', parsedUser.email || parsedUser.id);
+          
+          // FIXED: Accept any user object with some meaningful data
+          if (parsedUser && (parsedUser.id || parsedUser.email || parsedUser.pseudonym)) {
+            setUser(parsedUser);
+            setIsLoading(false);
+            
+            // Hiển thị tour giới thiệu nếu là lần đầu
+            const hasVisited = localStorage.getItem('mindmateOnboardingComplete');
+            if (!hasVisited) {
+              console.log('First visit, starting onboarding tour');
+              setRunTour(true);
+            }
+            
+            // Ensure we have lastAuthTime set
+            if (!localStorage.getItem('lastAuthTime')) {
+              localStorage.setItem('lastAuthTime', Date.now().toString());
+            }
+            
+            // Reset any redirect counters
+            localStorage.removeItem('redirectCount');
+            return;
+          }
+          
+          // If we reach here, the user data was invalid
+          console.error('Invalid user data format');
+          localStorage.removeItem('user');
+          router.push('/login');
+        } catch (e) {
+          console.error('Error parsing user data:', e);
+          localStorage.removeItem('user');
+          router.push('/login');
+        }
+      } else {
+        console.log('No user found, redirecting to login');
+        router.push('/login');
+      }
+    } catch (e) {
+      console.error('Home page error:', e);
+      setIsLoading(false);
+    }
+  }, [authChecked, router]);
 
   const tourSteps: Step[] = [
     {
@@ -78,14 +139,6 @@ export default function HomePage() {
     },
   ];
 
-  useEffect(() => {
-    // Start the tour only on the first visit
-    const hasVisited = localStorage.getItem('mindmateOnboardingComplete');
-    if (!hasVisited) {
-      setRunTour(true);
-    }
-  }, []);
-
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, type } = data;
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
@@ -96,6 +149,12 @@ export default function HomePage() {
     }
   };
 
+  // If we're still checking authentication or not authenticated, show loading
+  if (isLoading || !user) {
+    return <div className="flex justify-center items-center min-h-screen">
+      <p className="text-center text-muted-foreground">Loading homepage...</p>
+    </div>;
+  }
 
   return (
     // Removed page-specific gradient, adjusted padding

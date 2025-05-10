@@ -7,7 +7,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Moon, Sun, Laptop, Wand2, Star, Heart, Smile, CloudDrizzle, Flame, AlertTriangle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function ThemeSwitcher() {
+interface ThemeSwitcherProps {
+  id?: string;
+}
+
+export function ThemeSwitcher({ id }: ThemeSwitcherProps) {
   const { setTheme, theme } = useTheme();
 
   const icons = {
@@ -31,7 +35,7 @@ export function ThemeSwitcher() {
     <DropdownMenu> {/* Keep ID here for Joyride targetting */}
       <DropdownMenuTrigger asChild>
         <Button
-          id="theme-switcher" // Moved ID here
+          id={id || "theme-switcher"}
           variant="ghost"
           size="icon"
           className="h-9 w-9 rounded-lg hover:bg-primary/10 hover:text-primary transition-all duration-200"
