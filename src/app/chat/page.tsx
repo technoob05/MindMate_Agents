@@ -1,12 +1,15 @@
 'use client';
 
+// Force this page to be dynamically rendered (not statically generated at build time)
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info, LogOut, Calendar } from 'lucide-react'; // Added FileText, XCircle, Info, LogOut, Calendar
+import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info, LogOut, Calendar, BrainCircuit } from 'lucide-react'; // Added FileText, XCircle, Info, LogOut, Calendar, BrainCircuit
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +34,10 @@ import VoiceInteraction from "@/components/voice-interaction";
 import { motion, AnimatePresence } from "framer-motion"; // Import motion
 import { useRouter } from 'next/navigation';
 import RemindersWidget from '@/components/RemindersWidget';
+import { RagLoadingDisplay } from '@/components/rag-loading-display';
+import { getAIResponse } from '@/services/simple-ai-service';
+import { SourceDocuments } from '@/components/source-documents';
+import { ReasoningProcess } from '@/components/reasoning-process';
 
 interface Message {
   id: string;
@@ -75,12 +82,17 @@ export default function ChatPage() {
   const [isSpeechListening, setIsSpeechListening] = useState(false);
   const [showEmptyState, setShowEmptyState] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [typingEffect, setTypingEffect] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageUpdate, setMessageUpdate] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // State for selected file
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
   const router = useRouter();
+  const [ragStep, setRagStep] = useState<'analyzing' | 'searching' | 'retrieving' | 'generating' | 'completed' | null>(null);
+  const [reasoningMode, setReasoningMode] = useState<boolean>(false);
+  const [reasoningSteps, setReasoningSteps] = useState<Array<{type: 'thinking' | 'analysis' | 'conclusion'; content: string;}>>([]);
+  const [showReasoningProcess, setShowReasoningProcess] = useState<boolean>(false);
+  const [pendingAIResponse, setPendingAIResponse] = useState<{text: string, sourceDocs?: any} | null>(null);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
 
   // Scroll to bottom effect
   useEffect(() => {
@@ -92,7 +104,7 @@ export default function ChatPage() {
         viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
       }
     }, 100);
-  }, [messages, typingEffect]); // Trigger scroll on new messages and typing effect completion
+  }, [messages, isTyping]); // Trigger scroll on new messages and typing effect completion
 
    // Fetch initial messages
   useEffect(() => {
@@ -151,6 +163,11 @@ export default function ChatPage() {
     setIsLoading(true);
     setError(null);
     setShowEmptyState(false);
+    
+    // Reset reasoning state for the new message
+    setShowReasoningProcess(reasoningMode);
+    setReasoningSteps([]);
+    setPendingAIResponse(null);
 
     // Get user ID from session storage
     const userStr = sessionStorage.getItem('user');
@@ -178,203 +195,186 @@ export default function ChatPage() {
       userId: userId || undefined
     };
     setMessages((prevMessages) => [...prevMessages, optimisticUserMessage]);
-
-    // Prepare FormData
-    const formData = new FormData();
-    formData.append('text', textToSend);
-    formData.append('sender', 'user');
-    if (userId) {
-      formData.append('userId', userId);
-    }
-    if (fileToSend) {
-      formData.append('file', fileToSend);
-    }
-
+    
     try {
-      // Send FormData instead of JSON
-      const response = await fetch('/api/chat/messages', {
-        method: 'POST',
-        // No 'Content-Type' header needed for FormData, browser sets it
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-
-      // API now returns array with both user and AI messages
-      const messages = await response.json();
+      // Use our simplified AI service with reasoning mode if enabled
+      const aiResponse = await getAIResponse(textToSend, setRagStep, reasoningMode);
       
-      if (Array.isArray(messages) && messages.length === 2) {
-        const userMessage = messages[0];
-        const aiMessage = messages[1];
-        
-        // First, replace the optimistic user message with the confirmed user message
-        setMessages((prevMessages) => {
-          const filteredMessages = prevMessages.filter(
-            (msg) => msg.id !== optimisticUserMessage.id
-          );
-          return [...filteredMessages, userMessage];
+      // If in reasoning mode and reasoning steps exist, save them
+      if (reasoningMode && aiResponse.reasoningSteps) {
+        setReasoningSteps(aiResponse.reasoningSteps);
+        // Store the AI response to display later when reasoning is complete
+        setPendingAIResponse({
+          text: aiResponse.text,
+          sourceDocs: aiResponse.sourceDocs
         });
+      } else {
+        // For non-reasoning mode, display the AI response immediately
+        // Create the AI message response
+        const aiMessage: Message = {
+          id: crypto.randomUUID(),
+          text: aiResponse.text,
+          sender: 'ai',
+          timestamp: Date.now(),
+          sourceDocs: aiResponse.sourceDocs,
+          userId: userId || undefined
+        };
         
-        // Then add AI message with empty text initially
-        setMessages((prevMessages) => {
-          return [...prevMessages, {
-            ...aiMessage,
-            text: "", // Start with empty text for typing effect
-          }];
-        });
+        // Add AI message to state
+        setMessages((prevMessages) => [...prevMessages, aiMessage]);
         
-        // Simulate typing effect
-        setTypingEffect(true);
-        let currentIndex = 0;
-        let lastChar = '';
-        let typingInterval = setInterval(() => {
-          setMessages((prevMessages) => {
-            const lastMessageIndex = prevMessages.length - 1;
-            if (lastMessageIndex < 0 || prevMessages[lastMessageIndex].sender !== 'ai') {
-              clearInterval(typingInterval);
-              setTypingEffect(false);
-              return prevMessages;
-            }
-            
-            const fullAiMessageText = aiMessage.text;
-            const newMessages = [...prevMessages];
-            
-            if (currentIndex <= fullAiMessageText.length) {
-              // Calculate dynamic delay for the next iteration
-              const punctuationDelay = lastChar && typingConfig.punctuationPause[lastChar] || 0;
-              
-              // Random natural pause (like someone thinking while typing)
-              const shouldPause = Math.random() < typingConfig.pauseProbability;
-              
-              if (shouldPause || punctuationDelay > 0) {
-                clearInterval(typingInterval);
-                
-                // Calculate pause duration
-                const pauseDuration = shouldPause ? 
-                  typingConfig.pauseDuration.min + Math.floor(Math.random() * (typingConfig.pauseDuration.max - typingConfig.pauseDuration.min)) : 
-                  punctuationDelay;
-                
-                setTimeout(() => {
-                  typingInterval = setInterval(() => {
-                    setMessages((prevMsgs) => {
-                      // We need to reuse the existing interval callback logic
-                      const lastMsgIndex = prevMsgs.length - 1;
-                      if (lastMsgIndex < 0 || prevMsgs[lastMsgIndex].sender !== 'ai') {
-                        clearInterval(typingInterval);
-                        setTypingEffect(false);
-                        return prevMsgs;
-                      }
-                      
-                      const fullText = aiMessage.text;
-                      const newMsgs = [...prevMsgs];
-                      
-                      // Continue processing for next characters
-                      // Calculate how many characters to add in this step
-                      let charsToAdd = typingConfig.minCharsPerStep + Math.floor(Math.random() * typingConfig.randomVariation);
-                      
-                      // Sometimes add a burst of characters (simulates fast typing)
-                      if (Math.random() < typingConfig.burstProbability) {
-                        charsToAdd = typingConfig.burstSize.min + 
-                          Math.floor(Math.random() * (typingConfig.burstSize.max - typingConfig.burstSize.min));
-                      }
-                      
-                      // Make sure we don't exceed the full message length
-                      const nextIndex = Math.min(currentIndex + charsToAdd, fullText.length);
-                      
-                      // Update with new text
-                      if (currentIndex < fullText.length) {
-                        newMsgs[lastMsgIndex] = {
-                          ...newMsgs[lastMsgIndex],
-                          text: fullText.substring(0, nextIndex),
-                        };
-                        
-                        // Store the last character for next time
-                        lastChar = fullText[nextIndex - 1] || '';
-                        currentIndex = nextIndex;
-                        
-                        return newMsgs;
-                      }
-                      
-                      // If we've reached the end of the text
-                      if (currentIndex >= fullText.length) {
-                        newMsgs[lastMsgIndex] = {
-                          ...newMsgs[lastMsgIndex],
-                          text: fullText,
-                        };
-                        clearInterval(typingInterval);
-                        setTypingEffect(false);
-                      }
-                      
-                      // Always return a valid Messages[] array
-                      return newMsgs;
-                    });
-                  }, typingConfig.baseSpeed);
-                }, pauseDuration);
-                
-                return newMessages;
-              }
-              
-              // Calculate how many characters to add in this step
-              let charsToAdd = typingConfig.minCharsPerStep + Math.floor(Math.random() * typingConfig.randomVariation);
-              
-              // Sometimes add a burst of characters (simulates fast typing)
-              if (Math.random() < typingConfig.burstProbability) {
-                charsToAdd = typingConfig.burstSize.min + 
-                  Math.floor(Math.random() * (typingConfig.burstSize.max - typingConfig.burstSize.min));
-              }
-              
-              // Make sure we don't exceed the full message length
-              const nextIndex = Math.min(currentIndex + charsToAdd, fullAiMessageText.length);
-              
-              // Update the last message with incrementally more text
-              newMessages[lastMessageIndex] = {
-                ...newMessages[lastMessageIndex],
-                text: fullAiMessageText.substring(0, nextIndex),
-              };
-              
-              // Store the last character for potential punctuation delay
-              lastChar = fullAiMessageText[nextIndex - 1] || '';
-              currentIndex = nextIndex;
-              
-              return newMessages;
-            } else {
-              // Ensure the full message text is set at the end
-              newMessages[lastMessageIndex] = {
-                ...newMessages[lastMessageIndex],
-                text: fullAiMessageText,
-              };
-              clearInterval(typingInterval);
-              setTypingEffect(false);
-              return newMessages;
-            }
-          });
-        }, typingConfig.baseSpeed);
-      } else if (messages.userMessage) {
-        // Fallback for error case where only user message was saved
-        setMessages((prevMessages) => {
-          const filteredMessages = prevMessages.filter(
-            (msg) => msg.id !== optimisticUserMessage.id
-          );
-          return [...filteredMessages, messages.userMessage];
-        });
-        
-        // Show error
-        setError(messages.message || "Không thể nhận phản hồi từ AI");
+        // Send to database
+        saveAIResponseToDatabase(aiResponse.text, userId, aiResponse.sourceDocs);
       }
-    } catch (err: any) {
-      console.error("Failed to send message:", err);
-      setError(`Failed to send message: ${err.message}`);
-      // Remove the optimistic message on error
-      setMessages((prevMessages) =>
-        prevMessages.filter((msg) => msg.id !== optimisticUserMessage.id)
-      );
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      setError(`Failed to send message: ${error.message}`);
+      setIsLoading(false); // Always reset loading state on error
+      setIsTyping(false); // Ensure typing state is reset
     } finally {
-      setIsLoading(false);
+      if (!reasoningMode) {
+        setIsLoading(false);
+      } else {
+        // For reasoning mode, we'll keep isLoading true until the typing effect is done
+        // The reasoning component will handle its own display
+      }
     }
   };
+
+  // Save AI response to database
+  const saveAIResponseToDatabase = async (text: string, userId: string | null, sourceDocs?: any) => {
+    if (userId) {
+      try {
+        const formData = new FormData();
+        formData.append('text', text);
+        formData.append('sender', 'ai');
+        formData.append('userId', userId);
+        
+        // Include source docs if any
+        if (sourceDocs) {
+          formData.append('sourceDocs', JSON.stringify(sourceDocs));
+        }
+        
+        // Save AI message to database
+        await fetch('/api/chat/messages', {
+          method: 'POST',
+          body: formData
+        });
+      } catch (err) {
+        console.error('Failed to save AI message to database:', err);
+      }
+    }
+  };
+
+  // Simulate typing effect for AI response
+  const simulateTyping = (text: string, callback: (displayedText: string) => void) => {
+    setIsTyping(true);
+    let currentIndex = 0;
+    let lastChar = '';
+    let displayedText = '';
+    
+    const typingInterval = setInterval(() => {
+      if (currentIndex >= text.length) {
+        clearInterval(typingInterval);
+        setIsTyping(false);
+        callback(text);
+        return;
+      }
+      
+      // Calculate how many characters to add in this step
+      let charsToAdd = typingConfig.minCharsPerStep + Math.floor(Math.random() * typingConfig.randomVariation);
+      
+      // Sometimes add a burst of characters (simulates fast typing)
+      if (Math.random() < typingConfig.burstProbability) {
+        charsToAdd = typingConfig.burstSize.min + 
+          Math.floor(Math.random() * (typingConfig.burstSize.max - typingConfig.burstSize.min));
+      }
+      
+      // Check for punctuation pause
+      const punctuationDelay = lastChar && typingConfig.punctuationPause[lastChar] || 0;
+      if (punctuationDelay > 0) {
+        clearInterval(typingInterval);
+        setTimeout(() => {
+          simulateTyping(text.substring(currentIndex), (additionalText) => {
+            callback(displayedText + additionalText);
+          });
+        }, punctuationDelay);
+        return;
+      }
+      
+      // Add the next segment of text
+      const nextIndex = Math.min(currentIndex + charsToAdd, text.length);
+      const newSegment = text.substring(currentIndex, nextIndex);
+      displayedText += newSegment;
+      lastChar = text[nextIndex - 1] || '';
+      currentIndex = nextIndex;
+      
+      callback(displayedText);
+    }, typingConfig.baseSpeed);
+    
+    return () => clearInterval(typingInterval);
+  };
+
+  // Handle end of reasoning process
+  useEffect(() => {
+    // Only proceed if we're in reasoning mode with steps to show and a pending response
+    if (reasoningMode && 
+        reasoningSteps.length > 0 && 
+        pendingAIResponse !== null && 
+        !isLoading && 
+        !isTyping) {
+      // All reasoning steps are visible - start typing effect for the response
+      const userStr = sessionStorage.getItem('user');
+      let userId = null;
+      if (userStr) {
+        try {
+          const userData = JSON.parse(userStr);
+          userId = userData.id;
+        } catch (err) {
+          console.error("Failed to parse user data:", err);
+        }
+      }
+      
+      // Create a temporary AI message with empty text
+      const tempAiMessage: Message = {
+        id: crypto.randomUUID(),
+        text: "",
+        sender: 'ai',
+        timestamp: Date.now(),
+        userId: userId || undefined
+      };
+      
+      // Add the temporary message to the state
+      setMessages(prevMessages => [...prevMessages, tempAiMessage]);
+      
+      // Simulate typing
+      simulateTyping(pendingAIResponse.text, (displayedText) => {
+        setMessages(prevMessages => {
+          const updatedMessages = [...prevMessages];
+          const lastMessageIndex = updatedMessages.length - 1;
+          
+          if (lastMessageIndex >= 0 && updatedMessages[lastMessageIndex].sender === 'ai') {
+            updatedMessages[lastMessageIndex] = {
+              ...updatedMessages[lastMessageIndex],
+              text: displayedText,
+              sourceDocs: !isTyping ? pendingAIResponse.sourceDocs : undefined
+            };
+          }
+          
+          return updatedMessages;
+        });
+        
+        // If typing is complete, save to database and reset states
+        if (displayedText === pendingAIResponse.text) {
+          saveAIResponseToDatabase(pendingAIResponse.text, userId, pendingAIResponse.sourceDocs);
+          setIsLoading(false);
+          setPendingAIResponse(null);
+          // After processing, reset the reasoning process display flag
+          setShowReasoningProcess(false);
+        }
+      });
+    }
+  }, [reasoningMode, reasoningSteps, pendingAIResponse, isLoading, isTyping]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(event.target.value);
@@ -475,6 +475,18 @@ export default function ChatPage() {
     "Can you suggest a morning meditation routine?",
     "How do I start practicing self-compassion?"
   ];
+
+  // Toggle reasoning mode
+  const toggleReasoningMode = () => {
+    setReasoningMode(prev => !prev);
+    // Reset reasoning-related states when toggling
+    setShowReasoningProcess(false);
+    setReasoningSteps([]);
+    setPendingAIResponse(null);
+    setRagStep(null); // Reset RAG step state as well
+    setIsLoading(false); // Ensure UI is not locked
+    setIsTyping(false); // Ensure typing state is reset
+  };
 
   return (
     // Use theme background implicitly from layout
@@ -643,205 +655,154 @@ export default function ChatPage() {
 
             {/* Message list */}
             <AnimatePresence initial={false}>
-              {messages.map((message) => (
-                <motion.div
+              {messages.map((message, index) => (
+                <div
                   key={message.id}
-                  layout // Enable layout animation
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                  className={`group flex items-start gap-3 ${ // Reduced gap
-                    message.sender === "user" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`flex ${
+                    message.sender === 'user' ? 'justify-end' : 'justify-start'
+                  } mb-4`}
                 >
+                  {/* User message */}
+                  {message.sender === 'user' && (
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="rounded-xl rounded-tr-sm bg-primary text-primary-foreground p-3 shadow-md">
+                        <div className="text-sm whitespace-pre-wrap">
+                          {message.text}
+                        </div>
+                      </div>
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <span>
+                          {new Date(message.timestamp).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  
                   {/* AI message */}
-                  {message.sender === "ai" && (
-                    <>
-                      <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0"> {/* Smaller avatar */}
-                        <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
-                        <AvatarFallback className="bg-primary/20 text-primary font-semibold">
-                          MM
+                  {message.sender === 'ai' && (
+                    <div className="flex items-start space-x-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          AI
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex flex-col items-start max-w-[85%]"> {/* Increased max-width slightly */}
-                        {/* Styled bubble */}
-                        <div className="relative flex flex-col rounded-xl rounded-tl-sm bg-card/80 backdrop-blur-sm border border-border/50 p-3 shadow-sm">
-                          <p className="text-sm leading-relaxed whitespace-pre-wrap text-card-foreground">
+                      <div className="flex flex-col items-start gap-2 max-w-[90%]">
+                        <div className="rounded-xl rounded-tl-sm bg-card border p-3 shadow-sm">
+                          <div className="text-sm whitespace-pre-wrap">
                             {message.text}
-                            {/* Thêm hiệu ứng nhấp nháy con trỏ khi đang gõ */}
-                            {typingEffect &&
-                              messages[messages.length - 1].id === message.id && (
-                                <span className="inline-block w-1.5 h-5 ml-0.5 bg-primary/80 animate-pulse"></span>
-                              )}
-                          </p>
+                          </div>
                           
-                          {/* Source documents indicator - only show when typing is complete and message has sources */}
-                          {!typingEffect && message.sourceDocs && message.sourceDocs.length > 0 && (
-                            <div className="mt-3 pt-3 border-t border-border/30">
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <button className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors">
-                                    <Info size={12} className="text-primary/70" />
-                                    <span>Sources: {message.sourceDocs.length} document{message.sourceDocs.length > 1 ? 's' : ''}</span>
-                                  </button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-3xl">
-                                  <DialogHeader>
-                                    <DialogTitle>Source Documents</DialogTitle>
-                                    <DialogDescription>
-                                      The AI response was enhanced with information from these documents
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  <div className="mt-4 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                                    {message.sourceDocs.map((doc, i) => (
-                                      <div key={i} className="p-3 rounded-lg border border-border/50 bg-card/50">
-                                        <div className="flex items-center gap-2 mb-2 pb-1 border-b border-border/30">
-                                          <FileText size={14} className="text-primary/70" />
-                                          <div className="text-sm font-medium">
-                                            {doc.metadata.source || `Document ${i + 1}`}
-                                          </div>
-                                        </div>
-                                        <div className="text-sm whitespace-pre-wrap text-muted-foreground">
-                                          {doc.pageContent}
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-                            </div>
+                          {/* Display source documents if available */}
+                          {message.sourceDocs && message.sourceDocs.length > 0 && (
+                            <SourceDocuments sourceDocs={message.sourceDocs} />
                           )}
-                        </div>
-                        {/* Actions on hover */}
-                        <div className="flex items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          <div className="flex items-center gap-0.5 mr-2"> {/* Reduced gap */}
+                          
+                          <div className="flex items-center gap-2 mt-2 pt-2 border-t text-xs text-muted-foreground">
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Button
-                                    variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                                    onClick={() => handleFeedback(message.id, "like")}
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={() => handleFeedback(message.id, 'like')}
                                   >
-                                    <ThumbsUp size={14} className={message.feedback === 'like' ? 'text-primary fill-primary/50' : ''} />
+                                    <ThumbsUp size={14} className={message.feedback === 'like' ? 'text-green-500' : ''} />
                                   </Button>
                                 </TooltipTrigger>
-                                <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Like</TooltipContent>
+                                <TooltipContent side="bottom">Helpful</TooltipContent>
                               </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Button
-                                    variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                                    onClick={() => handleFeedback(message.id, "dislike")}
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={() => handleFeedback(message.id, 'dislike')}
                                   >
-                                    <ThumbsDown size={14} className={message.feedback === 'dislike' ? 'text-destructive fill-destructive/50' : ''} />
+                                    <ThumbsDown size={14} className={message.feedback === 'dislike' ? 'text-red-500' : ''} />
                                   </Button>
                                 </TooltipTrigger>
-                                <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Dislike</TooltipContent>
+                                <TooltipContent side="bottom">Not helpful</TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
-                          </div>
-                          <div className="flex items-center gap-0.5">
-                             <TooltipProvider>
-                               <Tooltip>
-                                 <TooltipTrigger asChild>
-                                   <Button
-                                     variant="ghost"
-                                     size="icon"
-                                     className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                                     onClick={() => toggleSaveMessage(message.id)}
-                                   >
-                                     <Bookmark size={14} className={message.saved ? 'text-primary fill-primary/50' : ''} />
-                                   </Button>
-                                 </TooltipTrigger>
-                                 <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">{message.saved ? 'Unsave' : 'Save'}</TooltipContent>
-                               </Tooltip>
-                               {/* Removed invalid buttonSize prop */}
-                               <VoiceInteraction textToSpeak={message.text} />
-                               <Dialog>
-                                 <Tooltip>
-                                   <TooltipTrigger asChild>
-                                     <DialogTrigger asChild>
-                                       <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10">
-                                         <Share2 size={14} />
-                                       </Button>
-                                     </DialogTrigger>
-                                   </TooltipTrigger>
-                                   <TooltipContent side="bottom" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Share</TooltipContent>
-                                 </Tooltip>
-                                 <DialogContent>
-                                   <DialogHeader>
-                                     <DialogTitle>Share this message</DialogTitle>
-                                     <DialogDescription>
-                                       Copy this message or share it with someone.
-                                     </DialogDescription>
-                                   </DialogHeader>
-                                   <div className="bg-muted p-4 rounded-md text-sm my-4 max-h-60 overflow-y-auto">
-                                     {message.text}
-                                   </div>
-                                   <Button variant="gradient" className="w-full" onClick={() => navigator.clipboard.writeText(message.text)}>Copy to clipboard</Button>
-                                 </DialogContent>
-                               </Dialog>
-                             </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={() => toggleSaveMessage(message.id)}
+                                  >
+                                    <Bookmark
+                                      size={14}
+                                      className={message.saved ? 'text-primary fill-primary' : ''}
+                                    />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom">
+                                  {message.saved ? 'Unsave message' : 'Save message'}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            <span className="ml-auto">
+                              {new Date(message.timestamp).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
                           </div>
                         </div>
                       </div>
-                    </>
+                    </div>
                   )}
-
-                  {/* User message */}
-                  {message.sender === "user" && (
-                    <>
-                      <div className="flex flex-col items-end max-w-[85%]">
-                        {/* Styled bubble */}
-                        <div className="flex flex-col rounded-xl rounded-tr-sm bg-primary/90 text-primary-foreground p-3 shadow-sm border border-primary/20">
-                          <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                            {message.text}
-                          </p>
-                        </div>
-                        <div className="flex items-center mt-1 mr-1">
-                          <time className="text-xs text-muted-foreground/80">
-                            {new Date(message.timestamp).toLocaleTimeString([], {
-                              hour: "numeric",
-                              minute: "2-digit",
-                            })}
-                          </time>
-                        </div>
-                      </div>
-                      <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0"> {/* Smaller avatar */}
-                        {/* Add user avatar image if available */}
-                        <AvatarFallback className="bg-muted font-semibold">
-                          You
-                        </AvatarFallback>
-                      </Avatar>
-                    </>
-                  )}
-                </motion.div>
+                </div>
               ))}
             </AnimatePresence>
 
-            {/* Thêm chỉ báo loading khi đang xử lý tin nhắn */}
-            {isLoading && !typingEffect && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-start gap-3"
-              >
-                <Avatar className="h-9 w-9 border shadow-sm flex-shrink-0">
-                  <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
-                  <AvatarFallback className="bg-primary/20 text-primary font-semibold">MM</AvatarFallback>
-                </Avatar>
-                {/* Loading dots */}
-                <div className="flex items-center space-x-1.5 rounded-xl rounded-tl-sm bg-card/80 border border-border/50 p-3 shadow-sm">
-                  <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.3s]"></div>
-                  <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.15s]"></div>
-                  <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce"></div>
+            {/* Show RAG process loading indicator */}
+            {isLoading && !reasoningMode && (
+              <div className="flex justify-start mb-4">
+                <div className="flex items-start space-x-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      AI
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-start gap-2">
+                    <RagLoadingDisplay 
+                      isVisible={isLoading} 
+                      currentStep={ragStep} 
+                    />
+                  </div>
                 </div>
-              </motion.div>
+              </div>
+            )}
+
+            {/* Show reasoning process when in reasoning mode */}
+            {(isLoading || showReasoningProcess) && reasoningMode && reasoningSteps.length > 0 && (
+              <div className="flex justify-start mb-4">
+                <div className="flex items-start space-x-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      AI
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-start gap-2 max-w-[90%]">
+                    <ReasoningProcess 
+                      isVisible={true} 
+                      steps={reasoningSteps} 
+                      isComplete={!isLoading && reasoningSteps.length > 0} 
+                    />
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* This div is to help with scrolling to the bottom */}
@@ -900,7 +861,7 @@ export default function ChatPage() {
                   size="icon"
                   className="h-8 w-8 flex-shrink-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
                   aria-label="Attach file"
-                  onClick={triggerFileInput} // Trigger file input click
+                  onClick={triggerFileInput}
                 >
                   <Paperclip size={18} />
                 </Button>
@@ -909,22 +870,42 @@ export default function ChatPage() {
             </Tooltip>
           </TooltipProvider>
 
-          {/* Input field with minimal styling */}
+          {/* Input field */}
           <Input
             type="text"
-            placeholder="Send a message..." // Updated placeholder
+            placeholder="Send a message..." 
             value={inputMessage}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            className="flex-grow border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-9 text-sm" // Adjusted padding/height
-            disabled={isLoading && !typingEffect} // Disable only when AI is truly busy
+            className="flex-grow border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-9 text-sm"
+            disabled={isLoading}
           />
 
           <div className="flex items-center gap-1">
-             {/* Removed invalid buttonSize prop */}
-             <VoiceInteraction
-               onTranscript={(t) => setInputMessage(t)} // Update input on transcript
-             />
+            {/* Reasoning mode toggle button */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={reasoningMode ? "secondary" : "ghost"}
+                    size="icon"
+                    className={`h-8 w-8 flex-shrink-0 ${reasoningMode ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary hover:bg-primary/10'}`}
+                    aria-label="Toggle reasoning mode"
+                    onClick={toggleReasoningMode}
+                  >
+                    <BrainCircuit size={18} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">
+                  {reasoningMode ? 'Disable reasoning mode' : 'Enable reasoning mode'}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Voice interaction */}
+            <VoiceInteraction
+              onTranscript={(t) => setInputMessage(t)}
+            />
 
             {/* Send Button */}
             <TooltipProvider>
@@ -932,11 +913,10 @@ export default function ChatPage() {
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => handleSendMessage()}
-                    // Disable if loading OR (input empty AND no file selected)
                     disabled={isLoading || (inputMessage.trim() === '' && !selectedFile)}
                     size="icon"
-                    variant="gradient" // Use gradient for send
-                    className="h-8 w-8 rounded-lg flex-shrink-0" // Adjusted size/rounding
+                    variant="gradient"
+                    className="h-8 w-8 rounded-lg flex-shrink-0"
                   >
                     <Send size={16} />
                   </Button>

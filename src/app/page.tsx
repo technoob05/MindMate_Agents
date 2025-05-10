@@ -1,9 +1,13 @@
 'use client'; // Required for framer-motion animations
 
+// Force this page to be dynamically rendered (not statically generated at build time)
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
+// Temporarily removing Joyride due to compatibility issues
+// import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ArrowRight, MessageSquare, Users, BrainCircuit, Sparkles, UserCircle, Lightbulb, Newspaper } from 'lucide-react'; // Added Sparkles, UserCircle, Lightbulb, Newspaper
@@ -63,7 +67,8 @@ export default function HomePage() {
             const hasVisited = localStorage.getItem('mindmateOnboardingComplete');
             if (!hasVisited) {
               console.log('First visit, starting onboarding tour');
-              setRunTour(true);
+              // Temporarily disabled
+              // setRunTour(true);
             }
             
             // Ensure we have lastAuthTime set
@@ -95,6 +100,8 @@ export default function HomePage() {
     }
   }, [authChecked, router]);
 
+  // Temporarily commented out for compatibility
+  /* 
   const tourSteps: Step[] = [
     {
       target: '#welcome-header',
@@ -102,41 +109,7 @@ export default function HomePage() {
       disableBeacon: true, // Start without a beacon
       placement: 'bottom',
     },
-    {
-      target: '#chat-card',
-      content: 'Start a private 1-on-1 chat with your AI assistant for personalized guidance.',
-      placement: 'bottom',
-    },
-    {
-      target: '#ai-team-card',
-      content: 'Explore the AI Team Chat to collaborate with specialized AI agents for multi-faceted support.',
-      placement: 'bottom',
-    },
-    {
-      target: '#community-card',
-      content: 'Join Community Chat rooms to connect, share experiences, and learn with others.',
-      placement: 'bottom',
-    },
-    {
-      target: '#ai-avatar-card',
-      content: 'Create and interact with your personalized AI Avatar here.',
-      placement: 'bottom',
-    },
-    {
-      target: '#ai-explainer-card',
-      content: 'Use the AI Explainer to understand complex topics simply.',
-      placement: 'bottom',
-    },
-    {
-      target: '#news-card',
-      content: 'Stay updated with curated news on wellness and personal growth.',
-      placement: 'bottom',
-    },
-    {
-      target: '#theme-switcher', // Assuming you have a theme switcher with this ID in your layout
-      content: 'Finally, you can switch between light and dark themes here.', // Added "Finally"
-      placement: 'bottom',
-    },
+    // ... other steps ...
   ];
 
   const handleJoyrideCallback = (data: CallBackProps) => {
@@ -148,6 +121,7 @@ export default function HomePage() {
       localStorage.setItem('mindmateOnboardingComplete', 'true'); // Mark onboarding as complete
     }
   };
+  */
 
   // If we're still checking authentication or not authenticated, show loading
   if (isLoading || !user) {
@@ -159,6 +133,7 @@ export default function HomePage() {
   return (
     // Removed page-specific gradient, adjusted padding
     <div className="flex flex-col items-center min-h-screen px-4 pt-16 pb-10 md:px-8 md:pt-24">
+      {/* Temporarily commented out Joyride
       <Joyride
         steps={tourSteps}
         run={runTour}
@@ -188,6 +163,7 @@ export default function HomePage() {
           }
         }}
       />
+      */}
 
       {/* Animated Hero Section */}
       <motion.header

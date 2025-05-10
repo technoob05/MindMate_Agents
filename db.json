@@ -57,6 +57,12 @@
         "sender": "ai",
         "timestamp": 1746111132898,
         "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
+      },
+      {
+        "id": "47879e9c-7a1b-435c-acb7-793e4007a48c",
+        "text": "How can mindfulness help with anxiety?",
+        "sender": "user",
+        "timestamp": 1746891670147
       }
     ],
     "ai_team": [],
@@ -64,5 +70,6 @@
     "multi_user_rooms": {
       "general": []
     }
-  }
+  },
+  "reminders": []
 }

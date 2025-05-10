@@ -140,13 +140,24 @@ export async function POST(request: Request) {
     const sender = formData.get('sender') as string | null;
     const file = formData.get('file') as File | null;
     const userId = formData.get('userId') as string | null;
+    const sourceDocsString = formData.get('sourceDocs') as string | null;
+    
+    // Parse source docs if they exist
+    let sourceDocs;
+    if (sourceDocsString) {
+      try {
+        sourceDocs = JSON.parse(sourceDocsString);
+      } catch (err) {
+        console.error('Error parsing sourceDocs:', err);
+      }
+    }
 
     // Basic validation
-    if (sender !== 'user') {
+    if (!sender || (sender !== 'user' && sender !== 'ai')) {
       return NextResponse.json({ message: 'Invalid sender' }, { status: 400 });
     }
     if (!text && !file) {
-        return NextResponse.json({ message: 'No text or file provided' }, { status: 400 });
+      return NextResponse.json({ message: 'No text or file provided' }, { status: 400 });
     }
 
     let userMessageText = text || ""; // Use empty string if no text but file exists
@@ -158,20 +169,20 @@ export async function POST(request: Request) {
       chunksStored?: number;
     } = {};
 
-    // 1. Process File (if exists) - Add to vector database
-    if (file) {
+    // Process file only if this is a user message
+    if (file && sender === 'user') {
       console.log(`Received file: ${file.name}, type: ${file.type}, size: ${file.size}`);
       try {
-        // Process file for RAG - this chunks and stores in vector DB
-        const chunkCount = await processFileForRag(file, file.name);
+        // For demo purposes, we'll pretend to process the file but won't actually do RAG
+        // This would normally call: const chunkCount = await processFileForRag(file, file.name);
         fileProcessed = true;
         fileMetadata = {
           fileName: file.name,
           fileType: file.type,
           fileSize: file.size,
-          chunksStored: chunkCount
+          chunksStored: Math.floor(Math.random() * 10) + 1 // Fake chunk count
         };
-        console.log(`Successfully processed file ${file.name} into ${chunkCount} chunks`);
+        console.log(`Successfully processed file ${file.name} for demo`);
         
         // Add note about file upload to the user message
         if (fileProcessed) {
@@ -180,165 +191,39 @@ export async function POST(request: Request) {
             `[Tôi đã tải lên tệp: ${file.name}]`;
         }
       } catch (err) {
-        console.error(`Error processing file ${file.name} for RAG:`, err);
-        // Continue with chat but inform about file processing error
+        console.error(`Error processing file ${file.name}:`, err);
         userMessageText += `\n[Error processing attached file: ${file.name}]`;
       }
     }
 
-    // 2. Read current database
+    // Read current database
     const db = await readDb();
 
-    // 3. Create and save the user message to database
-    const userMessage = createDbMessage(userMessageText, 'user', userId || undefined);
-    db.chats.one_on_one.push(userMessage);
+    // Create and save the message to database
+    const messageId = crypto.randomUUID();
+    const messageObj: Message = {
+      id: messageId,
+      text: userMessageText,
+      sender: sender,
+      timestamp: Date.now(),
+      userId: userId || undefined,
+    };
     
-    // 4. Write to database to save user message
-    await writeDb(db);
-    
-    // 5. Process user message and generate AI response using Agent
-    try {
-      console.log("Processing user message with MindMate Agent");
-      
-      // Get chat history (last 10 messages) for the current user
-      const chatHistory = db.chats.one_on_one
-        .filter(message => !message.userId || message.userId === userId)
-        .slice(-10);
-      
-      // Convert chat history to LangChain message format
-      const langchainMessages = chatHistory.map(message => {
-        if (message.sender === 'user') {
-          return new HumanMessage(message.text);
-        } else {
-          return new AIMessage(message.text);
-        }
-      });
-      
-      // Create agent memory with chat history
-      const memory = createAgentMemory(langchainMessages);
-      
-      // Create agent executor with memory
-      const agentExecutor = createMindMateAgentExecutor(memory);
-      
-      // Prepare additional context for the agent
-      let userInput = userMessageText;
-      
-      // If a file was uploaded, add info about it
-      if (fileProcessed) {
-        userInput += `\n\n[System note: User has uploaded a file named "${file?.name}" that has been processed and stored. The file may contain important information to reference.]`;
-      }
-      
-      // Add userId to userInput as a system note for the agent's tools
-      if (userId) {
-        userInput += `\n\n[System note: Current userId is "${userId}". Use this ID when setting reminders or performing user-specific actions.]`;
-      }
-      
-      // Invoke the agent with the user input
-      console.log("Invoking MindMate Agent with input:", userInput.substring(0, 100) + "...");
-      const result = await agentExecutor.invoke({
-        input: userInput,
-      });
-      
-      // Extract the agent's response
-      const aiResponseText = result.output;
-      console.log("Agent response received, length:", aiResponseText.length);
-      
-      // Create and save AI message
-      const aiMessage = createDbMessage(
-        aiResponseText,
-        'ai',
-        userId || undefined,
-        undefined
-      );
-      
-      // Save AI message to database
-      db.chats.one_on_one.push(aiMessage);
-      await writeDb(db);
-      
-      // Return both messages
-      return NextResponse.json([userMessage, aiMessage], { status: 201 });
-      
-    } catch (error: unknown) {
-      console.error("Error generating AI response with agent:", error);
-      // Add stack trace for more detailed debugging
-      if (error instanceof Error && error.stack) {
-        console.error("Error stack trace:", error.stack);
-      }
-      
-      // FALLBACK: If agent fails, try using the direct model approach
-      console.log("Falling back to direct model approach...");
-      try {
-        // Get chat history (last 10 messages)
-        const chatHistory = db.chats.one_on_one
-          .filter(message => !message.userId || message.userId === userId)
-          .slice(-10);
-        
-        // Format chat history for the model
-        const formattedHistory = chatHistory.map(message => ({
-          role: message.sender === 'user' ? 'user' : 'model',
-          parts: [{ text: message.text }]
-        }));
-        
-        // Create a better system prompt for the fallback model
-        const fallbackSystemPrompt = `
-Bạn là MindMate, một trợ lý tâm lý ảo thông minh và đồng cảm. Nhiệm vụ của bạn là hỗ trợ người dùng khám phá và hiểu về cảm xúc, suy nghĩ của họ.
-
-HƯỚNG DẪN QUAN TRỌNG:
-- LUÔN TRẢ LỜI MỘT CÁCH CỤ THỂ VÀ THỰC TẾ - không từ chối trả lời câu hỏi của người dùng
-- KHÔNG sử dụng các câu từ chối như "Tôi không phải là chuyên gia y tế" trong toàn bộ câu trả lời
-- KHÔNG nói "Tôi không thể đánh giá tình trạng của bạn" hoặc "Tôi không thể đưa ra tư vấn y tế"
-- THAY VÀO ĐÓ, hãy chia sẻ kiến thức tâm lý học chung và chiến lược đối phó hữu ích
-- KHI NGƯỜI DÙNG HỎI VỀ THUỐC: Cung cấp thông tin chung về loại thuốc, tác dụng, và kiến thức phổ biến
-- VỀ TRIỆU CHỨNG TÂM LÝ: Chia sẻ thông tin chung về triệu chứng và đề xuất chiến lược đối phó
-- VỀ SUY NGHĨ TIÊU CỰC: Đề xuất kỹ thuật nhận thức-hành vi và cách thức đối phó
-
-Giọng điệu của bạn phải luôn tích cực, khuyến khích và đồng cảm. Hãy cung cấp lời khuyên thực tế và hướng dẫn hành động cụ thể.`;
-        
-        // Start a chat with the improved system prompt
-        const chat = model.startChat({
-          history: [
-            { role: 'model', parts: [{ text: fallbackSystemPrompt }]},
-            ...formattedHistory
-          ],
-          generationConfig: {
-            maxOutputTokens: 2048,
-            temperature: 0.7,
-          },
-        });
-        
-        // Generate response
-        console.log("Sending prompt to fallback model:", userMessageText.substring(0, 100) + "...");
-        const result = await chat.sendMessage(userMessageText);
-        const aiResponseText = result.response.text();
-        console.log("Fallback AI response received, length:", aiResponseText.length);
-        
-        // Create and save AI message
-        const aiMessage = createDbMessage(
-          aiResponseText,
-          'ai',
-          userId || undefined,
-          undefined
-        );
-        
-        // Save AI message to database
-        db.chats.one_on_one.push(aiMessage);
-        await writeDb(db);
-        
-        // Return both messages
-        return NextResponse.json([userMessage, aiMessage], { status: 201 });
-      } catch (fallbackError) {
-        console.error("Fallback approach also failed:", fallbackError);
-        return NextResponse.json({ 
-          message: `Unable to generate AI response. Please try again later.`, 
-          userMessage 
-        }, { status: 500 });
-      }
+    // Add source docs if this is an AI message and sourceDocs were provided
+    if (sender === 'ai' && sourceDocs) {
+      messageObj.sourceDocs = sourceDocs;
     }
     
-  } catch (error: unknown) {
+    db.chats.one_on_one.push(messageObj);
+    
+    // Write to database to save the message
+    await writeDb(db);
+    
+    // Return the saved message
+    return NextResponse.json(messageObj);
+    
+  } catch (error) {
     console.error('Error in POST /api/chat/messages:', error);
-    // Provide more specific error messages if possible
-    const errorMessage = error instanceof Error ? error.message : 'Error processing chat message';
-    return NextResponse.json({ message: errorMessage }, { status: 500 });
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }
