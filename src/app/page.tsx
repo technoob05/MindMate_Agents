@@ -198,16 +198,36 @@ export default function HomePage() {
                 <CardTitle>1-on-1 Chat</CardTitle> {/* Use default CardTitle size */}
                 <MessageSquare className="h-5 w-5 text-primary" /> {/* Slightly smaller icon */}
               </div>
-              <CardDescription>Private conversation with your AI assistant.</CardDescription>
+              <CardDescription className="line-clamp-2"> {/* Limit height for consistent card sizing */}
+                Chat privately with your AI mental health assistant. Ask questions, seek guidance, or just talk.
+              </CardDescription>
             </CardHeader>
-            <CardContent className="flex-grow flex flex-col justify-between">
-              <p className="text-sm text-muted-foreground mb-6">
-                Receive personalized guidance, explore thoughts, and get support in a secure, confidential space.
-              </p>
-              <Link href="/chat" passHref legacyBehavior>
-                {/* Use gradient button for primary action */}
+            <CardContent className="flex-grow flex flex-col justify-end"> {/* Push button to bottom */}
+              <Button asChild className="w-full mt-2 group">
+                <Link href="/chat">
+                  Start Chatting <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* New Card: Scripted Chat Demo */}
+        <motion.div variants={itemVariants} className="flex" id="script-chat-card">
+          <Card className="flex flex-col w-full">
+            <CardHeader>
+              <div className="flex items-center justify-between mb-2">
+                <CardTitle>Mental Health Demo</CardTitle>
+                <BrainCircuit className="h-5 w-5 text-primary" />
+              </div>
+              <CardDescription className="line-clamp-2">
+                Experience a guided mental health consultation with predefined conversation flow.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow flex flex-col justify-end">
+              <Link href="/script-chat" passHref legacyBehavior>
                 <Button variant="gradient" className="w-full mt-auto">
-                  Start Chatting
+                  Try Demo
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>

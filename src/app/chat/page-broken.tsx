@@ -1,0 +1,1104 @@
+'use client';
+
+// Force this page to be dynamically rendered (not statically generated at build time)
+export const dynamic = 'force-dynamic';
+
+import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info, LogOut, Calendar, BrainCircuit, Trash2, Bug } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import VoiceInteraction from "@/components/voice-interaction";
+import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from 'next/navigation';
+import RemindersWidget from '@/components/RemindersWidget';
+import { RagLoadingDisplay } from '@/components/rag-loading-display';
+import { getAIResponse } from '@/services/simple-ai-service';
+import { SourceDocuments } from '@/components/source-documents';
+import { ReasoningProcess } from '@/components/reasoning-process';
+
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'ai';
+  timestamp: number;
+  chatId?: string;
+  feedback?: 'like' | 'dislike' | null;
+  saved?: boolean;
+  sourceDocs?: Array<{
+    pageContent: string;
+    metadata: Record<string, any>;
+  }>;
+  userId?: string;
+}
+
+export default function ChatPage() {
+  // Typing effect configuration
+  const typingConfig = {
+    baseSpeed: 20,
+    randomVariation: 3,
+    minCharsPerStep: 1,
+    burstProbability: 0.15,
+    burstSize: { min: 3, max: 8 },
+    pauseProbability: 0.05,
+    pauseDuration: { min: 200, max: 800 },
+    punctuationPause: {
+      ',': 250,
+      '.': 500,
+      '!': 500,
+      '?': 500,
+      ';': 300,
+      ':': 300,
+      '\n': 700,
+    } as Record<string, number>
+  };
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSpeechListening, setIsSpeechListening] = useState(false);
+  const [showEmptyState, setShowEmptyState] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [messageUpdate, setMessageUpdate] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const [ragStep, setRagStep] = useState<'analyzing' | 'searching' | 'retrieving' | 'generating' | 'completed' | null>(null);
+  const [reasoningMode, setReasoningMode] = useState<boolean>(false);
+  const [reasoningSteps, setReasoningSteps] = useState<Array<{type: 'thinking' | 'analysis' | 'conclusion'; content: string;}>>([]);
+  const [showReasoningProcess, setShowReasoningProcess] = useState<boolean>(false);
+  const [pendingAIResponse, setPendingAIResponse] = useState<{text: string, sourceDocs?: any} | null>(null);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [showChatHistory, setShowChatHistory] = useState(false);
+
+  // (rest of the functions remain the same)
+  
+  // Scroll to bottom effect
+  useEffect(() => {
+    setTimeout(() => {
+      const viewport = scrollAreaRef.current?.querySelector(
+        '[data-radix-scroll-area-viewport]'
+      );
+      if (viewport) {
+        viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
+      }
+    }, 100);
+  }, [messages, isTyping]);
+
+  // Fetch initial messages
+  useEffect(() => {
+    const fetchMessages = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      // Check if user is logged in via session storage
+      const userStr = sessionStorage.getItem('user');
+      if (!userStr) {
+        console.log('No user found in session storage');
+        setMessages([]);
+        setShowEmptyState(true);
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        // Parse user data from session storage
+        const userData = JSON.parse(userStr);
+        const userId = userData.id;
+        
+        console.log(`Fetching messages for user: ${userId}`);
+        
+        // Include user ID as a query parameter
+        const response = await fetch(`/api/chat/messages?userId=${userId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data: Message[] = await response.json();
+        console.log(`Fetched ${data.length} messages for user ${userId}`, data);
+        
+        setMessages(data);
+        
+        // Show empty state if no messages
+        setShowEmptyState(data.length === 0);
+      } catch (err: any) {
+        console.error("Failed to fetch messages:", err);
+        setError(`Failed to load chat history: ${err.message}`);
+        setShowEmptyState(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [messageUpdate]);
+  
+  // Check user info in session storage on load
+  useEffect(() => {
+    const userStr = sessionStorage.getItem('user');
+    if (userStr) {
+      try {
+        const userData = JSON.parse(userStr);
+        console.log('User info from session storage:', userData);
+      } catch (err) {
+        console.error('Error parsing user info from session storage:', err);
+      }
+    } else {
+      console.warn('No user info found in session storage');
+    }
+  }, []);
+  
+  const handleSendMessage = async (messageText?: string) => {
+    const textToSend = messageText || inputMessage;
+    // Allow sending only a file without text
+    if (textToSend.trim() === '' && !selectedFile || isLoading) return;
+
+    setInputMessage(''); // Clear input
+    const fileToSend = selectedFile; // Capture file before clearing
+    setSelectedFile(null); // Clear selected file state
+    // Reset the actual file input element so the same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setIsLoading(true);
+    setError(null);
+    setShowEmptyState(false);
+    
+    // Reset reasoning state for the new message
+    setShowReasoningProcess(reasoningMode);
+    setReasoningSteps([]);
+    setPendingAIResponse(null);
+
+    // Get user ID from session storage
+    const userStr = sessionStorage.getItem('user');
+    let userId = null;
+    if (userStr) {
+      try {
+        const userData = JSON.parse(userStr);
+        userId = userData.id;
+      } catch (err) {
+        console.error("Failed to parse user data:", err);
+      }
+    }
+
+    // Optimistically add user message to UI
+    // Include file name in optimistic message if present
+    let optimisticText = textToSend;
+    if (fileToSend) {
+      optimisticText += `\n[Attached: ${fileToSend.name}]`;
+    }
+    const optimisticUserMessage: Message = {
+      id: `temp-${crypto.randomUUID()}`,
+      text: optimisticText.trim(), // Trim in case only file was sent
+      sender: "user",
+      timestamp: Date.now(),
+      userId: userId || undefined
+    };
+    setMessages((prevMessages) => [...prevMessages, optimisticUserMessage]);
+
+    // Save user message to database
+    await saveUserMessageToDatabase(optimisticText.trim(), userId);
+    
+    try {
+      // Use our simplified AI service with reasoning mode if enabled
+      const aiResponse = await getAIResponse(textToSend, setRagStep, reasoningMode);
+      
+      // If in reasoning mode and reasoning steps exist, save them
+      if (reasoningMode && aiResponse.reasoningSteps) {
+        setReasoningSteps(aiResponse.reasoningSteps);
+        // Store the AI response to display later when reasoning is complete
+        setPendingAIResponse({
+          text: aiResponse.text,
+          sourceDocs: aiResponse.sourceDocs
+        });
+      } else {
+        // For non-reasoning mode, display the AI response immediately
+        // Create the AI message response
+        const aiMessage: Message = {
+          id: crypto.randomUUID(),
+          text: aiResponse.text,
+          sender: 'ai',
+          timestamp: Date.now(),
+          sourceDocs: aiResponse.sourceDocs,
+          userId: userId || undefined
+        };
+        
+        // Add AI message to state
+        setMessages((prevMessages) => [...prevMessages, aiMessage]);
+        
+        // Send to database
+        saveAIResponseToDatabase(aiResponse.text, userId, aiResponse.sourceDocs);
+      }
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      setError(`Failed to send message: ${error.message}`);
+      setIsLoading(false); // Always reset loading state on error
+      setIsTyping(false); // Ensure typing state is reset
+    } finally {
+      if (!reasoningMode) {
+        setIsLoading(false);
+      } else {
+        // For reasoning mode, we'll keep isLoading true until the typing effect is done
+        // The reasoning component will handle its own display
+      }
+    }
+  };
+  
+  // Save user message to database
+  const saveUserMessageToDatabase = async (text: string, userId: string | null) => {
+    if (userId) {
+      try {
+        console.log(`Saving user message to database with userId: ${userId}`);
+        
+        const formData = new FormData();
+        formData.append('text', text);
+        formData.append('sender', 'user');
+        formData.append('userId', userId);
+        
+        // Save user message to database
+        const response = await fetch('/api/chat/messages', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const savedMessage = await response.json();
+        console.log('Successfully saved user message:', savedMessage);
+        
+        // Trigger refresh of message list
+        setMessageUpdate(prev => prev + 1);
+        
+      } catch (err) {
+        console.error('Failed to save user message to database:', err);
+      }
+    } else {
+      console.error('Cannot save message - userId is null or undefined');
+    }
+  };
+  
+  // Save AI response to database
+  const saveAIResponseToDatabase = async (text: string, userId: string | null, sourceDocs?: any) => {
+    if (userId) {
+      try {
+        console.log(`Saving AI response to database with userId: ${userId}`);
+        
+        const formData = new FormData();
+        formData.append('text', text);
+        formData.append('sender', 'ai');
+        formData.append('userId', userId);
+        
+        // Include source docs if any
+        if (sourceDocs) {
+          formData.append('sourceDocs', JSON.stringify(sourceDocs));
+        }
+        
+        // Save AI message to database
+        const response = await fetch('/api/chat/messages', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const savedMessage = await response.json();
+        console.log('Successfully saved AI response:', savedMessage);
+        
+        // Trigger refresh of message list
+        setMessageUpdate(prev => prev + 1);
+        
+      } catch (err) {
+        console.error('Failed to save AI message to database:', err);
+      }
+    } else {
+      console.error('Cannot save AI response - userId is null or undefined');
+    }
+  };
+  
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputMessage(event.target.value);
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleFeedback = (messageId: string, type: "like" | "dislike") => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === messageId
+          ? { ...msg, feedback: msg.feedback === type ? null : type }
+          : msg
+      )
+    );
+    // Here you would also send this feedback to your API
+    console.log(`Feedback for ${messageId}: ${type}`);
+  };
+
+  const toggleSaveMessage = (messageId: string) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === messageId ? { ...msg, saved: !msg.saved } : msg
+      )
+    );
+    // Here you would also send this to your API
+    console.log(`Toggled save for ${messageId}`);
+  };
+  
+  const clearChat = async () => {
+    // Add confirmation dialog later if needed
+    setMessages([]);
+    setShowEmptyState(true);
+    setError(null);
+    
+    // Get user ID from session storage
+    const userStr = sessionStorage.getItem('user');
+    if (!userStr) return;
+    
+    try {
+      const userData = JSON.parse(userStr);
+      const userId = userData.id;
+      
+      // Call API to delete chat history for this user
+      const response = await fetch(`/api/chat/messages?userId=${userId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      console.log("Chat history cleared successfully");
+    } catch (err: any) {
+      console.error("Failed to clear chat history:", err);
+      setError(`Failed to clear chat history: ${err.message}`);
+    }
+  };
+  
+  // Refresh messages from the server
+  const refreshMessages = () => {
+    setMessageUpdate(prev => prev + 1);
+  };
+  
+  // Test function to save a message directly
+  const testSaveMessage = async () => {
+    // Get user ID from session storage
+    const userStr = sessionStorage.getItem('user');
+    if (!userStr) {
+      console.error('No user found in session storage');
+      return;
+    }
+
+    try {
+      const userData = JSON.parse(userStr);
+      const userId = userData.id;
+      
+      // Create a test message
+      const formData = new FormData();
+      formData.append('text', 'This is a test message from the client');
+      formData.append('sender', 'user');
+      formData.append('userId', userId);
+      
+      console.log(`Attempting to save test message for user: ${userId}`);
+      
+      // Send test message to API
+      const response = await fetch('/api/chat/messages', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const savedMessage = await response.json();
+      console.log('Successfully saved test message:', savedMessage);
+      
+      // Refresh messages
+      refreshMessages();
+      
+    } catch (err) {
+      console.error('Test message failed:', err);
+    }
+  };
+  
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        // Clear client-side session and state
+        sessionStorage.removeItem('user');
+        setMessages([]);
+        setShowEmptyState(true);
+        
+        // Redirect to login page
+        router.push('/login');
+      } else {
+        console.error('Failed to logout');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+  
+  const suggestedPrompts = [
+    "How can mindfulness help with anxiety?",
+    "What are some quick stress relief techniques?",
+    "Can you suggest a morning meditation routine?",
+    "How do I start practicing self-compassion?"
+  ];
+  
+  // Toggle reasoning mode
+  const toggleReasoningMode = () => {
+    setReasoningMode(prev => !prev);
+    // Reset reasoning-related states when toggling
+    setShowReasoningProcess(false);
+    setReasoningSteps([]);
+    setPendingAIResponse(null);
+    setRagStep(null); // Reset RAG step state as well
+    setIsLoading(false); // Ensure UI is not locked
+    setIsTyping(false); // Ensure typing state is reset
+  };
+  
+  // Simulate typing effect for AI response
+  const simulateTyping = (text: string, callback: (displayedText: string) => void) => {
+    setIsTyping(true);
+    let currentIndex = 0;
+    let lastChar = '';
+    let displayedText = '';
+    
+    const typingInterval = setInterval(() => {
+      if (currentIndex >= text.length) {
+        clearInterval(typingInterval);
+        setIsTyping(false);
+        callback(text);
+        return;
+      }
+      
+      // Calculate how many characters to add in this step
+      let charsToAdd = typingConfig.minCharsPerStep + Math.floor(Math.random() * typingConfig.randomVariation);
+      
+      // Sometimes add a burst of characters (simulates fast typing)
+      if (Math.random() < typingConfig.burstProbability) {
+        charsToAdd = typingConfig.burstSize.min + 
+          Math.floor(Math.random() * (typingConfig.burstSize.max - typingConfig.burstSize.min));
+      }
+      
+      // Check for punctuation pause
+      const punctuationDelay = lastChar && typingConfig.punctuationPause[lastChar] || 0;
+      if (punctuationDelay > 0) {
+        clearInterval(typingInterval);
+        setTimeout(() => {
+          simulateTyping(text.substring(currentIndex), (additionalText) => {
+            callback(displayedText + additionalText);
+          });
+        }, punctuationDelay);
+        return;
+      }
+      
+      // Add the next segment of text
+      const nextIndex = Math.min(currentIndex + charsToAdd, text.length);
+      const newSegment = text.substring(currentIndex, nextIndex);
+      displayedText += newSegment;
+      lastChar = text[nextIndex - 1] || '';
+      currentIndex = nextIndex;
+      
+      callback(displayedText);
+    }, typingConfig.baseSpeed);
+    
+    return () => clearInterval(typingInterval);
+  };
+  
+  // Handle end of reasoning process
+  useEffect(() => {
+    // Only proceed if we're in reasoning mode with steps to show and a pending response
+    if (reasoningMode && 
+        reasoningSteps.length > 0 && 
+        pendingAIResponse !== null && 
+        !isLoading && 
+        !isTyping) {
+      // All reasoning steps are visible - start typing effect for the response
+      const userStr = sessionStorage.getItem('user');
+      let userId = null;
+      if (userStr) {
+        try {
+          const userData = JSON.parse(userStr);
+          userId = userData.id;
+        } catch (err) {
+          console.error("Failed to parse user data:", err);
+        }
+      }
+      
+      // Create a temporary AI message with empty text
+      const tempAiMessage: Message = {
+        id: crypto.randomUUID(),
+        text: "",
+        sender: 'ai',
+        timestamp: Date.now(),
+        userId: userId || undefined
+      };
+      
+      // Add the temporary message to the state
+      setMessages(prevMessages => [...prevMessages, tempAiMessage]);
+      
+      // Simulate typing
+      simulateTyping(pendingAIResponse.text, (displayedText) => {
+        setMessages(prevMessages => {
+          const updatedMessages = [...prevMessages];
+          const lastMessageIndex = updatedMessages.length - 1;
+          
+          if (lastMessageIndex >= 0 && updatedMessages[lastMessageIndex].sender === 'ai') {
+            updatedMessages[lastMessageIndex] = {
+              ...updatedMessages[lastMessageIndex],
+              text: displayedText,
+              sourceDocs: !isTyping ? pendingAIResponse.sourceDocs : undefined
+            };
+          }
+          
+          return updatedMessages;
+        });
+        
+        // If typing is complete, save to database and reset states
+        if (displayedText === pendingAIResponse.text) {
+          saveAIResponseToDatabase(pendingAIResponse.text, userId, pendingAIResponse.sourceDocs);
+          setIsLoading(false);
+          setPendingAIResponse(null);
+          // After processing, reset the reasoning process display flag
+          setShowReasoningProcess(false);
+        }
+      });
+    }
+  }, [reasoningMode, reasoningSteps, pendingAIResponse, isLoading, isTyping]);
+
+  // Added handler for reporting issues
+  const handleReportIssue = () => {
+    // Implement the logic to report an issue
+    console.log("Reporting an issue");
+  };
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-var(--header-height,4rem))]">
+      {/* Header */}
+      <header className="bg-background/90 backdrop-blur-sm border-b border-border/60 p-3 shadow-sm flex justify-between items-center sticky top-0 z-10 h-[var(--header-height,4rem)]">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-9 w-9 border shadow-sm">
+            <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
+            <AvatarFallback className="bg-primary/20 text-primary font-semibold">
+              MM
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h1 className="text-lg font-semibold text-foreground">MindMate</h1>
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+              <span className="text-xs text-muted-foreground">Online</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Header Actions */}
+        <div className="flex items-center gap-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={refreshMessages} className="h-9 w-9">
+                  <RefreshCw size={17} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">
+                Refresh Messages
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* Test button - only in development */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={testSaveMessage} className="h-9 w-9">
+                  <Bug size={17} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">
+                Test Message
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+                  onClick={clearChat}
+                >
+                  <Trash2 size={18} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">
+                Clear chat
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <MoreVertical size={17} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-background/90 backdrop-blur-sm border-border/50 shadow-lg rounded-md w-56">
+              <DropdownMenuItem className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm">
+                <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                <span>Chat History</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => router.push('/reminders')} 
+                className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm"
+              >
+                <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                <span>Reminders & Schedule</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm">
+                <Share2 className="mr-2 h-4 w-4 text-muted-foreground" />
+                <span>Share Conversation</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={clearChat} className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm">
+                <Trash2 className="mr-2 h-4 w-4 text-muted-foreground" />
+                <span>Clear Chat</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleLogout} 
+                className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4 text-destructive" />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </header>
+
+      {/* Main chat area */}
+      <div className="flex flex-grow overflow-hidden">
+        {/* Messages column */}
+        <ScrollArea className="flex-grow" ref={scrollAreaRef}>
+          <div className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto">
+            {/* Error notification */}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="bg-destructive/10 border border-destructive/30 text-destructive rounded-lg p-3 mb-4 flex items-center gap-3 mx-auto"
+                >
+                  <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                  <p className="text-sm flex-grow">{error}</p>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/20" onClick={() => setError(null)}>
+                    <X size={16} />
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Empty state */}
+            <AnimatePresence>
+              {showEmptyState && !isLoading && !error && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4"
+                >
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 15 }}
+                    className="bg-primary/10 p-5 rounded-full mb-6 shadow-inner"
+                  >
+                    <Sparkles className="h-10 w-10 text-primary" />
+                  </motion.div>
+                  <h2 className="text-2xl font-semibold mb-3 text-foreground">Welcome to MindMate</h2>
+                  <p className="text-muted-foreground max-w-md mb-8 text-base">
+                    Your AI companion for mental wellness. How can I help you today?
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
+                    {suggestedPrompts.map((prompt, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 + index * 0.05 }}
+                      >
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left h-auto py-3 px-4 text-sm hover:bg-accent/70 hover:border-primary/30"
+                          onClick={() => handleSendMessage(prompt)}
+                        >
+                          <span>{prompt}</span>
+                        </Button>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Loading indicator for initial load */}
+            {isLoading && messages.length === 0 && !error && (
+              <div className="flex flex-col gap-4 max-w-4xl mx-auto pt-10">
+                {/* Simplified skeleton */}
+                <div className="flex items-start gap-3 animate-pulse">
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-16 w-56" />
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 justify-end animate-pulse">
+                  <div className="flex flex-col gap-2 items-end">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-10 w-40" />
+                  </div>
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                </div>
+              </div>
+            )}
+
+            {/* Message list */}
+            <AnimatePresence initial={false}>
+              {messages.map((message, index) => (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    message.sender === 'user' ? 'justify-end' : 'justify-start'
+                  } mb-4`}
+                >
+                  {/* User message */}
+                  {message.sender === 'user' && (
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="rounded-xl rounded-tr-sm bg-primary text-primary-foreground p-3 shadow-md">
+                        <div className="text-sm whitespace-pre-wrap">
+                          {message.text}
+                        </div>
+                      </div>
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <span>
+                          {new Date(message.timestamp).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* AI message */}
+                  {message.sender === 'ai' && (
+                    <div className="flex items-start space-x-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          AI
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col items-start gap-2 max-w-[90%]">
+                        <div className="rounded-xl rounded-tl-sm bg-card border p-3 shadow-sm">
+                          <div className="text-sm whitespace-pre-wrap">
+                            {message.text}
+                          </div>
+                          
+                          {/* Display source documents if available */}
+                          {message.sourceDocs && message.sourceDocs.length > 0 && (
+                            <SourceDocuments sourceDocs={message.sourceDocs} />
+                          )}
+                          
+                          <div className="flex items-center gap-2 mt-2 pt-2 border-t text-xs text-muted-foreground">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={() => handleFeedback(message.id, 'like')}
+                                  >
+                                    <ThumbsUp size={14} className={message.feedback === 'like' ? 'text-green-500' : ''} />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom">Helpful</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={() => handleFeedback(message.id, 'dislike')}
+                                  >
+                                    <ThumbsDown size={14} className={message.feedback === 'dislike' ? 'text-red-500' : ''} />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom">Not helpful</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={() => toggleSaveMessage(message.id)}
+                                  >
+                                    <Bookmark
+                                      size={14}
+                                      className={message.saved ? 'text-primary fill-primary' : ''}
+                                    />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom">
+                                  {message.saved ? 'Unsave message' : 'Save message'}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            <span className="ml-auto">
+                              {new Date(message.timestamp).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </AnimatePresence>
+
+            {/* Show RAG process loading indicator */}
+            {isLoading && !reasoningMode && (
+              <div className="flex justify-start mb-4">
+                <div className="flex items-start space-x-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      AI
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-start gap-2">
+                    <RagLoadingDisplay 
+                      isVisible={isLoading} 
+                      currentStep={ragStep} 
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Show reasoning process when in reasoning mode */}
+            {(isLoading || showReasoningProcess) && reasoningMode && reasoningSteps.length > 0 && (
+              <div className="flex justify-start mb-4">
+                <div className="flex items-start space-x-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      AI
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-start gap-2 max-w-[90%]">
+                    <ReasoningProcess 
+                      isVisible={true} 
+                      steps={reasoningSteps} 
+                      isComplete={!isLoading && reasoningSteps.length > 0} 
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* This div is to help with scrolling to the bottom */}
+            <div ref={messagesEndRef} className="h-1" />
+          </div>
+        </ScrollArea>
+        
+        {/* Reminders column - only visible on larger screens */}
+        <div className="hidden lg:block w-80 p-4 border-l border-border/60 overflow-y-auto">
+          <RemindersWidget userId={sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user') || '{}').id : null} />
+        </div>
+      </div>
+
+      {/* Message input area */}
+      <footer className="p-3 border-t border-border/60 bg-background/95 backdrop-blur-sm sticky bottom-0">
+        {/* Selected file display */}
+        {selectedFile && (
+          <div className="max-w-4xl mx-auto mb-2 flex items-center justify-between bg-muted/50 border border-border/30 rounded-lg px-3 py-1.5 text-sm">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <FileText size={16} className="text-muted-foreground flex-shrink-0" />
+              <span className="text-foreground truncate" title={selectedFile.name}>
+                {selectedFile.name}
+              </span>
+              <span className="text-muted-foreground text-xs flex-shrink-0">
+                ({(selectedFile.size / 1024).toFixed(1)} KB)
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+              onClick={removeSelectedFile}
+              aria-label="Remove attached file"
+            >
+              <XCircle size={16} />
+            </Button>
+          </div>
+        )}
+
+        {/* Styled input container */}
+        <div className="flex items-center gap-2 max-w-4xl mx-auto rounded-xl border border-input bg-background/80 shadow-sm px-2 py-1.5 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-1 focus-within:border-primary/50 transition-all duration-200 ease-in-out">
+          {/* Hidden File Input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 flex-shrink-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  aria-label="Attach file"
+                  onClick={triggerFileInput}
+                >
+                  <Paperclip size={18} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Attach File</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* Input field */}
+          <Input
+            type="text"
+            placeholder="Send a message..." 
+            value={inputMessage}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            className="flex-grow border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-9 text-sm"
+            disabled={isLoading}
+          />
+
+          <div className="flex items-center gap-1">
+            {/* Reasoning mode toggle button */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={reasoningMode ? "secondary" : "ghost"}
+                    size="icon"
+                    className={`h-8 w-8 flex-shrink-0 ${reasoningMode ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary hover:bg-primary/10'}`}
+                    aria-label="Toggle reasoning mode"
+                    onClick={toggleReasoningMode}
+                  >
+                    <BrainCircuit size={18} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">
+                  {reasoningMode ? 'Disable reasoning mode' : 'Enable reasoning mode'}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Voice interaction */}
+            <VoiceInteraction
+              onTranscript={(t) => setInputMessage(t)}
+            />
+
+            {/* Send Button */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => handleSendMessage()}
+                    disabled={isLoading || (inputMessage.trim() === '' && !selectedFile)}
+                    size="icon"
+                    variant="gradient"
+                    className="h-8 w-8 rounded-lg flex-shrink-0"
+                  >
+                    <Send size={16} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">Send Message</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
+
+        {/* Disclaimer */}
+        <div className="flex justify-center mt-2 px-4">
+          <p className="text-xs text-muted-foreground/80 text-center">
+            MindMate is an AI assistant. Please consult a professional for medical or therapeutic advice.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+} 
