@@ -13,6 +13,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import Cookies from 'js-cookie';
 import Image from 'next/image';
+import KnowledgeGraphView from '@/components/onboarding/knowledge-graph-view';
 // Import from json file to avoid TypeScript errors
 import questionData from '../../../question.json';
 
@@ -42,6 +43,8 @@ const OnboardingPage = () => {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isFirstLogin, setIsFirstLogin] = useState(false);
+  const [showKnowledgeGraph, setShowKnowledgeGraph] = useState(false);
+  const [userId, setUserId] = useState<string>('');
   const router = useRouter();
 
   // Lấy dữ liệu từ file JSON với kiểu dữ liệu đã định nghĩa
@@ -172,9 +175,9 @@ const OnboardingPage = () => {
         localStorage.setItem('onboardingCompleted', 'true');
         Cookies.set('onboardingCompleted', 'true', { expires: 365 }); // Hết hạn sau 1 năm
         
-        // Chuyển hướng về trang chủ
-        console.log('Onboarding completed, redirecting to homepage');
-        router.push('/');
+        // Lưu userId và hiển thị knowledge graph
+        setUserId(userData.id);
+        setShowKnowledgeGraph(true);
       } else {
         throw new Error('User data not found');
       }
@@ -183,6 +186,11 @@ const OnboardingPage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Hàm xử lý sau khi xem knowledge graph
+  const handleKnowledgeGraphComplete = () => {
+    router.push('/');
   };
 
   const question = questions[currentStep];
@@ -226,12 +234,14 @@ const OnboardingPage = () => {
       ))}
       
       {/* Thanh tiến trình tuyến tính */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-muted z-50">
-        <div 
-          className="h-full bg-primary transition-all duration-300 ease-in-out"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      {!showKnowledgeGraph && (
+        <div className="fixed top-0 left-0 right-0 h-1 bg-muted z-50">
+          <div 
+            className="h-full bg-primary transition-all duration-300 ease-in-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
       
       {/* Modernized Header with bicolor MindMate logo */}
       <div className="fixed top-6 left-0 right-0 flex flex-col items-center z-50">
@@ -246,206 +256,216 @@ const OnboardingPage = () => {
       </div>
       
       {/* Improved Category Progress Indicators - more cohesive and modern */}
-      <div className="fixed top-32 left-0 right-0 flex justify-center z-50">
-        <div className="flex items-center bg-card/30 backdrop-blur-sm rounded-full shadow-sm px-3 py-1.5">
-          {questionGroups.map((group: QuestionGroup, index: number) => (
-            <div key={group.id} className="relative flex flex-col items-center">
-              {/* Connecting line between circles */}
-              {index > 0 && (
-                <div className={`absolute top-[10px] -left-3 w-6 h-0.5 ${
-                  index <= currentGroupIndex ? 'bg-primary' : 'bg-muted'
-                } transition-colors duration-300`}/>
-              )}
-              
-              {/* Circle indicator */}
-              <div className="flex flex-col items-center mx-2">
-                <div 
-                  className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
-                    index < currentGroupIndex 
-                      ? 'bg-primary text-white' 
-                      : index === currentGroupIndex 
-                        ? 'bg-primary/90 text-white ring-2 ring-primary ring-offset-1 scale-125' 
-                        : 'bg-muted text-muted-foreground'
-                  }`}
-                >
-                  {index < currentGroupIndex ? (
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                      <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  ) : (
-                    <span className="text-[10px]">{index + 1}</span>
-                  )}
-                </div>
-                
-                {/* Category name - only shows for active or completed */}
-                <span className={`text-xs mt-1 whitespace-nowrap transition-all duration-300 ${
-                  index === currentGroupIndex 
-                    ? 'opacity-100 text-primary font-medium' 
-                    : 'opacity-0 text-muted-foreground'
-                } ${index === currentGroupIndex ? 'max-h-5' : 'max-h-0'}`}>
-                  {group.name}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Nút Quay lại */}
-      {currentStep > 0 && (
-        <button 
-          onClick={handlePrevious}
-          className="fixed top-5 left-5 flex items-center text-muted-foreground hover:text-foreground transition-colors z-50"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-            <path d="m15 18-6-6 6-6"/>
-          </svg>
-          <span className="text-sm">Previous Question</span>
-        </button>
-      )}
-      
-      {/* Nội dung câu hỏi */}
-      <div className="mt-48 w-full max-w-[90%] max-w-6xl relative z-50 pointer-events-auto">
-      <AnimatePresence mode="wait">
-      <motion.div
-        key={currentStep}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.3 }}
-          className="w-full z-50 pointer-events-auto"
-        >
-          {question && question.type === 'multiselect' ? (
-            // Custom container for multiselect questions
-            <div className="w-full rounded-2xl bg-white/75 backdrop-blur-md shadow-xl border border-white/30 p-6 lg:p-8 transition-all duration-500">
-              <div className="mb-6">
-                <h2 className="text-2xl font-semibold mb-2">{question.title}</h2>
-                <p className="text-muted-foreground">{question.description}</p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {question.options.map((option) => {
-                  const isSelected = (answers[question.id] || []).includes(option);
-                  
-                  return (
-                    <div 
-                      key={option}
-                      onClick={() => {
-                        console.log(`Clicking option: ${option}`);
-                        setAnswers(prev => {
-                          const currentValues = prev[question.id] || [];
-                          if (currentValues.includes(option)) {
-                            return {
-                              ...prev,
-                              [question.id]: currentValues.filter((item: string) => item !== option)
-                            };
-                          } else {
-                            return {
-                              ...prev,
-                              [question.id]: [...currentValues, option]
-                            };
-                          }
-                        });
-                      }}
-                      className={`p-5 rounded-xl border transition-all duration-300 transform ${
-                        isSelected 
-                          ? 'bg-primary/85 text-white border-primary/20 shadow-md scale-[1.02]' 
-                          : 'bg-white/65 text-gray-800 border-gray-200/50 hover:border-gray-300 hover:bg-white/75 hover:scale-[1.01] hover:shadow-sm'
-                      } cursor-pointer flex items-center backdrop-blur-sm`}
-                    >
-                      <div className={`w-5 h-5 rounded-md mr-3 flex items-center justify-center transition-all duration-300 ${
-                        isSelected ? 'bg-white' : 'border border-gray-300'
-                      }`}>
-                        {isSelected && (
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                            <path d="M5 13l4 4L19 7" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
-                      </div>
-                      <span className="text-base font-medium">{option}</span>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              {/* Button above quote */}
-              <div className="mt-8">
-                <button
-                  type="button"
-                  onClick={() => {
-                    console.log(`Next button clicked for question: ${question.id}`);
-                    setCurrentStep(currentStep + 1);
-                  }}
-                  className="w-full py-3.5 bg-black/85 text-white rounded-xl font-medium cursor-pointer transition-all duration-300 hover:bg-black hover:shadow-md"
-                >
-                  Continue
-                </button>
-              </div>
-              
-              {/* Quote box below button */}
-              {question.quote && (
-                <div className="mt-6 p-5 bg-secondary/10 rounded-xl border border-primary/10 backdrop-blur-md">
-                  <p className="text-sm italic text-muted-foreground">{question.quote}</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            // Regular card for single select questions
-            <Card className="border-none shadow-xl z-50 pointer-events-auto max-w-md mx-auto bg-white/70 backdrop-blur-md rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold">
-                  {question ? question.title : 'Complete'}
-            </CardTitle>
-            <CardDescription>
-                  {question ? question.description : 'Thank you for completing the questionnaire.'}
-            </CardDescription>
-          </CardHeader>
-          
-              <CardContent className="space-y-4 z-50 pointer-events-auto">
-                {question && question.options && (
-                  <div className="space-y-3">
-                    {question.options.map((option) => (
-                      <Button
-                        key={option}
-                        type="button"
-                        variant={isOptionSelected(option) ? "default" : "outline"}
-                        className={`w-full justify-start text-left h-auto py-3.5 px-4 transition-all duration-300 rounded-xl ${
-                          isOptionSelected(option)
-                            ? 'bg-primary/85 text-primary-foreground shadow-sm'
-                            : 'bg-white/65 hover:bg-white/75 hover:shadow-sm'
-                        }`}
-                        onClick={() => handleSelect(option)}
-                      >
-                        {option}
-                      </Button>
-                    ))}
-                </div>
+      {!showKnowledgeGraph && (
+        <div className="fixed top-32 left-0 right-0 flex justify-center z-50">
+          <div className="flex items-center bg-card/30 backdrop-blur-sm rounded-full shadow-sm px-3 py-1.5">
+            {questionGroups.map((group: QuestionGroup, index: number) => (
+              <div key={group.id} className="relative flex flex-col items-center">
+                {/* Connecting line between circles */}
+                {index > 0 && (
+                  <div className={`absolute top-[10px] -left-3 w-6 h-0.5 ${
+                    index <= currentGroupIndex ? 'bg-primary' : 'bg-muted'
+                  } transition-colors duration-300`}/>
                 )}
                 
-                {/* Quote box - below options */}
-                {question && question.quote && (
-                  <div className="mt-6 p-5 bg-secondary/10 rounded-xl border border-primary/10 backdrop-blur-md">
-                    <p className="text-sm italic text-muted-foreground">"{question.quote}"</p>
+                {/* Circle indicator */}
+                <div className="flex flex-col items-center mx-2">
+                  <div 
+                    className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
+                      index < currentGroupIndex 
+                        ? 'bg-primary text-white' 
+                        : index === currentGroupIndex 
+                          ? 'bg-primary/90 text-white ring-2 ring-primary ring-offset-1 scale-125' 
+                          : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {index < currentGroupIndex ? (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    ) : (
+                      <span className="text-[10px]">{index + 1}</span>
+                    )}
+                  </div>
+                  
+                  {/* Category name - only shows for active or completed */}
+                  <span className={`text-xs mt-1 whitespace-nowrap transition-all duration-300 ${
+                    index === currentGroupIndex 
+                      ? 'opacity-100 text-primary font-medium' 
+                      : 'opacity-0 text-muted-foreground'
+                  } ${index === currentGroupIndex ? 'max-h-5' : 'max-h-0'}`}>
+                    {group.name}
+                  </span>
+                </div>
               </div>
-            )}
-          </CardContent>
-          
-              <CardFooter className="flex justify-end space-x-2">
-                {!question && (
-              <Button 
-                    onClick={handleSubmit}
-                disabled={isLoading}
-                    className="w-full transition-all duration-300 rounded-xl py-3"
-              >
-                    {isLoading ? 'Processing...' : 'Start using MindMate'}
-              </Button>
-            )}
-          </CardFooter>
-        </Card>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Hiển thị KnowledgeGraph View nếu đã trả lời xong */}
+      {showKnowledgeGraph ? (
+        <KnowledgeGraphView userId={userId} onComplete={handleKnowledgeGraphComplete} hideHeader={true} />
+      ) : (
+        <>
+          {/* Nút Quay lại */}
+          {currentStep > 0 && (
+            <button 
+              onClick={handlePrevious}
+              className="fixed top-5 left-5 flex items-center text-muted-foreground hover:text-foreground transition-colors z-50"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              <span className="text-sm">Previous Question</span>
+            </button>
           )}
-      </motion.div>
-      </AnimatePresence>
-      </div>
+          
+          {/* Nội dung câu hỏi */}
+          <div className="mt-48 w-full max-w-[90%] max-w-6xl relative z-50 pointer-events-auto">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="w-full z-50 pointer-events-auto"
+              >
+                {question && question.type === 'multiselect' ? (
+                  // Custom container for multiselect questions
+                  <div className="w-full rounded-2xl bg-white/75 backdrop-blur-md shadow-xl border border-white/30 p-6 lg:p-8 transition-all duration-500">
+                    <div className="mb-6">
+                      <h2 className="text-2xl font-semibold mb-2">{question.title}</h2>
+                      <p className="text-muted-foreground">{question.description}</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {question.options.map((option) => {
+                        const isSelected = (answers[question.id] || []).includes(option);
+                        
+                        return (
+                          <div 
+                            key={option}
+                            onClick={() => {
+                              console.log(`Clicking option: ${option}`);
+                              setAnswers(prev => {
+                                const currentValues = prev[question.id] || [];
+                                if (currentValues.includes(option)) {
+                                  return {
+                                    ...prev,
+                                    [question.id]: currentValues.filter((item: string) => item !== option)
+                                  };
+                                } else {
+                                  return {
+                                    ...prev,
+                                    [question.id]: [...currentValues, option]
+                                  };
+                                }
+                              });
+                            }}
+                            className={`p-5 rounded-xl border transition-all duration-300 transform ${
+                              isSelected 
+                                ? 'bg-primary/85 text-white border-primary/20 shadow-md scale-[1.02]' 
+                                : 'bg-white/65 text-gray-800 border-gray-200/50 hover:border-gray-300 hover:bg-white/75 hover:scale-[1.01] hover:shadow-sm'
+                            } cursor-pointer flex items-center backdrop-blur-sm`}
+                          >
+                            <div className={`w-5 h-5 rounded-md mr-3 flex items-center justify-center transition-all duration-300 ${
+                              isSelected ? 'bg-white' : 'border border-gray-300'
+                            }`}>
+                              {isSelected && (
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                  <path d="M5 13l4 4L19 7" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              )}
+                            </div>
+                            <span className="text-base font-medium">{option}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Button above quote */}
+                    <div className="mt-8">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          console.log(`Next button clicked for question: ${question.id}`);
+                          setCurrentStep(currentStep + 1);
+                        }}
+                        className="w-full py-3.5 bg-black/85 text-white rounded-xl font-medium cursor-pointer transition-all duration-300 hover:bg-black hover:shadow-md"
+                      >
+                        Continue
+                      </button>
+                    </div>
+                    
+                    {/* Quote box below button */}
+                    {question.quote && (
+                      <div className="mt-6 p-5 bg-secondary/10 rounded-xl border border-primary/10 backdrop-blur-md">
+                        <p className="text-sm italic text-muted-foreground">{question.quote}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Regular card for single select questions
+                  <Card className="border-none shadow-xl z-50 pointer-events-auto max-w-md mx-auto bg-white/70 backdrop-blur-md rounded-2xl">
+                    <CardHeader>
+                      <CardTitle className="text-xl font-semibold">
+                        {question ? question.title : 'Complete'}
+                      </CardTitle>
+                      <CardDescription>
+                        {question ? question.description : 'Thank you for completing the questionnaire.'}
+                      </CardDescription>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-4 z-50 pointer-events-auto">
+                      {question && question.options && (
+                        <div className="space-y-3">
+                          {question.options.map((option) => (
+                            <Button
+                              key={option}
+                              type="button"
+                              variant={isOptionSelected(option) ? "default" : "outline"}
+                              className={`w-full justify-start text-left h-auto py-3.5 px-4 transition-all duration-300 rounded-xl ${
+                                isOptionSelected(option)
+                                  ? 'bg-primary/85 text-primary-foreground shadow-sm'
+                                  : 'bg-white/65 hover:bg-white/75 hover:shadow-sm'
+                              }`}
+                              onClick={() => handleSelect(option)}
+                            >
+                              {option}
+                            </Button>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Quote box - below options */}
+                      {question && question.quote && (
+                        <div className="mt-6 p-5 bg-secondary/10 rounded-xl border border-primary/10 backdrop-blur-md">
+                          <p className="text-sm italic text-muted-foreground">"{question.quote}"</p>
+                        </div>
+                      )}
+                    </CardContent>
+                    
+                    <CardFooter className="flex justify-end space-x-2">
+                      {!question && (
+                        <Button 
+                          onClick={handleSubmit}
+                          disabled={isLoading}
+                          className="w-full transition-all duration-300 rounded-xl py-3"
+                          variant="default"
+                        >
+                          {isLoading ? 'Đang tạo Knowledge Graph của bạn...' : 'Hoàn tất và xem Knowledge Graph'}
+                        </Button>
+                      )}
+                    </CardFooter>
+                  </Card>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </>
+      )}
       
       {/* Footer with gradient text */}
       <div className="fixed bottom-4 left-0 right-0 flex justify-center text-xs z-50">

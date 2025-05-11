@@ -738,6 +738,247 @@
         "lgbtq_specialized": "Preferred but not required"
       },
       "createdAt": "2025-05-11T09:23:27.965Z"
+    },
+    {
+      "userId": "ecd35e5c-1c6e-471a-8a1b-5558326526d9",
+      "answers": {
+        "age": "18-24",
+        "gender": "Male",
+        "orientation": "Heterosexual",
+        "relationship": "Single",
+        "religion": "Neutral",
+        "spiritual": "Unsure",
+        "previous_therapy": "Never",
+        "physical_health": "Average",
+        "sleep": "Never",
+        "mood": "Sometimes",
+        "concentration": "Sometimes",
+        "employment": "Student",
+        "alcohol": "Rarely",
+        "suicidal_thoughts": "Never",
+        "medication": "No",
+        "chronic_pain": "No",
+        "therapy_goals": [
+          "Personal growth",
+          "Build self-esteem",
+          "Find purpose in life"
+        ],
+        "mental_state": [
+          "Stressed",
+          "Normal"
+        ],
+        "therapy_timing": [
+          "Feeling overwhelmed",
+          "Curious about therapy"
+        ],
+        "therapist_expertise": [
+          "Relationship issues",
+          "Depression",
+          "Work stress"
+        ],
+        "therapist_style": [
+          "Gives specific advice",
+          "Focuses on the present"
+        ],
+        "therapist_approach": "Direct and straightforward",
+        "therapist_structure": "Flexible and natural",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "No",
+        "lgbtq_specialized": "Not applicable"
+      },
+      "createdAt": "2025-05-11T11:37:42.620Z"
+    },
+    {
+      "userId": "302eae7d-e5f1-46c8-b76c-92a6de4c60ab",
+      "answers": {
+        "age": "18-24",
+        "gender": "Male",
+        "orientation": "Heterosexual",
+        "relationship": "Single",
+        "religion": "Neutral",
+        "spiritual": "No, not very spiritual",
+        "previous_therapy": "Never",
+        "physical_health": "Average",
+        "sleep": "Never",
+        "mood": "Sometimes",
+        "concentration": "Sometimes",
+        "employment": "Student",
+        "alcohol": "Rarely",
+        "suicidal_thoughts": "Never",
+        "medication": "No",
+        "chronic_pain": "No",
+        "therapy_goals": [
+          "Reduce anxiety",
+          "Find purpose in life",
+          "Improve relationships",
+          "Build self-esteem"
+        ],
+        "mental_state": [
+          "Lost",
+          "Stressed",
+          "Anxious"
+        ],
+        "therapy_timing": [
+          "Feeling overwhelmed",
+          "Want personal development"
+        ],
+        "therapist_expertise": [
+          "Relationship issues",
+          "Work stress"
+        ],
+        "therapist_style": [
+          "Gives specific advice",
+          "Focuses on the present"
+        ],
+        "therapist_approach": "Direct and straightforward",
+        "therapist_structure": "Clearly structured",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "No",
+        "lgbtq_specialized": "Not important"
+      },
+      "createdAt": "2025-05-11T12:02:13.367Z"
+    },
+    {
+      "userId": "3afec7b0-bff6-49a8-ba93-65d40cc61427",
+      "answers": {
+        "age": "18-24",
+        "gender": "Female",
+        "orientation": "Heterosexual",
+        "relationship": "Single",
+        "religion": "Neutral",
+        "spiritual": "Yes, somewhat",
+        "previous_therapy": "Several months",
+        "physical_health": "Average",
+        "sleep": "Frequently",
+        "mood": "Frequently",
+        "concentration": "Almost always",
+        "employment": "Self-employed",
+        "alcohol": "Sometimes",
+        "suicidal_thoughts": "Frequently",
+        "medication": "Previously but not currently",
+        "chronic_pain": "Moderate",
+        "therapy_goals": [
+          "Personal growth",
+          "Manage depression",
+          "Build self-esteem",
+          "Manage stress"
+        ],
+        "mental_state": [
+          "Depressed",
+          "Lost",
+          "Confused",
+          "Hopeless"
+        ],
+        "therapy_timing": [
+          "Ongoing issues",
+          "Referred by doctor",
+          "Need support during transition",
+          "Want personal development"
+        ],
+        "therapist_expertise": [
+          "Severe mental health"
+        ],
+        "therapist_style": [
+          "Challenges beliefs",
+          "Focuses on the present"
+        ],
+        "therapist_approach": "Gentle and supportive",
+        "therapist_structure": "Flexible and natural",
+        "therapist_formality": "Friendly and relaxed",
+        "lgbtq": "No",
+        "lgbtq_specialized": "Preferred but not required"
+      },
+      "createdAt": "2025-05-11T12:57:38.077Z"
+    },
+    {
+      "userId": "3b6af013-d103-43ce-928d-51c53e383cd6",
+      "answers": {
+        "age": "18-24",
+        "gender": "Male",
+        "orientation": "Heterosexual",
+        "relationship": "Single",
+        "religion": "Not very important",
+        "spiritual": "No, not at all",
+        "previous_therapy": "Never",
+        "physical_health": "Average",
+        "sleep": "Never",
+        "mood": "No",
+        "concentration": "No",
+        "employment": "Student",
+        "alcohol": "Rarely",
+        "suicidal_thoughts": "Never",
+        "medication": "No",
+        "chronic_pain": "No",
+        "therapy_goals": [
+          "Improve relationships",
+          "Find purpose in life"
+        ],
+        "mental_state": [
+          "Stressed"
+        ],
+        "therapy_timing": [
+          "Feeling overwhelmed"
+        ],
+        "therapist_expertise": [
+          "Relationship issues"
+        ],
+        "therapist_style": [
+          "Gives specific advice"
+        ],
+        "therapist_approach": "Direct and straightforward",
+        "therapist_structure": "Clearly structured",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "No",
+        "lgbtq_specialized": "Not applicable"
+      },
+      "createdAt": "2025-05-11T13:14:30.739Z"
+    },
+    {
+      "userId": "206405c1-a90b-48b3-92ab-8756c443314a",
+      "answers": {
+        "age": "18-24",
+        "gender": "Male",
+        "orientation": "Gay",
+        "relationship": "Single",
+        "religion": "Somewhat important",
+        "spiritual": "Yes, very spiritual",
+        "previous_therapy": "A few sessions",
+        "physical_health": "Average",
+        "sleep": "Frequently",
+        "mood": "Sometimes",
+        "concentration": "Frequently",
+        "employment": "Self-employed",
+        "alcohol": "Sometimes",
+        "suicidal_thoughts": "Occasionally",
+        "medication": "Previously but not currently",
+        "chronic_pain": "Moderate",
+        "therapy_goals": [
+          "Personal growth",
+          "Build self-esteem"
+        ],
+        "mental_state": [
+          "Lost",
+          "Depressed"
+        ],
+        "therapy_timing": [
+          "Need support during transition",
+          "Ongoing issues"
+        ],
+        "therapist_expertise": [
+          "Relationship issues",
+          "Depression"
+        ],
+        "therapist_style": [
+          "Explores the past",
+          "Gives specific advice"
+        ],
+        "therapist_approach": "Gentle and supportive",
+        "therapist_structure": "Flexible and natural",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "Yes",
+        "lgbtq_specialized": "Preferred but not required"
+      },
+      "createdAt": "2025-05-11T13:25:47.746Z"
     }
   ]
 }

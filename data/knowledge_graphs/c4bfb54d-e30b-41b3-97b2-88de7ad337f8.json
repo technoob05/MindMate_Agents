@@ -1,0 +1,517 @@
+{
+  "userId": "c4bfb54d-e30b-41b3-97b2-88de7ad337f8",
+  "knowledgeGraph": {
+    "nodes": [
+      {
+        "id": "User",
+        "label": "User",
+        "type": "person",
+        "value": 3,
+        "description": "The user"
+      },
+      {
+        "id": "Under 18",
+        "label": "Under 18",
+        "type": "age",
+        "value": 3,
+        "description": "Under 18 (age)"
+      },
+      {
+        "id": "Female",
+        "label": "Female",
+        "type": "gender",
+        "value": 3,
+        "description": "Female (gender)"
+      },
+      {
+        "id": "Gay",
+        "label": "Gay",
+        "type": "sexual_orientation",
+        "value": 3,
+        "description": "Gay (sexual_orientation)"
+      },
+      {
+        "id": "Dating",
+        "label": "Dating",
+        "type": "relationship",
+        "value": 3,
+        "description": "Dating (relationship)"
+      },
+      {
+        "id": "Very important",
+        "label": "Very important",
+        "type": "religion_importance",
+        "value": 3,
+        "description": "Very important (religion_importance)"
+      },
+      {
+        "id": "Spiritual",
+        "label": "Spiritual",
+        "type": "spirituality",
+        "value": 3,
+        "description": "Spiritual (spirituality)"
+      },
+      {
+        "id": "Several months",
+        "label": "Several months",
+        "type": "therapy_experience",
+        "value": 3,
+        "description": "Several months (therapy_experience)"
+      },
+      {
+        "id": "Average",
+        "label": "Average",
+        "type": "physical_health",
+        "value": 3,
+        "description": "Average (physical_health)"
+      },
+      {
+        "id": "Frequently",
+        "label": "Frequently",
+        "type": "sleep_difficulty",
+        "value": 3,
+        "description": "Frequently (sleep_difficulty)"
+      },
+      {
+        "id": "Sometimes",
+        "label": "Sometimes",
+        "type": "depression",
+        "value": 3,
+        "description": "Sometimes (depression)"
+      },
+      {
+        "id": "Student",
+        "label": "Student",
+        "type": "employment",
+        "value": 3,
+        "description": "Student (employment)"
+      },
+      {
+        "id": "Rarely",
+        "label": "Rarely",
+        "type": "alcohol_consumption",
+        "value": 3,
+        "description": "Rarely (alcohol_consumption)"
+      },
+      {
+        "id": "No",
+        "label": "No",
+        "type": "mental_health_medication",
+        "value": 3,
+        "description": "No (mental_health_medication)"
+      },
+      {
+        "id": "Severe",
+        "label": "Severe",
+        "type": "chronic_pain",
+        "value": 3,
+        "description": "Severe (chronic_pain)"
+      },
+      {
+        "id": "Manage depression",
+        "label": "Manage depression",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Manage depression (therapy_goal)"
+      },
+      {
+        "id": "Personal growth",
+        "label": "Personal growth",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Personal growth (therapy_goal)"
+      },
+      {
+        "id": "Build self-esteem",
+        "label": "Build self-esteem",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Build self-esteem (therapy_goal)"
+      },
+      {
+        "id": "Manage stress",
+        "label": "Manage stress",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Manage stress (therapy_goal)"
+      },
+      {
+        "id": "Lonely",
+        "label": "Lonely",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Lonely (mental_state)"
+      },
+      {
+        "id": "Stressed",
+        "label": "Stressed",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Stressed (mental_state)"
+      },
+      {
+        "id": "Lost",
+        "label": "Lost",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Lost (mental_state)"
+      },
+      {
+        "id": "Confused",
+        "label": "Confused",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Confused (mental_state)"
+      },
+      {
+        "id": "Need support during transition",
+        "label": "Need support during transition",
+        "type": "therapy_motivation",
+        "value": 3,
+        "description": "Need support during transition (therapy_motivation)"
+      },
+      {
+        "id": "Recent crisis",
+        "label": "Recent crisis",
+        "type": "therapy_motivation",
+        "value": 3,
+        "description": "Recent crisis (therapy_motivation)"
+      },
+      {
+        "id": "Referred by doctor",
+        "label": "Referred by doctor",
+        "type": "therapy_motivation",
+        "value": 3,
+        "description": "Referred by doctor (therapy_motivation)"
+      },
+      {
+        "id": "Relationship issues",
+        "label": "Relationship issues",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Relationship issues (therapist_expertise)"
+      },
+      {
+        "id": "Addiction",
+        "label": "Addiction",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Addiction (therapist_expertise)"
+      },
+      {
+        "id": "Eating disorders",
+        "label": "Eating disorders",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Eating disorders (therapist_expertise)"
+      },
+      {
+        "id": "Anger",
+        "label": "Anger",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Anger (therapist_expertise)"
+      },
+      {
+        "id": "Explores the past",
+        "label": "Explores the past",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Explores the past (therapist_style)"
+      },
+      {
+        "id": "Gives specific advice",
+        "label": "Gives specific advice",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Gives specific advice (therapist_style)"
+      },
+      {
+        "id": "Focuses on the present",
+        "label": "Focuses on the present",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Focuses on the present (therapist_style)"
+      },
+      {
+        "id": "Future-oriented",
+        "label": "Future-oriented",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Future-oriented (therapist_style)"
+      },
+      {
+        "id": "Direct and straightforward",
+        "label": "Direct and straightforward",
+        "type": "therapist_approach",
+        "value": 3,
+        "description": "Direct and straightforward (therapist_approach)"
+      },
+      {
+        "id": "Flexible and natural",
+        "label": "Flexible and natural",
+        "type": "therapy_structure",
+        "value": 3,
+        "description": "Flexible and natural (therapy_structure)"
+      },
+      {
+        "id": "Friendly and relaxed",
+        "label": "Friendly and relaxed",
+        "type": "therapy_atmosphere",
+        "value": 3,
+        "description": "Friendly and relaxed (therapy_atmosphere)"
+      },
+      {
+        "id": "Not applicable",
+        "label": "Not applicable",
+        "type": "lgbtq_specialized_therapist",
+        "value": 3,
+        "description": "Not applicable (lgbtq_specialized_therapist)"
+      }
+    ],
+    "edges": [
+      {
+        "source": "User",
+        "target": "Under 18",
+        "label": "is_of_age",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Female",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Gay",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Dating",
+        "label": "has_relationship_status",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Very important",
+        "label": "values",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Spiritual",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Several months",
+        "label": "has_experience",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Average",
+        "label": "rates_physical_health",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Frequently",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Sometimes",
+        "label": "feels",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Frequently",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Student",
+        "label": "has_employment_status",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Rarely",
+        "label": "engages_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Frequently",
+        "label": "thinks_about",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No",
+        "label": "is_taking",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Severe",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Manage depression",
+        "label": "wants_to_achieve",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Personal growth",
+        "label": "wants_to_achieve",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Build self-esteem",
+        "label": "wants_to_achieve",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Manage stress",
+        "label": "wants_to_achieve",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Lonely",
+        "label": "feels",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Stressed",
+        "label": "feels",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Lost",
+        "label": "feels",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Confused",
+        "label": "feels",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Need support during transition",
+        "label": "seeks_therapy_due_to",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Recent crisis",
+        "label": "seeks_therapy_due_to",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Referred by doctor",
+        "label": "seeks_therapy_due_to",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Relationship issues",
+        "label": "wants_therapist_expertise_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Addiction",
+        "label": "wants_therapist_expertise_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Eating disorders",
+        "label": "wants_therapist_expertise_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Anger",
+        "label": "wants_therapist_expertise_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Explores the past",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Gives specific advice",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Focuses on the present",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Future-oriented",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Direct and straightforward",
+        "label": "prefers_therapist_approach",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Flexible and natural",
+        "label": "prefers_therapy_structure",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Friendly and relaxed",
+        "label": "prefers_therapy_atmosphere",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No",
+        "label": "is_part_of",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Not applicable",
+        "label": "wants_to_work_with",
+        "weight": 3
+      }
+    ]
+  },
+  "userDescription": "Based on the user's questionnaire responses, the following psychological profile can be constructed:\n\nThe user is a young female, under 18 years old, who identifies as gay and is currently dating. She considers herself spiritual and religion is very important to her. These factors may influence her therapeutic needs and the approach to therapy. She has not participated in therapy before, but her current mental health status indicates a need for support. The user reports experiencing feelings of sadness and depression sometimes, difficulty concentrating frequently, and frequent sleep issues. These symptoms could suggest mood disorders or anxiety, which should be explored further in therapy. Additionally, she endorses frequent thoughts of suicide or self-harm, which is a serious concern requiring immediate attention and safety planning.\n\nThe user's therapeutic goals include managing depression, personal growth, building self-esteem, and managing stress. She hopes to achieve these goals by working with a therapist who has experience in relationship issues, addiction, eating disorders, and anger management. She prefers a direct and straightforward approach from her therapist, with sessions that are flexible and natural, in a friendly and relaxed atmosphere. These preferences suggest that the user values authenticity, openness, and a supportive environment in therapy.\n\nIn terms of personality traits, the user's responses suggest resilience and self-awareness. Despite her young age and the challenges she faces, she is actively seeking help and has clear goals for therapy. Her willingness to engage in self-reflection and her preference for a direct and straightforward approach indicate a strong sense of self and a desire for genuine connection. These traits will likely serve her well in therapy and contribute to her progress towards her goals.\n\nOverall, the recommended approach for therapy would be to prioritize safety and crisis management, given the user's endorsement of suicidal thoughts. A cognitive-behavioral or dialectical behavior therapy approach may be helpful in addressing her mood symptoms, sleep issues, and difficulty concentrating. Additionally, incorporating spirituality and religious beliefs into therapy may be beneficial, given their importance to the user. The therapist should work collaboratively with the user to develop a treatment plan that addresses her specific needs and goals, while also creating a safe and supportive therapeutic environment.",
+  "createdAt": "2025-05-11T12:20:05.312Z"
+}
