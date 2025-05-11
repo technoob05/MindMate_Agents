@@ -36,6 +36,16 @@ const LoginPage = () => {
           const parsedUser = JSON.parse(user);
           console.log('Login Page: User already in localStorage:', parsedUser.email || parsedUser.id);
           
+          // Kiểm tra xem người dùng đã hoàn thành onboarding chưa
+          const hasCompletedOnboarding = localStorage.getItem('onboardingCompleted') === 'true';
+          
+          // Nếu chưa hoàn thành onboarding, chuyển hướng đến trang onboarding
+          if (!hasCompletedOnboarding) {
+            console.log('Login Page: User has not completed onboarding, redirecting to onboarding page');
+            router.push('/onboarding');
+            return;
+          }
+          
           // Get redirect URL or use the home page (/) as default
           const redirectPath = searchParams.get('redirect') || '/';
           console.log('Login Page: Redirecting to (already logged in):', redirectPath);
@@ -92,7 +102,7 @@ const LoginPage = () => {
       localStorage.setItem('lastAuthTime', Date.now().toString());
       
       // IMPROVED: More robust navigation with proper delays
-      console.log('Login successful, redirecting to home page');
+      console.log('Login successful, checking onboarding status');
       
       // Add a longer delay to ensure localStorage is properly updated
       setTimeout(() => {
@@ -100,14 +110,20 @@ const LoginPage = () => {
         localStorage.removeItem('redirectCount');
         
         try {
-          // Try to navigate using Next.js router first
-          router.push('/');
+          // Kiểm tra xem người dùng đã hoàn thành onboarding chưa
+          const hasCompletedOnboarding = localStorage.getItem('onboardingCompleted') === 'true';
           
-          // Fallback to direct location change after a short delay if router doesn't work
-          setTimeout(() => {
-            console.log('Fallback navigation to home page');
-            window.location.href = '/';
-          }, 500);
+          // Nếu chưa hoàn thành onboarding, chuyển hướng đến trang onboarding
+          if (!hasCompletedOnboarding) {
+            console.log('Login successful, user has not completed onboarding, redirecting to onboarding page');
+            router.push('/onboarding');
+            return;
+          }
+          
+          // Nếu đã hoàn thành onboarding, chuyển hướng về trang chủ hoặc trang được chỉ định trong tham số redirect
+          console.log('Login successful, user has completed onboarding, redirecting to home page or specified redirect');
+          const redirectPath = searchParams.get('redirect') || '/';
+          router.push(redirectPath);
         } catch (e) {
           console.error('Navigation error:', e);
           // Direct fallback if router throws an error
@@ -133,23 +149,43 @@ const LoginPage = () => {
   };
 
   return (
-    // Add a main container to take the full screen height
-    <main className="min-h-screen flex items-center justify-center p-4">
+    // Change the main container to include the background and animations
+    <main className="min-h-screen flex items-center justify-center p-4 overflow-hidden relative bg-gradient-to-b from-blue-50 to-indigo-50">
+      {/* CSS Animations - Gradient Orbs */}
+      <div className="gradient-orb orb-1"></div>
+      <div className="gradient-orb orb-2"></div>
+      <div className="gradient-orb orb-3"></div>
+      <div className="gradient-orb orb-4"></div>
+      
+      {/* CSS Animations - Light Beams */}
+      <div className="light-beam beam-1"></div>
+      <div className="light-beam beam-2"></div>
+      <div className="light-beam beam-3"></div>
+      <div className="light-beam beam-4"></div>
+      
+      {/* CSS Animations - Floating Particles */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <div key={i} className={`floating-particle particle-${i % 5}`} style={{
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 5}s`,
+          animationDuration: `${Math.random() * 10 + 10}s`,
+        }}></div>
+      ))}
+      
       {/* Animate the card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="w-full max-w-md" // Apply width constraints here
+        className="w-full max-w-md z-50" // Add z-index to ensure card is above animations
       >
-        {/* Use default Card styling */}
-        <Card>
-          <CardHeader className="text-center space-y-2"> {/* Added space-y */}
-            {/* Use standard CardTitle, adjust size */}
+        {/* Update Card styling to match onboarding style */}
+        <Card className="border-none shadow-xl bg-white/75 backdrop-blur-md rounded-2xl">
+          <CardHeader className="text-center space-y-2">
             <CardTitle className="text-2xl font-bold tracking-tight text-primary">
               Welcome Back!
             </CardTitle>
-            {/* Use standard CardDescription */}
             <CardDescription>
               Sign in to your MindMate account.
             </CardDescription>
@@ -158,7 +194,6 @@ const LoginPage = () => {
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                {/* Use default Input styling */}
                 <Input
                   id="email"
                   type="email"
@@ -166,12 +201,12 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  autoComplete="email" // Add autocomplete
+                  autoComplete="email"
+                  className="bg-white/80 border-gray-200/70"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                 {/* Use default Input styling */}
                 <Input
                   id="password"
                   type="password"
@@ -179,32 +214,32 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  autoComplete="current-password" // Add autocomplete
+                  autoComplete="current-password"
+                  className="bg-white/80 border-gray-200/70"
                 />
               </div>
               {error && (
-                <p className="text-sm text-destructive">{error}</p> // Use destructive color
+                <p className="text-sm text-destructive">{error}</p>
               )}
-              {/* Use gradient Button variant */}
               <Button
                 type="submit"
                 variant="gradient"
-                className="w-full"
+                className="w-full py-3 rounded-xl transition-all duration-300 hover:shadow-md"
                 disabled={loading}
               >
                 {loading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col items-center space-y-4 text-sm pt-4"> {/* Added padding-top */}
+          <CardFooter className="flex flex-col items-center space-y-4 text-sm pt-4">
             <div className="w-full text-center">
-              <p className="text-muted-foreground mb-2"> {/* Use muted foreground color */}
+              <p className="text-muted-foreground mb-2">
                 Don't have an account?
               </p>
               <Button 
                 variant="outline" 
                 onClick={goToRegister} 
-                className="w-full"
+                className="w-full rounded-xl border-gray-200/70 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white/90"
               >
                 Register here
               </Button>
@@ -212,6 +247,173 @@ const LoginPage = () => {
           </CardFooter>
         </Card>
       </motion.div>
+      
+      {/* CSS for animations */}
+      <style jsx>{`
+        /* Base Animation Classes */
+        .gradient-orb {
+          position: fixed;
+          border-radius: 50%;
+          filter: blur(80px);
+          opacity: 0.25;
+          z-index: 1;
+        }
+        
+        .light-beam {
+          position: fixed;
+          height: 80px;
+          width: 100%;
+          opacity: 0.15;
+          z-index: 2;
+          transform: rotate(-1deg);
+        }
+        
+        .floating-particle {
+          position: fixed;
+          border-radius: 50%;
+          width: 6px;
+          height: 6px;
+          z-index: 1;
+          animation: float 15s ease-in-out infinite;
+        }
+        
+        /* Orb Styles */
+        .orb-1 {
+          top: 10%;
+          left: 10%;
+          width: 400px;
+          height: 400px;
+          background: radial-gradient(circle at center, rgba(139, 92, 246, 0.3), rgba(76, 29, 149, 0.1));
+          animation: pulse 15s ease-in-out infinite alternate;
+        }
+        
+        .orb-2 {
+          top: 60%;
+          right: 5%;
+          width: 350px;
+          height: 350px;
+          background: radial-gradient(circle at center, rgba(250, 204, 21, 0.2), rgba(234, 179, 8, 0.05));
+          animation: pulse 12s ease-in-out infinite alternate-reverse;
+        }
+        
+        .orb-3 {
+          bottom: 5%;
+          left: 20%;
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(circle at center, rgba(236, 72, 153, 0.2), rgba(190, 24, 93, 0.05));
+          animation: pulse 18s ease-in-out infinite alternate;
+        }
+        
+        .orb-4 {
+          top: 30%;
+          right: 30%;
+          width: 280px;
+          height: 280px;
+          background: radial-gradient(circle at center, rgba(56, 189, 248, 0.2), rgba(3, 105, 161, 0.05));
+          animation: pulse 14s ease-in-out infinite alternate-reverse;
+        }
+        
+        /* Light Beam Styles */
+        .beam-1 {
+          top: 15%;
+          background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.2), transparent);
+          animation: beam-move 20s ease-in-out infinite;
+        }
+        
+        .beam-2 {
+          top: 35%;
+          background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.25), transparent);
+          animation: beam-move 25s ease-in-out infinite;
+          animation-delay: -5s;
+        }
+        
+        .beam-3 {
+          top: 60%;
+          background: linear-gradient(90deg, transparent, rgba(217, 70, 239, 0.2), transparent);
+          animation: beam-move 18s ease-in-out infinite;
+          animation-delay: -10s;
+        }
+        
+        .beam-4 {
+          top: 80%;
+          background: linear-gradient(90deg, transparent, rgba(76, 29, 149, 0.15), transparent);
+          animation: beam-move 22s ease-in-out infinite;
+          animation-delay: -15s;
+        }
+        
+        /* Particle Colors */
+        .particle-0 {
+          background-color: rgba(139, 92, 246, 0.6); /* Violet */
+        }
+        
+        .particle-1 {
+          background-color: rgba(236, 72, 153, 0.6); /* Pink */
+        }
+        
+        .particle-2 {
+          background-color: rgba(14, 165, 233, 0.6); /* Sky */
+        }
+        
+        .particle-3 {
+          background-color: rgba(20, 184, 166, 0.6); /* Teal */
+        }
+        
+        .particle-4 {
+          background-color: rgba(217, 70, 239, 0.6); /* Fuchsia */
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+          0% {
+            transform: scale(1);
+            opacity: 0.2;
+          }
+          50% {
+            transform: scale(1.05);
+            opacity: 0.3;
+          }
+          100% {
+            transform: scale(0.95);
+            opacity: 0.2;
+          }
+        }
+        
+        @keyframes beam-move {
+          0% {
+            transform: translateY(-50px) rotate(-1deg);
+          }
+          50% {
+            transform: translateY(50px) rotate(0.5deg);
+          }
+          100% {
+            transform: translateY(-50px) rotate(-1deg);
+          }
+        }
+        
+        @keyframes float {
+          0% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.7;
+          }
+          25% {
+            transform: translateY(-20px) translateX(10px);
+            opacity: 0.5;
+          }
+          50% {
+            transform: translateY(-10px) translateX(20px);
+            opacity: 0.7;
+          }
+          75% {
+            transform: translateY(10px) translateX(-10px);
+            opacity: 0.5;
+          }
+          100% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.7;
+          }
+        }
+      `}</style>
     </main>
   );
 };

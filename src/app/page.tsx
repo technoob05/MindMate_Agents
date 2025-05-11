@@ -56,6 +56,16 @@ export default function HomePage() {
           
           // FIXED: Accept any user object with some meaningful data
           if (parsedUser && (parsedUser.id || parsedUser.email || parsedUser.pseudonym)) {
+            // Kiểm tra xem người dùng đã hoàn thành onboarding chưa
+            const hasCompletedOnboarding = localStorage.getItem('onboardingCompleted') === 'true';
+            
+            // Nếu chưa hoàn thành onboarding, chuyển hướng đến trang onboarding
+            if (!hasCompletedOnboarding) {
+              console.log('Home Page: User has not completed onboarding, redirecting to onboarding page');
+              router.push('/onboarding');
+              return;
+            }
+            
             setUser(parsedUser);
             setIsLoading(false);
             
@@ -251,12 +261,11 @@ export default function HomePage() {
             </CardHeader>
             <CardContent className="flex-grow flex flex-col justify-between">
               <p className="text-sm text-muted-foreground mb-6">
-                Engage a team of AIs (Listener, Goal Setter, Resource Finder) for multi-faceted support.
+                Consult with a team of AI experts specialized in different areas of mental wellness for comprehensive support.
               </p>
-              {/* Using variant="secondary" for visual distinction */}
               <Link href="/ai-team-chat" passHref legacyBehavior>
-                <Button variant="secondary" className="w-full mt-auto">
-                  Explore AI Team
+                <Button variant="gradient" className="w-full mt-auto">
+                  Talk with Team
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>

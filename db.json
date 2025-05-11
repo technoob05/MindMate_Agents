@@ -51,6 +51,42 @@
       "email": "nguyenhuyhoang3305@gmail.com",
       "hashedPassword": "$2b$10$8a/uWjoJ1Oq6MZ6WwTAUD.QxtbawNGzKoMIXSCZXvk1B5H9MctyrK",
       "pseudonym": "nguyenhuyhoang3305@gmail.com"
+    },
+    {
+      "id": "be303c7d-1eaa-4a7a-942a-a46a3a49f627",
+      "email": "hhnguyen.3305@gmail.com",
+      "hashedPassword": "$2b$10$6h8J9B0m4WnVzunpvLWIL.TSpR/8RKZ7ZK9ox1vlgKZz5tNpk3n9K",
+      "pseudonym": "hhnguyen.3305@gmail.com"
+    },
+    {
+      "id": "3c9a7c4f-e6b5-4b50-802f-312e643e8a75",
+      "email": "me@hh.com",
+      "hashedPassword": "$2b$10$n.LzUoqSv/36IDzP2nSLEObDQetRKM/7sCcpSJp5O1IRLtkd8Wagy",
+      "pseudonym": "Leonard"
+    },
+    {
+      "id": "7fd88c7c-5693-4d0b-a419-2f2ac7495614",
+      "email": "me@hh.com1",
+      "hashedPassword": "$2b$10$hP3iTaIo6pv2p9zc.ab7DeX7H4sRBFjGrwx7zQLaDB86zOLV76XLu",
+      "pseudonym": "me@hh.com1"
+    },
+    {
+      "id": "490d5665-3454-4e44-bba6-0b8b41142b88",
+      "email": "hh.dz@c",
+      "hashedPassword": "$2b$10$cMXEJ2kj8wprsOUj89rdUeH.OtIKhbSyOXle/0ztBVXeH.vCii6X6",
+      "pseudonym": "HuyHoang"
+    },
+    {
+      "id": "eec3cd10-2f9f-4949-8004-5c9cd24b862e",
+      "email": "hh@dz.c",
+      "hashedPassword": "$2b$10$hj8SGZveHQpIqRM5.wUpZOtHhhK7n88yjPG.h5NycPc.7AFuzcpBq",
+      "pseudonym": "829372"
+    },
+    {
+      "id": "3f58fd31-1c69-4080-93ff-45e0cf2273c9",
+      "email": "me@hh.com2",
+      "hashedPassword": "$2b$10$Q3g3P1A0xgUtiyj.7Y4vOux242RflkYLr602pTBQeJZEaStFQAyQW",
+      "pseudonym": "me@hh.com"
     }
   ],
   "chats": {
@@ -279,6 +315,5 @@
     "multi_user_rooms": {
       "general": []
     }
-  },
-  "reminders": []
+  }
 }

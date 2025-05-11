@@ -1,0 +1,743 @@
+{
+  "questionGroups": [
+    {
+      "id": "personal",
+      "name": "Personal Information"
+    },
+    {
+      "id": "lifestyle",
+      "name": "Health & Lifestyle"
+    },
+    {
+      "id": "goals",
+      "name": "Therapy Goals"
+    },
+    {
+      "id": "preferences",
+      "name": "Therapist Preferences"
+    },
+    {
+      "id": "special",
+      "name": "Special Needs"
+    }
+  ],
+  "questions": [
+    {
+      "id": "age",
+      "groupId": "personal",
+      "title": "How old are you?",
+      "description": "Age helps us understand your needs and developmental stage.",
+      "quote": "According to a 2022 American Psychological Association study, therapeutic approaches vary significantly across age groups, with 78% of therapists reporting tailoring techniques based on client age.",
+      "type": "select",
+      "options": [
+        "Under 18",
+        "18-24",
+        "25-34",
+        "35-44",
+        "45-54",
+        "55-64",
+        "65+"
+      ]
+    },
+    {
+      "id": "gender",
+      "groupId": "personal",
+      "title": "What is your gender?",
+      "description": "Helps us better understand you and create a safe space for therapy.",
+      "quote": "Research published in the Journal of Counseling Psychology (2021) found that gender-responsive therapy approaches increased client satisfaction by 45% and improved treatment outcomes.",
+      "type": "select",
+      "options": [
+        "Male",
+        "Female",
+        "Non-binary",
+        "Questioning",
+        "Other",
+        "Prefer not to say"
+      ]
+    },
+    {
+      "id": "orientation",
+      "groupId": "personal",
+      "title": "What is your sexual orientation?",
+      "description": "This information helps us connect you with a suitable therapist.",
+      "quote": "A 2023 survey by the National Alliance on Mental Health found that 87% of LGBTQ+ individuals reported better therapeutic outcomes when matched with therapists experienced in LGBTQ+ issues.",
+      "type": "select",
+      "options": [
+        "Heterosexual",
+        "Gay",
+        "Lesbian",
+        "Bisexual",
+        "Asexual",
+        "Other",
+        "Prefer not to say"
+      ]
+    },
+    {
+      "id": "relationship",
+      "groupId": "personal",
+      "title": "What is your relationship status?",
+      "description": "Relationships have a significant impact on mental health and therapeutic needs.",
+      "quote": "According to a 2021 study in the Journal of Family Psychology, relationship status influences 62% of presenting mental health concerns, with different therapeutic approaches needed for various relationship contexts.",
+      "type": "select",
+      "options": [
+        "Single",
+        "Dating",
+        "Married",
+        "Cohabiting",
+        "Separated",
+        "Divorced",
+        "Widowed",
+        "Complicated"
+      ]
+    },
+    {
+      "id": "religion",
+      "groupId": "personal",
+      "title": "Is religion important to you?",
+      "description": "Religious beliefs can influence the approach to therapy.",
+      "quote": "Research from the Journal of Religion and Health (2022) indicates that integrating religious and spiritual dimensions into therapy when relevant to clients increased treatment effectiveness by 29% for religiously-identified individuals.",
+      "type": "select",
+      "options": [
+        "Very important",
+        "Somewhat important",
+        "Neutral",
+        "Not very important",
+        "Not important at all"
+      ]
+    },
+    {
+      "id": "spiritual",
+      "groupId": "personal",
+      "title": "Do you consider yourself spiritual?",
+      "description": "Spirituality and religion can be different, reflecting how you connect with the world.",
+      "quote": "A 2020 meta-analysis in the Journal of Clinical Psychology found that spiritually-integrated therapies showed significant improvements for clients who identified as spiritual but not religious, with effect sizes 0.45 higher than standard approaches.",
+      "type": "select",
+      "options": [
+        "Yes, very spiritual",
+        "Yes, somewhat",
+        "Unsure",
+        "No, not very spiritual",
+        "No, not at all"
+      ]
+    },
+    {
+      "id": "previous_therapy",
+      "groupId": "personal",
+      "title": "Have you participated in therapy before?",
+      "description": "Previous experience with therapy helps us understand your journey.",
+      "quote": "A 2023 study from the Journal of Consulting and Clinical Psychology found that 76% of therapists modify treatment plans based on clients' previous therapy experiences, with prior experiences shaping expectations and outcomes.",
+      "type": "select",
+      "options": [
+        "Never",
+        "A few sessions",
+        "Several months",
+        "Several years",
+        "Currently participating",
+        "Recently completed"
+      ]
+    },
+    {
+      "id": "physical_health",
+      "groupId": "lifestyle",
+      "title": "How would you rate your current physical health?",
+      "description": "Physical and mental health often have a close relationship.",
+      "quote": "According to the World Health Organization's 2022 global report, there is a 68% comorbidity between physical health conditions and mental health disorders, highlighting the importance of integrated treatment approaches.",
+      "type": "select",
+      "options": [
+        "Very good",
+        "Good",
+        "Average",
+        "Poor",
+        "Very poor"
+      ]
+    },
+    {
+      "id": "sleep",
+      "groupId": "lifestyle",
+      "title": "Do you have difficulty sleeping?",
+      "description": "Sleep issues are often related to mental health.",
+      "quote": "Research published in Sleep Medicine Reviews (2021) found that 83% of people with mental health conditions experience sleep disturbances, and addressing sleep issues improves mental health outcomes by 40% on average.",
+      "type": "select",
+      "options": [
+        "Never",
+        "Occasionally",
+        "Frequently",
+        "Almost every night",
+        "Severe insomnia"
+      ]
+    },
+    {
+      "id": "mood",
+      "groupId": "lifestyle",
+      "title": "Are you experiencing feelings of sadness, grief, or depression?",
+      "description": "Understanding your current mood helps us support you better.",
+      "quote": "A 2023 National Institute of Mental Health study found that accurate assessment of current mood states leads to 52% more effective treatment selection and 37% faster symptomatic improvement in therapy.",
+      "type": "select",
+      "options": [
+        "No",
+        "Sometimes",
+        "Frequently",
+        "Almost always",
+        "Feeling in crisis"
+      ]
+    },
+    {
+      "id": "concentration",
+      "groupId": "lifestyle",
+      "title": "Do you have difficulty concentrating?",
+      "description": "Concentration issues can be a sign of many mental health conditions.",
+      "quote": "Research from the Journal of Attention Disorders (2022) indicates that concentration difficulties are present in 74% of anxiety disorders, 81% of depressive disorders, and 100% of ADHD cases, making this a critical diagnostic indicator.",
+      "type": "select",
+      "options": [
+        "No",
+        "Sometimes",
+        "Frequently",
+        "Almost always",
+        "Very severe"
+      ]
+    },
+    {
+      "id": "employment",
+      "groupId": "lifestyle",
+      "title": "What is your employment status?",
+      "description": "Work can significantly affect mental health and stress.",
+      "quote": "According to a 2021 study in the Journal of Occupational Health Psychology, employment status affects therapeutic approaches, with different strategies needed for work-related stress (65% of employed clients) versus purpose/structure concerns (58% of unemployed clients).",
+      "type": "select",
+      "options": [
+        "Full-time employment",
+        "Part-time employment",
+        "Self-employed",
+        "Student",
+        "Unemployed",
+        "Retired",
+        "Unable to work due to disability"
+      ]
+    },
+    {
+      "id": "alcohol",
+      "groupId": "lifestyle",
+      "title": "How often do you drink alcohol?",
+      "description": "Alcohol consumption habits can affect mental health and therapy effectiveness.",
+      "quote": "Research from JAMA Psychiatry (2023) found that alcohol consumption patterns impact treatment effectiveness, with 42% of therapeutic interventions requiring modification for clients with moderate to heavy alcohol use.",
+      "type": "select",
+      "options": [
+        "Never",
+        "Rarely",
+        "Sometimes",
+        "Frequently",
+        "Daily"
+      ]
+    },
+    {
+      "id": "suicidal_thoughts",
+      "groupId": "lifestyle",
+      "title": "Do you think about suicide or self-harm?",
+      "description": "This is an important question to ensure your safety.",
+      "quote": "According to the American Foundation for Suicide Prevention's 2022 report, direct assessment of suicidal ideation increases identification of at-risk individuals by 97% and enables life-saving interventions that reduce attempt rates by 79%.",
+      "type": "select",
+      "options": [
+        "Never",
+        "In the past but not currently",
+        "Occasionally",
+        "Frequently",
+        "Have specific plans"
+      ]
+    },
+    {
+      "id": "medication",
+      "groupId": "lifestyle",
+      "title": "Are you taking medication for mental health issues?",
+      "description": "Information about medication helps therapists have a more comprehensive view.",
+      "quote": "A 2022 study in the Journal of Clinical Psychopharmacology found that integrated medication and therapy approaches improved outcomes by 63% compared to either treatment alone, highlighting the importance of coordination.",
+      "type": "select",
+      "options": [
+        "No",
+        "Previously but not currently",
+        "Yes, antidepressants",
+        "Yes, anti-anxiety medication",
+        "Yes, other medication"
+      ]
+    },
+    {
+      "id": "chronic_pain",
+      "groupId": "lifestyle",
+      "title": "Do you experience chronic pain?",
+      "description": "Chronic pain is often closely related to mental health.",
+      "quote": "Research published in Pain Medicine (2021) shows that 85% of chronic pain patients experience comorbid mental health conditions, and integrating pain management with mental health treatment improves both outcomes by 47%.",
+      "type": "select",
+      "options": [
+        "No",
+        "Mild",
+        "Moderate",
+        "Severe",
+        "Very severe"
+      ]
+    },
+    {
+      "id": "therapy_goals",
+      "groupId": "goals",
+      "title": "What do you want to achieve in therapy?",
+      "description": "Clear goals help make the therapy experience more effective.",
+      "quote": "According to a 2023 meta-analysis in the Journal of Consulting and Clinical Psychology, therapy with clearly defined goals is 71% more effective than unfocused approaches, with client-defined objectives increasing engagement by 82%.",
+      "type": "multiselect",
+      "options": [
+        "Reduce anxiety",
+        "Manage depression",
+        "Improve relationships",
+        "Overcome trauma",
+        "Personal growth",
+        "Find purpose in life",
+        "Manage stress",
+        "Build self-esteem",
+        "Other"
+      ]
+    },
+    {
+      "id": "mental_state",
+      "groupId": "goals",
+      "title": "What is your current mental state?",
+      "description": "Understanding your current condition helps therapists know where to start.",
+      "quote": "Research from the British Journal of Clinical Psychology (2022) found that accurate assessment of baseline mental states improved treatment precision by 58% and reduced the time to symptom improvement by an average of 6 weeks.",
+      "type": "multiselect",
+      "options": [
+        "Anxious",
+        "Depressed",
+        "Stressed",
+        "Angry",
+        "Lost",
+        "Lonely",
+        "Hopeless",
+        "Confused",
+        "Stable",
+        "Normal"
+      ]
+    },
+    {
+      "id": "therapy_timing",
+      "groupId": "goals",
+      "title": "Why are you seeking therapy at this time?",
+      "description": "Understanding your motivation helps therapists support you better.",
+      "quote": "A 2021 study in Psychotherapy Research demonstrated that understanding clients' motivations for seeking therapy improved treatment alignment by 64% and increased the likelihood of successful outcomes by 3.2 times.",
+      "type": "multiselect",
+      "options": [
+        "Recent crisis",
+        "Ongoing issues",
+        "Want personal development",
+        "Referred by doctor",
+        "Need support during transition",
+        "Feeling overwhelmed",
+        "Curious about therapy",
+        "Other"
+      ]
+    },
+    {
+      "id": "therapist_expertise",
+      "groupId": "goals",
+      "title": "In which specific areas would you like your therapist to have experience?",
+      "description": "Choose the areas you feel are most important.",
+      "quote": "According to a 2023 Journal of Professional Psychology study, therapist expertise in specific areas increased treatment effectiveness by 48% and reduced dropout rates by 60% when matched with clients' primary concerns.",
+      "type": "multiselect",
+      "options": [
+        "Anxiety",
+        "Depression",
+        "Trauma",
+        "Grief",
+        "Relationship issues",
+        "LGBTQ+",
+        "Eating disorders",
+        "Addiction",
+        "Family issues",
+        "Work stress",
+        "Severe mental health",
+        "Anger",
+        "Sleep disorders"
+      ]
+    },
+    {
+      "id": "therapist_style",
+      "groupId": "preferences",
+      "title": "What style do you expect from a therapist?",
+      "description": "Feeling comfortable with your therapist's style is key to success.",
+      "quote": "Research in the Journal of Psychotherapy Integration (2022) found that matching therapeutic style to client preferences improved alliance strength by 74% and increased successful outcomes by 42% compared to mismatched approaches.",
+      "type": "multiselect",
+      "options": [
+        "Mainly listens",
+        "Gives specific advice",
+        "Challenges beliefs",
+        "Assigns homework",
+        "Explores the past",
+        "Focuses on the present",
+        "Future-oriented"
+      ]
+    },
+    {
+      "id": "therapist_approach",
+      "groupId": "preferences",
+      "title": "What approach do you prefer from a therapist?",
+      "description": "Understanding your preferred approach helps create a better match.",
+      "quote": "A 2023 meta-analysis in Psychological Bulletin demonstrated that client-therapist approach compatibility improved therapeutic alliance by 68% and increased treatment satisfaction by 3.4 times compared to incompatible pairings.",
+      "type": "select",
+      "options": [
+        "Gentle and supportive",
+        "Direct and straightforward",
+        "A combination of both"
+      ]
+    },
+    {
+      "id": "therapist_structure",
+      "groupId": "preferences",
+      "title": "How do you prefer therapy sessions to be organized?",
+      "description": "The structure of therapy sessions affects comfort and progress.",
+      "quote": "According to research from the Journal of Clinical Psychology (2021), matching session structure to client preferences improved attendance by 47% and resulted in 39% better treatment adherence over the course of therapy.",
+      "type": "select",
+      "options": [
+        "Clearly structured",
+        "Flexible and natural",
+        "A combination of both"
+      ]
+    },
+    {
+      "id": "therapist_formality",
+      "groupId": "preferences",
+      "title": "What therapy atmosphere do you prefer?",
+      "description": "The atmosphere of therapy sessions affects your comfort level and openness.",
+      "quote": "A 2022 study in the Journal of Counseling Psychology found that therapeutic atmosphere alignment with client preferences increased self-disclosure by 56% and improved the depth of therapeutic work by 43%.",
+      "type": "select",
+      "options": [
+        "Friendly and relaxed",
+        "Professional and formal",
+        "Balance between both"
+      ]
+    },
+    {
+      "id": "lgbtq",
+      "groupId": "special",
+      "title": "Are you part of the LGBTQ+ community?",
+      "description": "This information helps us connect you with an appropriate therapist.",
+      "quote": "Research by the Williams Institute (2023) found that LGBTQ+ individuals matched with culturally competent therapists experienced 3.8 times better outcomes and 72% lower dropout rates than those with therapists lacking such expertise.",
+      "type": "select",
+      "options": [
+        "Yes",
+        "No",
+        "Prefer not to say"
+      ]
+    },
+    {
+      "id": "lgbtq_specialized",
+      "groupId": "special",
+      "title": "Would you like to work with a therapist specializing in LGBTQ+ issues?",
+      "description": "Some therapists have special expertise in LGBTQ+ issues.",
+      "quote": "According to a 2022 study in LGBT Health, 78% of LGBTQ+ clients reported that therapist specialization in LGBTQ+ issues was 'very important' to therapeutic success, with 91% higher satisfaction rates with specialists.",
+      "type": "select",
+      "options": [
+        "Yes, this is important",
+        "Preferred but not required",
+        "Not important",
+        "Not applicable"
+      ]
+    },
+    {
+      "id": "religion_therapy",
+      "groupId": "special",
+      "title": "Do you want religion-based therapy?",
+      "description": "Therapy can incorporate religious beliefs if that's important to you.",
+      "quote": "A 2021 meta-analysis in the Journal of Psychology and Theology found that religion-integrated therapy was 56% more effective for religious clients compared to secular approaches, with significantly higher retention rates and implementation of therapeutic insights.",
+      "type": "select",
+      "options": [
+        "Yes, this is important",
+        "Preferred but not required",
+        "Not important",
+        "Not applicable"
+      ]
+    }
+  ],
+  "userAnswers": [
+    {
+      "userId": "be303c7d-1eaa-4a7a-942a-a46a3a49f627",
+      "answers": {
+        "age": "Under 18",
+        "gender": "Non-binary",
+        "orientation": "Asexual",
+        "relationship": "Cohabiting",
+        "religion": "Somewhat important",
+        "spiritual": "Yes, somewhat",
+        "previous_therapy": "Never",
+        "physical_health": "Average",
+        "sleep": "Frequently",
+        "mood": "Sometimes",
+        "concentration": "Frequently",
+        "employment": "Student",
+        "alcohol": "Daily",
+        "suicidal_thoughts": "Occasionally",
+        "medication": "No",
+        "chronic_pain": "Severe",
+        "therapy_goals": [
+          "Manage stress",
+          "Find purpose in life",
+          "Improve relationships",
+          "Manage depression",
+          "Reduce anxiety"
+        ],
+        "mental_state": [
+          "Anxious",
+          "Depressed",
+          "Hopeless",
+          "Normal"
+        ],
+        "therapy_timing": [
+          "Recent crisis",
+          "Ongoing issues",
+          "Referred by doctor",
+          "Feeling overwhelmed"
+        ],
+        "therapist_expertise": [
+          "Relationship issues",
+          "LGBTQ+",
+          "Anxiety",
+          "Grief"
+        ],
+        "therapist_style": [
+          "Assigns homework",
+          "Gives specific advice"
+        ],
+        "therapist_approach": "A combination of both",
+        "therapist_structure": "Clearly structured",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "Yes",
+        "lgbtq_specialized": "Preferred but not required"
+      },
+      "createdAt": "2025-05-11T07:20:39.026Z"
+    },
+    {
+      "userId": "3c9a7c4f-e6b5-4b50-802f-312e643e8a75",
+      "answers": {
+        "age": "Under 18",
+        "gender": "Female",
+        "orientation": "Gay",
+        "relationship": "Separated",
+        "religion": "Neutral",
+        "spiritual": "Yes, somewhat",
+        "previous_therapy": "Never",
+        "physical_health": "Good",
+        "sleep": "Occasionally",
+        "mood": "Sometimes",
+        "concentration": "No",
+        "employment": "Self-employed",
+        "alcohol": "Never",
+        "suicidal_thoughts": "Occasionally",
+        "medication": "No",
+        "chronic_pain": "Moderate",
+        "therapy_goals": [
+          "Find purpose in life"
+        ],
+        "mental_state": [
+          "Lonely",
+          "Angry",
+          "Stressed"
+        ],
+        "therapy_timing": [
+          "Referred by doctor",
+          "Need support during transition",
+          "Feeling overwhelmed"
+        ],
+        "therapist_expertise": [
+          "Family issues",
+          "Addiction"
+        ],
+        "therapist_style": [
+          "Challenges beliefs",
+          "Explores the past",
+          "Assigns homework"
+        ],
+        "therapist_approach": "Gentle and supportive",
+        "therapist_structure": "Flexible and natural",
+        "therapist_formality": "Friendly and relaxed",
+        "lgbtq": "Prefer not to say",
+        "lgbtq_specialized": "Not applicable"
+      },
+      "createdAt": "2025-05-11T07:48:30.320Z"
+    },
+    {
+      "userId": "7fd88c7c-5693-4d0b-a419-2f2ac7495614",
+      "answers": {
+        "age": "Under 18",
+        "gender": "Female",
+        "orientation": "Bisexual",
+        "relationship": "Married",
+        "religion": "Somewhat important",
+        "spiritual": "Yes, very spiritual",
+        "previous_therapy": "A few sessions",
+        "physical_health": "Average",
+        "sleep": "Occasionally",
+        "mood": "No",
+        "concentration": "Sometimes",
+        "employment": "Part-time employment",
+        "alcohol": "Rarely",
+        "suicidal_thoughts": "Occasionally",
+        "medication": "No",
+        "chronic_pain": "No",
+        "therapy_goals": [
+          "Personal growth"
+        ],
+        "mental_state": [
+          "Lost"
+        ],
+        "therapy_timing": [
+          "Ongoing issues",
+          "Need support during transition"
+        ],
+        "therapist_expertise": [
+          "Depression",
+          "Relationship issues"
+        ],
+        "therapist_style": [
+          "Explores the past",
+          "Focuses on the present"
+        ],
+        "therapist_approach": "Direct and straightforward",
+        "therapist_structure": "Flexible and natural",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "No",
+        "lgbtq_specialized": "Yes, this is important"
+      },
+      "createdAt": "2025-05-11T08:52:47.945Z"
+    },
+    {
+      "userId": "490d5665-3454-4e44-bba6-0b8b41142b88",
+      "answers": {
+        "age": "18-24",
+        "gender": "Non-binary",
+        "orientation": "Heterosexual",
+        "relationship": "Dating",
+        "religion": "Neutral",
+        "spiritual": "Yes, very spiritual",
+        "previous_therapy": "A few sessions",
+        "physical_health": "Good",
+        "sleep": "Never",
+        "mood": "Sometimes",
+        "concentration": "Frequently",
+        "employment": "Part-time employment",
+        "alcohol": "Rarely",
+        "suicidal_thoughts": "Occasionally",
+        "medication": "No",
+        "chronic_pain": "Moderate",
+        "therapy_goals": [
+          "Improve relationships",
+          "Find purpose in life",
+          "Other",
+          "Build self-esteem",
+          "Personal growth",
+          "Manage depression",
+          "Reduce anxiety"
+        ],
+        "mental_state": [
+          "Depressed",
+          "Lonely"
+        ],
+        "therapy_timing": [
+          "Ongoing issues",
+          "Recent crisis"
+        ],
+        "therapist_expertise": [
+          "Depression",
+          "Relationship issues"
+        ],
+        "therapist_style": [
+          "Gives specific advice",
+          "Explores the past",
+          "Mainly listens"
+        ],
+        "therapist_approach": "Gentle and supportive",
+        "therapist_structure": "Flexible and natural",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "Prefer not to say",
+        "lgbtq_specialized": "Not applicable"
+      },
+      "createdAt": "2025-05-11T08:57:36.939Z"
+    },
+    {
+      "userId": "eec3cd10-2f9f-4949-8004-5c9cd24b862e",
+      "answers": {
+        "age": "Under 18",
+        "gender": "Non-binary",
+        "orientation": "Bisexual",
+        "relationship": "Dating",
+        "religion": "Not very important",
+        "spiritual": "Yes, somewhat",
+        "previous_therapy": "Several years",
+        "physical_health": "Good",
+        "sleep": "Almost every night",
+        "mood": "No",
+        "concentration": "Frequently",
+        "employment": "Student",
+        "alcohol": "Sometimes",
+        "suicidal_thoughts": "In the past but not currently",
+        "medication": "Yes, antidepressants",
+        "chronic_pain": "Moderate",
+        "therapy_goals": [
+          "Build self-esteem"
+        ],
+        "mental_state": [
+          "Confused"
+        ],
+        "therapy_timing": [
+          "Feeling overwhelmed"
+        ],
+        "therapist_expertise": [
+          "Relationship issues"
+        ],
+        "therapist_style": [
+          "Challenges beliefs"
+        ],
+        "therapist_approach": "Gentle and supportive",
+        "therapist_structure": "A combination of both",
+        "therapist_formality": "Balance between both",
+        "lgbtq": "No",
+        "lgbtq_specialized": "Not important"
+      },
+      "createdAt": "2025-05-11T08:59:16.345Z"
+    },
+    {
+      "userId": "3f58fd31-1c69-4080-93ff-45e0cf2273c9",
+      "answers": {
+        "age": "18-24",
+        "gender": "Non-binary",
+        "orientation": "Gay",
+        "relationship": "Single",
+        "religion": "Neutral",
+        "spiritual": "No, not very spiritual",
+        "previous_therapy": "A few sessions",
+        "physical_health": "Poor",
+        "sleep": "Frequently",
+        "mood": "No",
+        "concentration": "Frequently",
+        "employment": "Part-time employment",
+        "alcohol": "Sometimes",
+        "suicidal_thoughts": "Occasionally",
+        "medication": "Yes, antidepressants",
+        "chronic_pain": "No",
+        "therapy_goals": [
+          "Manage depression"
+        ],
+        "mental_state": [
+          "Lost"
+        ],
+        "therapy_timing": [
+          "Want personal development"
+        ],
+        "therapist_expertise": [
+          "Relationship issues"
+        ],
+        "therapist_style": [
+          "Explores the past"
+        ],
+        "therapist_approach": "Direct and straightforward",
+        "therapist_structure": "Clearly structured",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "Yes",
+        "lgbtq_specialized": "Preferred but not required"
+      },
+      "createdAt": "2025-05-11T09:23:27.965Z"
+    }
+  ]
+}
