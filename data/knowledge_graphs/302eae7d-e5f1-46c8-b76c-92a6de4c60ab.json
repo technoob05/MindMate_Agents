@@ -1,0 +1,460 @@
+{
+  "userId": "302eae7d-e5f1-46c8-b76c-92a6de4c60ab",
+  "knowledgeGraph": {
+    "nodes": [
+      {
+        "id": "User",
+        "label": "User",
+        "type": "person",
+        "value": 3,
+        "description": "The user"
+      },
+      {
+        "id": "18-24",
+        "label": "18-24",
+        "type": "age",
+        "value": 3,
+        "description": "18-24 (age)"
+      },
+      {
+        "id": "Male",
+        "label": "Male",
+        "type": "gender",
+        "value": 3,
+        "description": "Male (gender)"
+      },
+      {
+        "id": "Heterosexual",
+        "label": "Heterosexual",
+        "type": "sexual_orientation",
+        "value": 3,
+        "description": "Heterosexual (sexual_orientation)"
+      },
+      {
+        "id": "Single",
+        "label": "Single",
+        "type": "relationship",
+        "value": 3,
+        "description": "Single (relationship)"
+      },
+      {
+        "id": "Neutral",
+        "label": "Neutral",
+        "type": "belief",
+        "value": 3,
+        "description": "Neutral (belief)"
+      },
+      {
+        "id": "Not very spiritual",
+        "label": "Not very spiritual",
+        "type": "spirituality",
+        "value": 3,
+        "description": "Not very spiritual (spirituality)"
+      },
+      {
+        "id": "Never",
+        "label": "Never",
+        "type": "therapy_experience",
+        "value": 3,
+        "description": "Never (therapy_experience)"
+      },
+      {
+        "id": "Average",
+        "label": "Average",
+        "type": "health",
+        "value": 3,
+        "description": "Average (health)"
+      },
+      {
+        "id": "No difficulty sleeping",
+        "label": "No difficulty sleeping",
+        "type": "sleep_issue",
+        "value": 3,
+        "description": "No difficulty sleeping (sleep_issue)"
+      },
+      {
+        "id": "Sometimes feelings of sadness, grief, or depression",
+        "label": "Sometimes feelings of sadness, grief, or depression",
+        "type": "emotion",
+        "value": 3,
+        "description": "Sometimes feelings of sadness, grief, or depression (emotion)"
+      },
+      {
+        "id": "Sometimes difficulty concentrating",
+        "label": "Sometimes difficulty concentrating",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Sometimes difficulty concentrating (mental_state)"
+      },
+      {
+        "id": "Student",
+        "label": "Student",
+        "type": "employment",
+        "value": 3,
+        "description": "Student (employment)"
+      },
+      {
+        "id": "Rarely drinking alcohol",
+        "label": "Rarely drinking alcohol",
+        "type": "habit",
+        "value": 3,
+        "description": "Rarely drinking alcohol (habit)"
+      },
+      {
+        "id": "No suicidal thoughts or self-harm",
+        "label": "No suicidal thoughts or self-harm",
+        "type": "mental_state",
+        "value": 3,
+        "description": "No suicidal thoughts or self-harm (mental_state)"
+      },
+      {
+        "id": "No",
+        "label": "No",
+        "type": "medication",
+        "value": 3,
+        "description": "No (medication)"
+      },
+      {
+        "id": "No chronic pain",
+        "label": "No chronic pain",
+        "type": "symptom",
+        "value": 3,
+        "description": "No chronic pain (symptom)"
+      },
+      {
+        "id": "Reduce anxiety",
+        "label": "Reduce anxiety",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Reduce anxiety (therapy_goal)"
+      },
+      {
+        "id": "Find purpose in life",
+        "label": "Find purpose in life",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Find purpose in life (therapy_goal)"
+      },
+      {
+        "id": "Improve relationships",
+        "label": "Improve relationships",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Improve relationships (therapy_goal)"
+      },
+      {
+        "id": "Build self-esteem",
+        "label": "Build self-esteem",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Build self-esteem (therapy_goal)"
+      },
+      {
+        "id": "Lost",
+        "label": "Lost",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Lost (mental_state)"
+      },
+      {
+        "id": "Stressed",
+        "label": "Stressed",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Stressed (mental_state)"
+      },
+      {
+        "id": "Anxious",
+        "label": "Anxious",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Anxious (mental_state)"
+      },
+      {
+        "id": "Feeling overwhelmed",
+        "label": "Feeling overwhelmed",
+        "type": "motivation",
+        "value": 3,
+        "description": "Feeling overwhelmed (motivation)"
+      },
+      {
+        "id": "Want personal development",
+        "label": "Want personal development",
+        "type": "motivation",
+        "value": 3,
+        "description": "Want personal development (motivation)"
+      },
+      {
+        "id": "Relationship issues",
+        "label": "Relationship issues",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Relationship issues (therapist_expertise)"
+      },
+      {
+        "id": "Work stress",
+        "label": "Work stress",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Work stress (therapist_expertise)"
+      },
+      {
+        "id": "Gives specific advice",
+        "label": "Gives specific advice",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Gives specific advice (therapist_style)"
+      },
+      {
+        "id": "Focuses on the present",
+        "label": "Focuses on the present",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Focuses on the present (therapist_style)"
+      },
+      {
+        "id": "Direct and straightforward",
+        "label": "Direct and straightforward",
+        "type": "therapist_approach",
+        "value": 3,
+        "description": "Direct and straightforward (therapist_approach)"
+      },
+      {
+        "id": "Clearly structured",
+        "label": "Clearly structured",
+        "type": "session_structure",
+        "value": 3,
+        "description": "Clearly structured (session_structure)"
+      },
+      {
+        "id": "Professional and formal",
+        "label": "Professional and formal",
+        "type": "atmosphere",
+        "value": 3,
+        "description": "Professional and formal (atmosphere)"
+      },
+      {
+        "id": "Not part of the LGBTQ+ community",
+        "label": "Not part of the LGBTQ+ community",
+        "type": "community",
+        "value": 3,
+        "description": "Not part of the LGBTQ+ community (community)"
+      },
+      {
+        "id": "Not important",
+        "label": "Not important",
+        "type": "therapist_specialization",
+        "value": 3,
+        "description": "Not important (therapist_specialization)"
+      }
+    ],
+    "edges": [
+      {
+        "source": "User",
+        "target": "18-24",
+        "label": "has_age",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Male",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Heterosexual",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Single",
+        "label": "has_relationship_status",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Neutral",
+        "label": "has_religious_importance",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Not very spiritual",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Never",
+        "label": "has_previous_therapy",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Average",
+        "label": "rates_physical_health",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No difficulty sleeping",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Sometimes feelings of sadness, grief, or depression",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Sometimes difficulty concentrating",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Student",
+        "label": "has_employment_status",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Rarely drinking alcohol",
+        "label": "engages_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No suicidal thoughts or self-harm",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No",
+        "label": "has_medication",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No chronic pain",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Reduce anxiety",
+        "label": "has_therapy_goal",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Find purpose in life",
+        "label": "has_therapy_goal",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Improve relationships",
+        "label": "has_therapy_goal",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Build self-esteem",
+        "label": "has_therapy_goal",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Lost",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Stressed",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Anxious",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Feeling overwhelmed",
+        "label": "seeks_therapy_due_to",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Want personal development",
+        "label": "seeks_therapy_due_to",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Relationship issues",
+        "label": "prefers_therapist_expertise_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Work stress",
+        "label": "prefers_therapist_expertise_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Gives specific advice",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Focuses on the present",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Direct and straightforward",
+        "label": "prefers_therapist_approach",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Clearly structured",
+        "label": "prefers_therapy_session_structure",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Professional and formal",
+        "label": "prefers_therapy_atmosphere",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Not part of the LGBTQ+ community",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Not important",
+        "label": "prefers_therapist_specialization",
+        "weight": 3
+      }
+    ]
+  },
+  "userDescription": "Based on the questionnaire responses, the user is a young adult male, aged 18-24, who identifies as heterosexual and is currently single. He does not consider himself spiritual and religion is not important to him. This suggests a secular worldview, which may influence his approach to therapy and personal growth.\n\nThe user has never participated in therapy before and rates his physical health as average. He occasionally experiences feelings of sadness, difficulty concentrating, and anxiety. However, he does not have issues with sleep, suicidal thoughts, or chronic pain. His employment status as a student could be a source of stress or anxiety, given the demands of academic life. The user's goals for therapy include reducing anxiety, finding purpose in life, improving relationships, and building self-esteem. These goals indicate a desire for personal development and improved mental well-being.\n\nIn terms of therapeutic needs and approaches, the user may benefit from cognitive-behavioral therapy (CBT) or mindfulness-based interventions to address his anxiety and concentration issues. A therapist with experience in relationship issues and work stress would be well-suited to help him achieve his therapy goals. The user prefers a direct, straightforward approach and clearly structured therapy sessions within a professional and formal atmosphere. This suggests a preference for a goal-oriented, solution-focused therapeutic process.\n\nKey personality traits that can be inferred from the user's responses include self-motivation, openness to personal growth, and a proactive approach to addressing mental health challenges. These traits will likely positively contribute to the therapeutic process and the user's ability to make progress towards his goals. Overall, the user presents as a young adult seeking support to navigate life transitions and improve his mental well-being, demonstrating a strong commitment to personal development.",
+  "createdAt": "2025-05-11T12:03:15.135Z"
+}

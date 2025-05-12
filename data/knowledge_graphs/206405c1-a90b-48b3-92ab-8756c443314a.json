@@ -1,0 +1,421 @@
+{
+  "userId": "206405c1-a90b-48b3-92ab-8756c443314a",
+  "knowledgeGraph": {
+    "nodes": [
+      {
+        "id": "User",
+        "label": "User",
+        "type": "person",
+        "value": 3,
+        "description": "The user"
+      },
+      {
+        "id": "18-24 years",
+        "label": "18-24 years",
+        "type": "age",
+        "value": 3,
+        "description": "18-24 years (age)"
+      },
+      {
+        "id": "Male",
+        "label": "Male",
+        "type": "gender",
+        "value": 3,
+        "description": "Male (gender)"
+      },
+      {
+        "id": "Gay",
+        "label": "Gay",
+        "type": "sexual_orientation",
+        "value": 3,
+        "description": "Gay (sexual_orientation)"
+      },
+      {
+        "id": "Single",
+        "label": "Single",
+        "type": "relationship_status",
+        "value": 3,
+        "description": "Single (relationship_status)"
+      },
+      {
+        "id": "Religion (somewhat important)",
+        "label": "Religion (somewhat important)",
+        "type": "belief",
+        "value": 3,
+        "description": "Religion (somewhat important) (belief)"
+      },
+      {
+        "id": "Spiritual",
+        "label": "Spiritual",
+        "type": "spirituality",
+        "value": 3,
+        "description": "Spiritual (spirituality)"
+      },
+      {
+        "id": "A few sessions",
+        "label": "A few sessions",
+        "type": "therapy_experience",
+        "value": 3,
+        "description": "A few sessions (therapy_experience)"
+      },
+      {
+        "id": "Average",
+        "label": "Average",
+        "type": "physical_health",
+        "value": 3,
+        "description": "Average (physical_health)"
+      },
+      {
+        "id": "Sleep issues (frequently)",
+        "label": "Sleep issues (frequently)",
+        "type": "symptom",
+        "value": 3,
+        "description": "Sleep issues (frequently) (symptom)"
+      },
+      {
+        "id": "Sadness, grief, or depression (sometimes)",
+        "label": "Sadness, grief, or depression (sometimes)",
+        "type": "emotion",
+        "value": 3,
+        "description": "Sadness, grief, or depression (sometimes) (emotion)"
+      },
+      {
+        "id": "Difficulty concentrating (frequently)",
+        "label": "Difficulty concentrating (frequently)",
+        "type": "symptom",
+        "value": 3,
+        "description": "Difficulty concentrating (frequently) (symptom)"
+      },
+      {
+        "id": "Self-employed",
+        "label": "Self-employed",
+        "type": "employment_status",
+        "value": 3,
+        "description": "Self-employed (employment_status)"
+      },
+      {
+        "id": "Alcohol consumption (sometimes)",
+        "label": "Alcohol consumption (sometimes)",
+        "type": "habit",
+        "value": 3,
+        "description": "Alcohol consumption (sometimes) (habit)"
+      },
+      {
+        "id": "Suicidal thoughts or self-harm (occasionally)",
+        "label": "Suicidal thoughts or self-harm (occasionally)",
+        "type": "symptom",
+        "value": 3,
+        "description": "Suicidal thoughts or self-harm (occasionally) (symptom)"
+      },
+      {
+        "id": "Previously but not currently",
+        "label": "Previously but not currently",
+        "type": "medication_history",
+        "value": 3,
+        "description": "Previously but not currently (medication_history)"
+      },
+      {
+        "id": "Chronic pain (moderate)",
+        "label": "Chronic pain (moderate)",
+        "type": "symptom",
+        "value": 3,
+        "description": "Chronic pain (moderate) (symptom)"
+      },
+      {
+        "id": "Personal growth",
+        "label": "Personal growth",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Personal growth (therapy_goal)"
+      },
+      {
+        "id": "Build self-esteem",
+        "label": "Build self-esteem",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Build self-esteem (therapy_goal)"
+      },
+      {
+        "id": "Lost",
+        "label": "Lost",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Lost (mental_state)"
+      },
+      {
+        "id": "Depressed",
+        "label": "Depressed",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Depressed (mental_state)"
+      },
+      {
+        "id": "Need support during transition",
+        "label": "Need support during transition",
+        "type": "therapy_motivation",
+        "value": 3,
+        "description": "Need support during transition (therapy_motivation)"
+      },
+      {
+        "id": "Ongoing issues",
+        "label": "Ongoing issues",
+        "type": "therapy_motivation",
+        "value": 3,
+        "description": "Ongoing issues (therapy_motivation)"
+      },
+      {
+        "id": "Relationship issues",
+        "label": "Relationship issues",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Relationship issues (therapist_expertise)"
+      },
+      {
+        "id": "Depression",
+        "label": "Depression",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Depression (therapist_expertise)"
+      },
+      {
+        "id": "Explores the past",
+        "label": "Explores the past",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Explores the past (therapist_style)"
+      },
+      {
+        "id": "Gives specific advice",
+        "label": "Gives specific advice",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Gives specific advice (therapist_style)"
+      },
+      {
+        "id": "Gentle and supportive",
+        "label": "Gentle and supportive",
+        "type": "therapist_approach",
+        "value": 3,
+        "description": "Gentle and supportive (therapist_approach)"
+      },
+      {
+        "id": "Flexible and natural",
+        "label": "Flexible and natural",
+        "type": "therapy_structure",
+        "value": 3,
+        "description": "Flexible and natural (therapy_structure)"
+      },
+      {
+        "id": "Professional and formal",
+        "label": "Professional and formal",
+        "type": "therapy_atmosphere",
+        "value": 3,
+        "description": "Professional and formal (therapy_atmosphere)"
+      },
+      {
+        "id": "LGBTQ+",
+        "label": "LGBTQ+",
+        "type": "community_membership",
+        "value": 3,
+        "description": "LGBTQ+ (community_membership)"
+      },
+      {
+        "id": "LGBTQ+ issues (preferred but not required)",
+        "label": "LGBTQ+ issues (preferred but not required)",
+        "type": "therapist_specialization",
+        "value": 3,
+        "description": "LGBTQ+ issues (preferred but not required) (therapist_specialization)"
+      }
+    ],
+    "edges": [
+      {
+        "source": "User",
+        "target": "18-24 years",
+        "label": "has_age",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Male",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Gay",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Single",
+        "label": "has_relationship_status",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Religion (somewhat important)",
+        "label": "values",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Spiritual",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "A few sessions",
+        "label": "has_experience",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Average",
+        "label": "rates",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Sleep issues (frequently)",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Sadness, grief, or depression (sometimes)",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Difficulty concentrating (frequently)",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Self-employed",
+        "label": "has_employment_status",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Alcohol consumption (sometimes)",
+        "label": "engages_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Suicidal thoughts or self-harm (occasionally)",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Previously but not currently",
+        "label": "has_medication_history",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Chronic pain (moderate)",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Personal growth",
+        "label": "has_therapy_goal",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Build self-esteem",
+        "label": "has_therapy_goal",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Lost",
+        "label": "has_mental_state",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Depressed",
+        "label": "has_mental_state",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Need support during transition",
+        "label": "has_therapy_motivation",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Ongoing issues",
+        "label": "has_therapy_motivation",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Relationship issues",
+        "label": "prefers_therapist_expertise",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Depression",
+        "label": "prefers_therapist_expertise",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Explores the past",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Gives specific advice",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Gentle and supportive",
+        "label": "prefers_therapist_approach",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Flexible and natural",
+        "label": "prefers_therapy_structure",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Professional and formal",
+        "label": "prefers_therapy_atmosphere",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "LGBTQ+",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "LGBTQ+ issues (preferred but not required)",
+        "label": "prefers_therapist_specialization",
+        "weight": 3
+      }
+    ]
+  },
+  "userDescription": "Based on the provided questionnaire responses, the user is a young adult male, aged 18-24, who identifies as gay and is currently single. He considers himself very spiritual, although religion is only somewhat important to him. This suggests a strong personal belief system that may be independent of organized religion.\n\nThe user has participated in therapy before, albeit only a few sessions, and has previously taken medication for mental health issues. His current mental state is described as lost and depressed, with occasional feelings of sadness and grief. He also experiences difficulty sleeping and concentrating, which are common symptoms of depression and anxiety. The user occasionally thinks about suicide or self-harm and occasionally consumes alcohol. These are significant risk factors that need to be addressed in therapy.\n\nIn terms of therapeutic needs and goals, the user seeks personal growth and wants to build self-esteem. He is seeking therapy due to ongoing issues and a need for support during transition, possibly related to his age, sexual orientation, or other life changes. The user prefers a gentle and supportive approach from a therapist, with sessions organized in a flexible and natural manner. He also prefers a professional and formal atmosphere during therapy.\n\nGiven his sexual orientation and identification as part of the LGBTQ+ community, it would be beneficial to connect him with a therapist who specializes in LGBTQ+ issues. This can provide a safe and understanding space for the user to explore his feelings and challenges. The therapist should focus on building the user's self-esteem and resilience, while also addressing his symptoms of depression and suicidal ideation. Cognitive-behavioral therapy (CBT) or dialectical behavior therapy (DBT) could be suitable therapeutic approaches, as they can help the user identify negative thought patterns and develop coping skills.\n\nKey personality traits that can be inferred from the user's responses include openness, as he is willing to engage in therapy and explore his feelings, and introspection, as he is reflective about his mental state and therapeutic needs. His self-employment status may indicate self-motivation and independence, which are positive traits that can be leveraged in therapy. However, it is essential to address his chronic pain and its potential impact on his mental health, as this can be a significant source of stress and discomfort.",
+  "createdAt": "2025-05-11T13:27:03.756Z"
+}

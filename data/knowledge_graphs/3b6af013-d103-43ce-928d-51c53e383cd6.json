@@ -1,0 +1,327 @@
+{
+  "userId": "3b6af013-d103-43ce-928d-51c53e383cd6",
+  "knowledgeGraph": {
+    "nodes": [
+      {
+        "id": "User",
+        "label": "User",
+        "type": "person",
+        "value": 3,
+        "description": "The user"
+      },
+      {
+        "id": "18-24",
+        "label": "18-24",
+        "type": "age_group",
+        "value": 3,
+        "description": "18-24 (age_group)"
+      },
+      {
+        "id": "Male",
+        "label": "Male",
+        "type": "gender",
+        "value": 3,
+        "description": "Male (gender)"
+      },
+      {
+        "id": "Heterosexual",
+        "label": "Heterosexual",
+        "type": "sexual_orientation",
+        "value": 3,
+        "description": "Heterosexual (sexual_orientation)"
+      },
+      {
+        "id": "Single",
+        "label": "Single",
+        "type": "relationship_status",
+        "value": 3,
+        "description": "Single (relationship_status)"
+      },
+      {
+        "id": "Not very important",
+        "label": "Not very important",
+        "type": "religious_importance",
+        "value": 3,
+        "description": "Not very important (religious_importance)"
+      },
+      {
+        "id": "Not at all spiritual",
+        "label": "Not at all spiritual",
+        "type": "spirituality",
+        "value": 3,
+        "description": "Not at all spiritual (spirituality)"
+      },
+      {
+        "id": "Never",
+        "label": "Never",
+        "type": "therapy_experience",
+        "value": 3,
+        "description": "Never (therapy_experience)"
+      },
+      {
+        "id": "Average",
+        "label": "Average",
+        "type": "physical_health_rating",
+        "value": 3,
+        "description": "Average (physical_health_rating)"
+      },
+      {
+        "id": "No",
+        "label": "No",
+        "type": "sadness_grief_depression",
+        "value": 3,
+        "description": "No (sadness_grief_depression)"
+      },
+      {
+        "id": "Student",
+        "label": "Student",
+        "type": "employment_status",
+        "value": 3,
+        "description": "Student (employment_status)"
+      },
+      {
+        "id": "Rarely",
+        "label": "Rarely",
+        "type": "alcohol_consumption",
+        "value": 3,
+        "description": "Rarely (alcohol_consumption)"
+      },
+      {
+        "id": "Improve relationships",
+        "label": "Improve relationships",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Improve relationships (therapy_goal)"
+      },
+      {
+        "id": "Find purpose in life",
+        "label": "Find purpose in life",
+        "type": "therapy_goal",
+        "value": 3,
+        "description": "Find purpose in life (therapy_goal)"
+      },
+      {
+        "id": "Stressed",
+        "label": "Stressed",
+        "type": "mental_state",
+        "value": 3,
+        "description": "Stressed (mental_state)"
+      },
+      {
+        "id": "Feeling overwhelmed",
+        "label": "Feeling overwhelmed",
+        "type": "therapy_timing",
+        "value": 3,
+        "description": "Feeling overwhelmed (therapy_timing)"
+      },
+      {
+        "id": "Relationship issues",
+        "label": "Relationship issues",
+        "type": "therapist_expertise",
+        "value": 3,
+        "description": "Relationship issues (therapist_expertise)"
+      },
+      {
+        "id": "Gives specific advice",
+        "label": "Gives specific advice",
+        "type": "therapist_style",
+        "value": 3,
+        "description": "Gives specific advice (therapist_style)"
+      },
+      {
+        "id": "Direct and straightforward",
+        "label": "Direct and straightforward",
+        "type": "therapist_approach",
+        "value": 3,
+        "description": "Direct and straightforward (therapist_approach)"
+      },
+      {
+        "id": "Clearly structured",
+        "label": "Clearly structured",
+        "type": "therapy_structure",
+        "value": 3,
+        "description": "Clearly structured (therapy_structure)"
+      },
+      {
+        "id": "Professional and formal",
+        "label": "Professional and formal",
+        "type": "therapy_atmosphere",
+        "value": 3,
+        "description": "Professional and formal (therapy_atmosphere)"
+      },
+      {
+        "id": "Not applicable",
+        "label": "Not applicable",
+        "type": "lgbtq_specialized_therapist_preference",
+        "value": 3,
+        "description": "Not applicable (lgbtq_specialized_therapist_preference)"
+      }
+    ],
+    "edges": [
+      {
+        "source": "User",
+        "target": "18-24",
+        "label": "is_of_age",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Male",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Heterosexual",
+        "label": "has_orientation",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Single",
+        "label": "has_relationship_status",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Not very important",
+        "label": "values",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Not at all spiritual",
+        "label": "identifies_as",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Never",
+        "label": "has_previous_therapy_experience",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Average",
+        "label": "rates_physical_health",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Never",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Student",
+        "label": "has_employment_status",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Rarely",
+        "label": "engages_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Never",
+        "label": "has_suicidal_thoughts",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No",
+        "label": "takes_medication",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Improve relationships",
+        "label": "has_therapy_goal",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Find purpose in life",
+        "label": "has_therapy_goal",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Stressed",
+        "label": "experiences",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Feeling overwhelmed",
+        "label": "seeks_therapy_due_to",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Relationship issues",
+        "label": "prefers_therapist_expertise_in",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Gives specific advice",
+        "label": "prefers_therapist_style",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Direct and straightforward",
+        "label": "prefers_therapist_approach",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Clearly structured",
+        "label": "prefers_therapy_structure",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Professional and formal",
+        "label": "prefers_therapy_atmosphere",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "No",
+        "label": "is_part_of_lgbtq",
+        "weight": 3
+      },
+      {
+        "source": "User",
+        "target": "Not applicable",
+        "label": "prefers_lgbtq_specialized_therapist",
+        "weight": 3
+      }
+    ]
+  },
+  "userDescription": "Based on the questionnaire responses, the user is a young adult male between the ages of 18-24, identifying as heterosexual and currently single. He does not consider religion or spirituality to be important in his life. The user has never participated in therapy before and rates his physical health as average. He does not report any difficulty sleeping, feelings of sadness or depression, concentration issues, or suicidal thoughts. He is a student and drinks alcohol rarely. He does not take medication for mental health issues and does not experience chronic pain.\n\nThe user's therapeutic goals include improving relationships and finding purpose in life. He is seeking therapy at this time due to feelings of stress and being overwhelmed. He would like his therapist to have experience in relationship issues and prefers a direct, straightforward approach. The user expects the therapist to give specific advice and prefers clearly structured sessions in a professional and formal atmosphere.\n\nGiven the user's reported stress and overwhelmed feelings, it is recommended that the therapist focus on developing coping strategies and stress management techniques. Additionally, addressing relationship issues may help alleviate some of the user's stress and improve his overall well-being. The user's preference for a direct, straightforward approach suggests that he may appreciate a problem-solving focus in therapy. The therapist should also be aware of the user's desire for specific advice and ensure that sessions are clearly structured to meet this need. The user's preference for a professional and formal atmosphere may indicate a need for a sense of safety and structure in therapy. Overall, the user appears to be a goal-oriented and pragmatic individual who may benefit from a solution-focused and structured therapeutic approach.",
+  "createdAt": "2025-05-11T13:15:44.005Z"
+}

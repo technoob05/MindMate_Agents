@@ -33,6 +33,111 @@
       "email": "dathu@gmail.com",
       "hashedPassword": "$2b$10$3ER3qcPNC7FpZQ0TiIHcj.dHrTgtA03mJiFnqhXg1Njr74lZEemaS",
       "pseudonym": "huyHoang"
+    },
+    {
+      "id": "e0dff7d8-922c-427b-bc04-c0ad7aaacc0d",
+      "email": "a@a.a",
+      "hashedPassword": "$2b$10$haRlz9zwObU2Bb9Utvp9tuVBzfHgm6tRXA7JzKBXML7QItxFT29CS",
+      "pseudonym": "huyHoang"
+    },
+    {
+      "id": "337eb694-e803-491e-a261-4de87217f3a3",
+      "email": "test1@m.c",
+      "hashedPassword": "$2b$10$HhIurKrWe4yoEVJxCDza9ucT7GPo9KI2bgj9RfX2Ml2wuLr7xGTna",
+      "pseudonym": "annguyen.31231025069@st.ueh.edu.vn"
+    },
+    {
+      "id": "2621fd39-1f32-4763-9425-48367c83e136",
+      "email": "nguyenhuyhoang3305@gmail.com",
+      "hashedPassword": "$2b$10$8a/uWjoJ1Oq6MZ6WwTAUD.QxtbawNGzKoMIXSCZXvk1B5H9MctyrK",
+      "pseudonym": "nguyenhuyhoang3305@gmail.com"
+    },
+    {
+      "id": "be303c7d-1eaa-4a7a-942a-a46a3a49f627",
+      "email": "hhnguyen.3305@gmail.com",
+      "hashedPassword": "$2b$10$6h8J9B0m4WnVzunpvLWIL.TSpR/8RKZ7ZK9ox1vlgKZz5tNpk3n9K",
+      "pseudonym": "hhnguyen.3305@gmail.com"
+    },
+    {
+      "id": "3c9a7c4f-e6b5-4b50-802f-312e643e8a75",
+      "email": "me@hh.com",
+      "hashedPassword": "$2b$10$n.LzUoqSv/36IDzP2nSLEObDQetRKM/7sCcpSJp5O1IRLtkd8Wagy",
+      "pseudonym": "Leonard"
+    },
+    {
+      "id": "7fd88c7c-5693-4d0b-a419-2f2ac7495614",
+      "email": "me@hh.com1",
+      "hashedPassword": "$2b$10$hP3iTaIo6pv2p9zc.ab7DeX7H4sRBFjGrwx7zQLaDB86zOLV76XLu",
+      "pseudonym": "me@hh.com1"
+    },
+    {
+      "id": "490d5665-3454-4e44-bba6-0b8b41142b88",
+      "email": "hh.dz@c",
+      "hashedPassword": "$2b$10$cMXEJ2kj8wprsOUj89rdUeH.OtIKhbSyOXle/0ztBVXeH.vCii6X6",
+      "pseudonym": "HuyHoang"
+    },
+    {
+      "id": "eec3cd10-2f9f-4949-8004-5c9cd24b862e",
+      "email": "hh@dz.c",
+      "hashedPassword": "$2b$10$hj8SGZveHQpIqRM5.wUpZOtHhhK7n88yjPG.h5NycPc.7AFuzcpBq",
+      "pseudonym": "829372"
+    },
+    {
+      "id": "3f58fd31-1c69-4080-93ff-45e0cf2273c9",
+      "email": "me@hh.com2",
+      "hashedPassword": "$2b$10$Q3g3P1A0xgUtiyj.7Y4vOux242RflkYLr602pTBQeJZEaStFQAyQW",
+      "pseudonym": "me@hh.com"
+    },
+    {
+      "id": "ecd35e5c-1c6e-471a-8a1b-5558326526d9",
+      "email": "tranhuukhangdl1@gmail.com",
+      "hashedPassword": "$2b$10$RnRNyP.IHh7mmR28aKYaUu16.qzFF8wi0m7O00tiZIiEq45wnrvW6"
+    },
+    {
+      "id": "302eae7d-e5f1-46c8-b76c-92a6de4c60ab",
+      "email": "tranhuukhang1905@gmail.com",
+      "hashedPassword": "$2b$10$SM08lDPHcA2kgiH6.JVon.E2Eij5cp8XdqMLBME8ez8uZBT9iOD6O",
+      "pseudonym": "tranhuukhangdl1@gmail.com"
+    },
+    {
+      "id": "c4bfb54d-e30b-41b3-97b2-88de7ad337f8",
+      "email": "hoangnguyen@gmail.com",
+      "hashedPassword": "$2b$10$ozNU0Hx/jBrSixtDZALFQOG0mARk9QRzfn12XAhvmvvK4JWeLPIyu",
+      "pseudonym": "Hoang"
+    },
+    {
+      "id": "721efcda-6627-41d0-b323-5c29620dfbd3",
+      "email": "me@hh.com3",
+      "hashedPassword": "$2b$10$7iNxHCvZjHIWIuQffeTvM.UOR2DuabK9imB553.Id5QlxgmLWT7Zi",
+      "pseudonym": "me@hh.com3"
+    },
+    {
+      "id": "9969eea3-c15a-4563-9286-7b5aa7f31d1f",
+      "email": "nguyenhuyhoang@gmail.com",
+      "hashedPassword": "$2b$10$c85QlMZmTSisGbRICsRx8eHjj0rQJoLt/ViF0Q8nmQrHmC9e6T/fq",
+      "pseudonym": "nguyenhuyhoang3305@gmail.com"
+    },
+    {
+      "id": "3afec7b0-bff6-49a8-ba93-65d40cc61427",
+      "email": "me@hh.com4",
+      "hashedPassword": "$2b$10$N8fTVPwNdrhnMptEcx0Gx.gguKcnAC1L4YVizcN.VCofKauzeIkY.",
+      "pseudonym": "me@hh.com"
+    },
+    {
+      "id": "3b6af013-d103-43ce-928d-51c53e383cd6",
+      "email": "heo@gmail.com",
+      "hashedPassword": "$2b$10$TtJXxGOX6MivhJgaF4uBoOSBO42MJHlHldHqO.Pi8wkP5V4ls1hEy"
+    },
+    {
+      "id": "206405c1-a90b-48b3-92ab-8756c443314a",
+      "email": "1@1.com",
+      "hashedPassword": "$2b$10$NHJQaXVguOheqpTFppTRj.PQCuiQC3EcX68ITNoJ9AyE/Xy9JxXvy"
+    },
+    {
+      "id": "23846220-1dee-49f8-bb16-6bf1832407b6",
+      "email": "2@2.com",
+      "hashedPassword": "$2b$10$mI3/But7.WGZMNhKTlRS/eLwnzL8KsyrM4U8L93AqlDtHrcXCr1.u",
+      "pseudonym": "829372"
     }
   ],
   "chats": {
@@ -57,15 +162,8 @@
         "sender": "ai",
         "timestamp": 1746111132898,
         "userId": "9dbbce27-1b7c-450b-9444-22d7b7118bdd"
-      },
-      {
-        "id": "47879e9c-7a1b-435c-acb7-793e4007a48c",
-        "text": "How can mindfulness help with anxiety?",
-        "sender": "user",
-        "timestamp": 1746891670147
       }
     ],
-    "ai_team": [],
     "multi_user": [],
     "multi_user_rooms": {
       "general": []

@@ -59,8 +59,8 @@ export default function AppLayout({
   const [user, setUser] = useState<any>(null);
   const [isClient, setIsClient] = useState(false);
   
-  // Check if current path is login, register, or any debug route
-  const isAuthPage = pathname === '/login' || pathname === '/register' || pathname.startsWith('/debug/');
+  // Check if current path is login, register, onboarding or any debug route
+  const isAuthPage = pathname === '/login' || pathname === '/register' || pathname === '/onboarding' || pathname.startsWith('/debug/');
 
   console.log('AppLayout rendering, pathname:', pathname, 'isAuthPage:', isAuthPage, 'Current time:', new Date().toISOString());
 

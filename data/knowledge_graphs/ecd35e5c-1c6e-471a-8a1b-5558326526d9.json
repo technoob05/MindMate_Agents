@@ -1,0 +1,306 @@
+{
+  "userId": "ecd35e5c-1c6e-471a-8a1b-5558326526d9",
+  "knowledgeGraph": {
+    "nodes": [
+      {
+        "id": "node1",
+        "label": "Young Adult",
+        "type": "personality_trait",
+        "value": 4,
+        "description": "User is between 18-24 years old"
+      },
+      {
+        "id": "node2",
+        "label": "Male",
+        "type": "personality_trait",
+        "value": 5,
+        "description": "User identifies as male"
+      },
+      {
+        "id": "node3",
+        "label": "Heterosexual",
+        "type": "personality_trait",
+        "value": 5,
+        "description": "User identifies as heterosexual"
+      },
+      {
+        "id": "node4",
+        "label": "Single",
+        "type": "relationship",
+        "value": 5,
+        "description": "User is currently single"
+      },
+      {
+        "id": "node5",
+        "label": "Neutral on Religion",
+        "type": "value",
+        "value": 3,
+        "description": "User has a neutral stance on religion"
+      },
+      {
+        "id": "node6",
+        "label": "Unsure of Spirituality",
+        "type": "value",
+        "value": 2,
+        "description": "User is unsure about their spirituality"
+      },
+      {
+        "id": "node7",
+        "label": "No Previous Therapy",
+        "type": "therapeutic_need",
+        "value": 5,
+        "description": "User has never participated in therapy before"
+      },
+      {
+        "id": "node8",
+        "label": "Average Physical Health",
+        "type": "personality_trait",
+        "value": 3,
+        "description": "User rates their physical health as average"
+      },
+      {
+        "id": "node9",
+        "label": "Occasional Sadness",
+        "type": "symptom",
+        "value": 3,
+        "description": "User sometimes experiences feelings of sadness or depression"
+      },
+      {
+        "id": "node10",
+        "label": "Occasional Concentration Issues",
+        "type": "symptom",
+        "value": 3,
+        "description": "User sometimes has difficulty concentrating"
+      },
+      {
+        "id": "node11",
+        "label": "Student",
+        "type": "personality_trait",
+        "value": 5,
+        "description": "User is currently a student"
+      },
+      {
+        "id": "node12",
+        "label": "Rare Alcohol Consumption",
+        "type": "personality_trait",
+        "value": 1,
+        "description": "User rarely consumes alcohol"
+      },
+      {
+        "id": "node13",
+        "label": "No Suicidal Thoughts",
+        "type": "symptom",
+        "value": 1,
+        "description": "User does not have suicidal thoughts"
+      },
+      {
+        "id": "node14",
+        "label": "No Medication",
+        "type": "therapeutic_need",
+        "value": 5,
+        "description": "User is not taking any mental health medication"
+      },
+      {
+        "id": "node15",
+        "label": "No Chronic Pain",
+        "type": "symptom",
+        "value": 1,
+        "description": "User does not experience chronic pain"
+      },
+      {
+        "id": "node16",
+        "label": "Personal Growth",
+        "type": "goal",
+        "value": 5,
+        "description": "User wants to achieve personal growth in therapy"
+      },
+      {
+        "id": "node17",
+        "label": "Self-esteem Building",
+        "type": "goal",
+        "value": 5,
+        "description": "User wants to build self-esteem in therapy"
+      },
+      {
+        "id": "node18",
+        "label": "Find Purpose",
+        "type": "goal",
+        "value": 5,
+        "description": "User wants to find purpose in life through therapy"
+      },
+      {
+        "id": "node19",
+        "label": "Stressed",
+        "type": "symptom",
+        "value": 4,
+        "description": "User is currently stressed"
+      },
+      {
+        "id": "node20",
+        "label": "Normal",
+        "type": "symptom",
+        "value": 3,
+        "description": "User's current mental state is normal"
+      },
+      {
+        "id": "node21",
+        "label": "Overwhelmed",
+        "type": "therapeutic_need",
+        "value": 5,
+        "description": "User is seeking therapy due to feeling overwhelmed"
+      },
+      {
+        "id": "node22",
+        "label": "Curious about Therapy",
+        "type": "therapeutic_need",
+        "value": 4,
+        "description": "User is curious about therapy"
+      },
+      {
+        "id": "node23",
+        "label": "Relationship Issues",
+        "type": "therapeutic_need",
+        "value": 5,
+        "description": "User wants therapist to have experience with relationship issues"
+      },
+      {
+        "id": "node24",
+        "label": "Depression",
+        "type": "therapeutic_need",
+        "value": 4,
+        "description": "User wants therapist to have experience with depression"
+      },
+      {
+        "id": "node25",
+        "label": "Work Stress",
+        "type": "therapeutic_need",
+        "value": 4,
+        "description": "User wants therapist to have experience with work stress"
+      }
+    ],
+    "edges": [
+      {
+        "source": "node1",
+        "target": "node11",
+        "label": "influences",
+        "weight": 4
+      },
+      {
+        "source": "node2",
+        "target": "node3",
+        "label": "correlates with",
+        "weight": 5
+      },
+      {
+        "source": "node4",
+        "target": "node23",
+        "label": "influences",
+        "weight": 4
+      },
+      {
+        "source": "node5",
+        "target": "node6",
+        "label": "correlates with",
+        "weight": 4
+      },
+      {
+        "source": "node7",
+        "target": "node21",
+        "label": "leads to",
+        "weight": 5
+      },
+      {
+        "source": "node8",
+        "target": "node9",
+        "label": "influences",
+        "weight": 4
+      },
+      {
+        "source": "node8",
+        "target": "node10",
+        "label": "influences",
+        "weight": 4
+      },
+      {
+        "source": "node11",
+        "target": "node25",
+        "label": "influences",
+        "weight": 4
+      },
+      {
+        "source": "node12",
+        "target": "node9",
+        "label": "reduces risk of",
+        "weight": 4
+      },
+      {
+        "source": "node13",
+        "target": "node9",
+        "label": "contradicts",
+        "weight": 5
+      },
+      {
+        "source": "node14",
+        "target": "node24",
+        "label": "addresses",
+        "weight": 5
+      },
+      {
+        "source": "node15",
+        "target": "node9",
+        "label": "reduces risk of",
+        "weight": 4
+      },
+      {
+        "source": "node16",
+        "target": "node21",
+        "label": "addresses",
+        "weight": 5
+      },
+      {
+        "source": "node17",
+        "target": "node21",
+        "label": "addresses",
+        "weight": 5
+      },
+      {
+        "source": "node18",
+        "target": "node21",
+        "label": "addresses",
+        "weight": 5
+      },
+      {
+        "source": "node19",
+        "target": "node25",
+        "label": "associated with",
+        "weight": 4
+      },
+      {
+        "source": "node20",
+        "target": "node22",
+        "label": "associated with",
+        "weight": 4
+      },
+      {
+        "source": "node21",
+        "target": "node23",
+        "label": "requires",
+        "weight": 5
+      },
+      {
+        "source": "node21",
+        "target": "node24",
+        "label": "requires",
+        "weight": 5
+      },
+      {
+        "source": "node21",
+        "target": "node25",
+        "label": "requires",
+        "weight": 5
+      }
+    ]
+  },
+  "userDescription": "Based on the questionnaire responses, the user is a young adult male aged 18-24, identifying as heterosexual and currently single. He has never participated in therapy before and rates his physical health as average. The user sometimes experiences feelings of sadness or depression and occasionally has difficulty concentrating. However, he does not have issues with sleep, suicidal thoughts, or chronic pain. He is a student and rarely drinks alcohol. In terms of spirituality, the user is unsure about his beliefs and feels neutral about religion.\n\nThe user's therapeutic needs and goals revolve around personal growth, building self-esteem, and finding purpose in life. He is seeking therapy at this time due to feeling overwhelmed and curiosity about the process. The user would like his therapist to have experience in relationship issues, depression, and work stress. He prefers a direct and straightforward approach, with sessions being flexible and natural, in a professional and formal atmosphere.\n\nGiven these insights, the recommended approach for therapy would be Cognitive Behavioral Therapy (CBT) or Solution-Focused Brief Therapy (SFBT). Both approaches emphasize active problem-solving and developing coping strategies, which align with the user's desire for personal growth and self-esteem building. The user's preference for a direct and straightforward approach suggests that he may appreciate the structured and goal-oriented nature of these therapies. Additionally, the therapist should be experienced in working with young adults and addressing issues related to relationships, depression, and work stress.\n\nKey personality traits that can be inferred from the user's responses include openness to self-exploration, as indicated by his curiosity about therapy, and a proactive attitude towards personal growth. The user also appears to value professionalism and structure, as evidenced by his preference for a formal therapy atmosphere and a flexible yet natural session organization. These traits suggest that the user may be motivated, self-aware, and committed to working on his mental health goals.",
+  "createdAt": "2025-05-11T11:39:09.638Z"
+}
