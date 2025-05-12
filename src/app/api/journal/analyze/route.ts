@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import textToSpeech from '@google-cloud/text-to-speech';
+import * as textToSpeech from '@google-cloud/text-to-speech';
 import { z } from 'zod';
 
 // Ensure GOOGLE_APPLICATION_CREDENTIALS is set in your environment pointing to your service account key file
@@ -12,7 +12,7 @@ import { z } from 'zod';
 const isGoogleAIConfigured = !!process.env.GOOGLE_API_KEY;
 
 // Initialize Gemini Model if credentials are available
-let model;
+let model: ChatGoogleGenerativeAI | undefined;
 try {
   if (isGoogleAIConfigured) {
     model = new ChatGoogleGenerativeAI({
@@ -35,7 +35,7 @@ const isTTSCredentialsConfigured = !!process.env.GOOGLE_APPLICATION_CREDENTIALS 
                                  (process.env.GOOGLE_API_KEY && process.env.GOOGLE_PROJECT_ID);
 
 // Initialize Google Text-to-Speech Client only if credentials are available
-let ttsClient;
+let ttsClient: textToSpeech.TextToSpeechClient | undefined;
 try {
   if (isTTSCredentialsConfigured) {
     ttsClient = new textToSpeech.TextToSpeechClient();

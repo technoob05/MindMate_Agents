@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info, LogOut, Calendar, BrainCircuit } from 'lucide-react'; // Added FileText, XCircle, Info, LogOut, Calendar, BrainCircuit
+import { AlertCircle, Send, Mic, X, RefreshCw, MoreVertical, Clock, Paperclip, ThumbsUp, ThumbsDown, Share2, Bookmark, Sparkles, FileText, XCircle, Info, LogOut, Calendar, BrainCircuit, Trash2, Bug } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -31,7 +31,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import VoiceInteraction from "@/components/voice-interaction";
-import { motion, AnimatePresence } from "framer-motion"; // Import motion
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import RemindersWidget from '@/components/RemindersWidget';
 import { RagLoadingDisplay } from '@/components/rag-loading-display';
@@ -57,13 +57,13 @@ interface Message {
 export default function ChatPage() {
   // Typing effect configuration
   const typingConfig = {
-    baseSpeed: 20, // milliseconds per character (lower = faster)
-    randomVariation: 3, // random variation in characters per step
-    minCharsPerStep: 1, // minimum characters per step
-    burstProbability: 0.15, // probability of typing a burst of characters at once
-    burstSize: { min: 3, max: 8 }, // burst size range when it happens
-    pauseProbability: 0.05, // probability of a natural pause in typing
-    pauseDuration: { min: 200, max: 800 }, // range of pause duration in ms
+    baseSpeed: 20,
+    randomVariation: 3,
+    minCharsPerStep: 1,
+    burstProbability: 0.15,
+    burstSize: { min: 3, max: 8 },
+    pauseProbability: 0.05,
+    pauseDuration: { min: 200, max: 800 },
     punctuationPause: {
       ',': 250,
       '.': 500,
@@ -71,7 +71,7 @@ export default function ChatPage() {
       '?': 500,
       ';': 300,
       ':': 300,
-      '\n': 700, // pause after new line
+      '\n': 700,
     } as Record<string, number>
   };
 
@@ -84,8 +84,8 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageUpdate, setMessageUpdate] = useState(0);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null); // State for selected file
-  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const [ragStep, setRagStep] = useState<'analyzing' | 'searching' | 'retrieving' | 'generating' | 'completed' | null>(null);
   const [reasoningMode, setReasoningMode] = useState<boolean>(false);
@@ -93,7 +93,10 @@ export default function ChatPage() {
   const [showReasoningProcess, setShowReasoningProcess] = useState<boolean>(false);
   const [pendingAIResponse, setPendingAIResponse] = useState<{text: string, sourceDocs?: any} | null>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [showChatHistory, setShowChatHistory] = useState(false);
 
+  // (rest of the functions remain the same)
+  
   // Scroll to bottom effect
   useEffect(() => {
     setTimeout(() => {
@@ -104,9 +107,9 @@ export default function ChatPage() {
         viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
       }
     }, 100);
-  }, [messages, isTyping]); // Trigger scroll on new messages and typing effect completion
+  }, [messages, isTyping]);
 
-   // Fetch initial messages
+  // Fetch initial messages
   useEffect(() => {
     const fetchMessages = async () => {
       setIsLoading(true);
@@ -115,6 +118,7 @@ export default function ChatPage() {
       // Check if user is logged in via session storage
       const userStr = sessionStorage.getItem('user');
       if (!userStr) {
+        console.log('No user found in session storage');
         setMessages([]);
         setShowEmptyState(true);
         setIsLoading(false);
@@ -126,12 +130,17 @@ export default function ChatPage() {
         const userData = JSON.parse(userStr);
         const userId = userData.id;
         
+        console.log(`Fetching messages for user: ${userId}`);
+        
         // Include user ID as a query parameter
         const response = await fetch(`/api/chat/messages?userId=${userId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const data: Message[] = await response.json();
+        console.log(`Fetched ${data.length} messages for user ${userId}`, data);
+        
         setMessages(data);
         
         // Show empty state if no messages
@@ -147,7 +156,22 @@ export default function ChatPage() {
 
     fetchMessages();
   }, [messageUpdate]);
-
+  
+  // Check user info in session storage on load
+  useEffect(() => {
+    const userStr = sessionStorage.getItem('user');
+    if (userStr) {
+      try {
+        const userData = JSON.parse(userStr);
+        console.log('User info from session storage:', userData);
+      } catch (err) {
+        console.error('Error parsing user info from session storage:', err);
+      }
+    } else {
+      console.warn('No user info found in session storage');
+    }
+  }, []);
+  
   const handleSendMessage = async (messageText?: string) => {
     const textToSend = messageText || inputMessage;
     // Allow sending only a file without text
@@ -195,6 +219,9 @@ export default function ChatPage() {
       userId: userId || undefined
     };
     setMessages((prevMessages) => [...prevMessages, optimisticUserMessage]);
+
+    // Save user message to database
+    await saveUserMessageToDatabase(optimisticText.trim(), userId);
     
     try {
       // Use our simplified AI service with reasoning mode if enabled
@@ -240,11 +267,48 @@ export default function ChatPage() {
       }
     }
   };
-
+  
+  // Save user message to database
+  const saveUserMessageToDatabase = async (text: string, userId: string | null) => {
+    if (userId) {
+      try {
+        console.log(`Saving user message to database with userId: ${userId}`);
+        
+        const formData = new FormData();
+        formData.append('text', text);
+        formData.append('sender', 'user');
+        formData.append('userId', userId);
+        
+        // Save user message to database
+        const response = await fetch('/api/chat/messages', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const savedMessage = await response.json();
+        console.log('Successfully saved user message:', savedMessage);
+        
+        // Trigger refresh of message list
+        setMessageUpdate(prev => prev + 1);
+        
+      } catch (err) {
+        console.error('Failed to save user message to database:', err);
+      }
+    } else {
+      console.error('Cannot save message - userId is null or undefined');
+    }
+  };
+  
   // Save AI response to database
   const saveAIResponseToDatabase = async (text: string, userId: string | null, sourceDocs?: any) => {
     if (userId) {
       try {
+        console.log(`Saving AI response to database with userId: ${userId}`);
+        
         const formData = new FormData();
         formData.append('text', text);
         formData.append('sender', 'ai');
@@ -256,16 +320,197 @@ export default function ChatPage() {
         }
         
         // Save AI message to database
-        await fetch('/api/chat/messages', {
+        const response = await fetch('/api/chat/messages', {
           method: 'POST',
           body: formData
         });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const savedMessage = await response.json();
+        console.log('Successfully saved AI response:', savedMessage);
+        
+        // Trigger refresh of message list
+        setMessageUpdate(prev => prev + 1);
+        
       } catch (err) {
         console.error('Failed to save AI message to database:', err);
       }
+    } else {
+      console.error('Cannot save AI response - userId is null or undefined');
+    }
+  };
+  
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputMessage(event.target.value);
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
     }
   };
 
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleFeedback = (messageId: string, type: "like" | "dislike") => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === messageId
+          ? { ...msg, feedback: msg.feedback === type ? null : type }
+          : msg
+      )
+    );
+    // Here you would also send this feedback to your API
+    console.log(`Feedback for ${messageId}: ${type}`);
+  };
+
+  const toggleSaveMessage = (messageId: string) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === messageId ? { ...msg, saved: !msg.saved } : msg
+      )
+    );
+    // Here you would also send this to your API
+    console.log(`Toggled save for ${messageId}`);
+  };
+  
+  const clearChat = async () => {
+    // Add confirmation dialog later if needed
+    setMessages([]);
+    setShowEmptyState(true);
+    setError(null);
+    
+    // Get user ID from session storage
+    const userStr = sessionStorage.getItem('user');
+    if (!userStr) return;
+    
+    try {
+      const userData = JSON.parse(userStr);
+      const userId = userData.id;
+      
+      // Call API to delete chat history for this user
+      const response = await fetch(`/api/chat/messages?userId=${userId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      console.log("Chat history cleared successfully");
+    } catch (err: any) {
+      console.error("Failed to clear chat history:", err);
+      setError(`Failed to clear chat history: ${err.message}`);
+    }
+  };
+  
+  // Refresh messages from the server
+  const refreshMessages = () => {
+    setMessageUpdate(prev => prev + 1);
+  };
+  
+  // Test function to save a message directly
+  const testSaveMessage = async () => {
+    // Get user ID from session storage
+    const userStr = sessionStorage.getItem('user');
+    if (!userStr) {
+      console.error('No user found in session storage');
+      return;
+    }
+
+    try {
+      const userData = JSON.parse(userStr);
+      const userId = userData.id;
+      
+      // Create a test message
+      const formData = new FormData();
+      formData.append('text', 'This is a test message from the client');
+      formData.append('sender', 'user');
+      formData.append('userId', userId);
+      
+      console.log(`Attempting to save test message for user: ${userId}`);
+      
+      // Send test message to API
+      const response = await fetch('/api/chat/messages', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const savedMessage = await response.json();
+      console.log('Successfully saved test message:', savedMessage);
+      
+      // Refresh messages
+      refreshMessages();
+      
+    } catch (err) {
+      console.error('Test message failed:', err);
+    }
+  };
+  
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        // Clear client-side session and state
+        sessionStorage.removeItem('user');
+        setMessages([]);
+        setShowEmptyState(true);
+        
+        // Redirect to login page
+        router.push('/login');
+      } else {
+        console.error('Failed to logout');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+  
+  const suggestedPrompts = [
+    "How can mindfulness help with anxiety?",
+    "What are some quick stress relief techniques?",
+    "Can you suggest a morning meditation routine?",
+    "How do I start practicing self-compassion?"
+  ];
+  
+  // Toggle reasoning mode
+  const toggleReasoningMode = () => {
+    setReasoningMode(prev => !prev);
+    // Reset reasoning-related states when toggling
+    setShowReasoningProcess(false);
+    setReasoningSteps([]);
+    setPendingAIResponse(null);
+    setRagStep(null); // Reset RAG step state as well
+    setIsLoading(false); // Ensure UI is not locked
+    setIsTyping(false); // Ensure typing state is reset
+  };
+  
   // Simulate typing effect for AI response
   const simulateTyping = (text: string, callback: (displayedText: string) => void) => {
     setIsTyping(true);
@@ -314,7 +559,7 @@ export default function ChatPage() {
     
     return () => clearInterval(typingInterval);
   };
-
+  
   // Handle end of reasoning process
   useEffect(() => {
     // Only proceed if we're in reasoning mode with steps to show and a pending response
@@ -376,151 +621,75 @@ export default function ChatPage() {
     }
   }, [reasoningMode, reasoningSteps, pendingAIResponse, isLoading, isTyping]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputMessage(event.target.value);
-  };
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setSelectedFile(event.target.files[0]);
-    }
-  };
-
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
-  };
-
-  const removeSelectedFile = () => {
-    setSelectedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Reset file input value
-    }
-  };
-
-  // Removed handleTranscript - handled by VoiceInteraction component directly
-
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleSendMessage();
-    }
-  };
-
-  // Removed toggleSpeechRecognition - handled by VoiceInteraction component
-
-  const handleFeedback = (messageId: string, type: "like" | "dislike") => {
-    setMessages((prevMessages) =>
-      prevMessages.map((msg) =>
-        msg.id === messageId
-          ? { ...msg, feedback: msg.feedback === type ? null : type }
-          : msg
-      )
-    );
-    // Here you would also send this feedback to your API
-    console.log(`Feedback for ${messageId}: ${type}`);
-  };
-
-  const toggleSaveMessage = (messageId: string) => {
-    setMessages((prevMessages) =>
-      prevMessages.map((msg) =>
-        msg.id === messageId ? { ...msg, saved: !msg.saved } : msg
-      )
-    );
-    // Here you would also send this to your API
-    console.log(`Toggled save for ${messageId}`);
-  };
-
-  const clearChat = async () => {
-    // Add confirmation dialog later if needed
-    setMessages([]);
-    setShowEmptyState(true);
-    setError(null);
-    
-    // Here you would also call an API endpoint to clear the chat
-    console.log("Clearing chat...");
-    // Example API call (replace with actual endpoint)
-    // try {
-    //   await fetch('/api/chat/clear', { method: 'POST' });
-    // } catch (err) {
-    //   console.error("Failed to clear chat on server:", err);
-    //   setError("Failed to clear chat history.");
-    // }
-  };
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      });
-      
-      if (response.ok) {
-        // Clear client-side session and state
-        sessionStorage.removeItem('user');
-        setMessages([]);
-        setShowEmptyState(true);
-        
-        // Redirect to login page
-        router.push('/login');
-      } else {
-        console.error('Failed to logout');
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
-  };
-
-  const suggestedPrompts = [
-    "How can mindfulness help with anxiety?",
-    "What are some quick stress relief techniques?",
-    "Can you suggest a morning meditation routine?",
-    "How do I start practicing self-compassion?"
-  ];
-
-  // Toggle reasoning mode
-  const toggleReasoningMode = () => {
-    setReasoningMode(prev => !prev);
-    // Reset reasoning-related states when toggling
-    setShowReasoningProcess(false);
-    setReasoningSteps([]);
-    setPendingAIResponse(null);
-    setRagStep(null); // Reset RAG step state as well
-    setIsLoading(false); // Ensure UI is not locked
-    setIsTyping(false); // Ensure typing state is reset
+  // Added handler for reporting issues
+  const handleReportIssue = () => {
+    // Implement the logic to report an issue
+    console.log("Reporting an issue");
   };
 
   return (
-    // Use theme background implicitly from layout
-    <div className="flex flex-col h-[calc(100vh-var(--header-height,4rem))]"> {/* Adjust height based on actual header */}
+    <div className="flex flex-col h-[calc(100vh-var(--header-height,4rem))]">
       {/* Header */}
       <header className="bg-background/90 backdrop-blur-sm border-b border-border/60 p-3 shadow-sm flex justify-between items-center sticky top-0 z-10 h-[var(--header-height,4rem)]">
         <div className="flex items-center gap-3">
-          <Avatar className="h-9 w-9 border shadow-sm"> {/* Slightly smaller avatar */}
-            <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" /> {/* Add actual logo */}
+          <Avatar className="h-9 w-9 border shadow-sm">
+            <AvatarImage src="/mindmate-logo.png" alt="Mindmate AI" />
             <AvatarFallback className="bg-primary/20 text-primary font-semibold">
               MM
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-lg font-semibold text-foreground">MindMate</h1> {/* Updated name */}
-            <div className="flex items-center gap-1.5"> {/* Increased gap */}
-              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span> {/* Added pulse */}
+            <h1 className="text-lg font-semibold text-foreground">MindMate</h1>
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
               <span className="text-xs text-muted-foreground">Online</span>
             </div>
           </div>
         </div>
 
         {/* Header Actions */}
-        <div className="flex items-center gap-1"> {/* Reduced gap */}
+        <div className="flex items-center gap-1">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                {/* Use updated Button style */}
-                <Button variant="ghost" size="icon" onClick={clearChat} className="h-9 w-9">
-                  <RefreshCw size={17} /> {/* Slightly smaller icon */}
+                <Button variant="ghost" size="icon" onClick={refreshMessages} className="h-9 w-9">
+                  <RefreshCw size={17} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">
-                New Conversation
+                Refresh Messages
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* Test button - only in development */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={testSaveMessage} className="h-9 w-9">
+                  <Bug size={17} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">
+                Test Message
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+                  onClick={clearChat}
+                >
+                  <Trash2 size={18} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground px-2 py-1 rounded text-xs">
+                Clear chat
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -531,11 +700,10 @@ export default function ChatPage() {
                 <MoreVertical size={17} />
               </Button>
             </DropdownMenuTrigger>
-             {/* Use updated Dropdown style */}
             <DropdownMenuContent align="end" className="bg-background/90 backdrop-blur-sm border-border/50 shadow-lg rounded-md w-56">
               <DropdownMenuItem className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm">
                 <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                <span>Conversation History</span>
+                <span>Chat History</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => router.push('/reminders')} 
@@ -549,7 +717,7 @@ export default function ChatPage() {
                 <span>Share Conversation</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={clearChat} className="focus:bg-accent/50 cursor-pointer mx-1 rounded px-2 py-1.5 text-sm">
-                <RefreshCw className="mr-2 h-4 w-4 text-muted-foreground" />
+                <Trash2 className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span>Clear Chat</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
@@ -568,7 +736,7 @@ export default function ChatPage() {
       <div className="flex flex-grow overflow-hidden">
         {/* Messages column */}
         <ScrollArea className="flex-grow" ref={scrollAreaRef}>
-          <div className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto"> {/* Increased max-width */}
+          <div className="p-4 md:p-6 space-y-6 max-w-4xl mx-auto">
             {/* Error notification */}
             <AnimatePresence>
               {error && (
@@ -617,11 +785,10 @@ export default function ChatPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 + index * 0.05 }}
                       >
-                        {/* Use updated Button style */}
                         <Button
                           variant="outline"
                           className="w-full justify-start text-left h-auto py-3 px-4 text-sm hover:bg-accent/70 hover:border-primary/30"
-                          onClick={() => handleSendMessage(prompt)} // Send message directly on click
+                          onClick={() => handleSendMessage(prompt)}
                         >
                           <span>{prompt}</span>
                         </Button>
@@ -850,8 +1017,6 @@ export default function ChatPage() {
             ref={fileInputRef}
             onChange={handleFileChange}
             className="hidden"
-            // Add accept attribute if you want to limit file types
-            // accept=".pdf,.doc,.docx,.txt"
           />
           <TooltipProvider>
             <Tooltip>
@@ -936,5 +1101,4 @@ export default function ChatPage() {
       </footer>
     </div>
   );
-}
-
+} 

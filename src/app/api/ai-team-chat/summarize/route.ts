@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import {
   generateOnDemandSummary,
-  // OnDemandSummaryResult, // Import from shared types
+  OnDemandSummaryResult, // Import the missing type
   ChatMessage as FlowChatMessageFromFlow // Use alias
 } from '@/ai/flows/inside-out-chat';
 

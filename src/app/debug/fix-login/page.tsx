@@ -216,7 +216,7 @@ export default function FixLoginPage() {
             <Button variant="secondary" onClick={createTempUser}>
               Create Temp User
             </Button>
-            <Button variant="accent" onClick={fixAuthFormat} className="bg-purple-600 hover:bg-purple-700 text-white">
+            <Button variant="default" onClick={fixAuthFormat} className="bg-purple-600 hover:bg-purple-700 text-white">
               Fix Auth Format
             </Button>
           </div>
