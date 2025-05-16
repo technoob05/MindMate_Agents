@@ -979,6 +979,54 @@
         "lgbtq_specialized": "Preferred but not required"
       },
       "createdAt": "2025-05-11T13:25:47.746Z"
+    },
+    {
+      "userId": "23846220-1dee-49f8-bb16-6bf1832407b6",
+      "answers": {
+        "age": "18-24",
+        "gender": "Female",
+        "orientation": "Gay",
+        "relationship": "Dating",
+        "religion": "Somewhat important",
+        "spiritual": "Yes, somewhat",
+        "previous_therapy": "A few sessions",
+        "physical_health": "Good",
+        "sleep": "Occasionally",
+        "mood": "No",
+        "concentration": "Frequently",
+        "employment": "Self-employed",
+        "alcohol": "Sometimes",
+        "suicidal_thoughts": "Occasionally",
+        "medication": "Previously but not currently",
+        "chronic_pain": "Moderate",
+        "therapy_goals": [
+          "Personal growth",
+          "Build self-esteem"
+        ],
+        "mental_state": [
+          "Lost",
+          "Confused"
+        ],
+        "therapy_timing": [
+          "Need support during transition",
+          "Ongoing issues"
+        ],
+        "therapist_expertise": [
+          "Relationship issues",
+          "Severe mental health"
+        ],
+        "therapist_style": [
+          "Explores the past",
+          "Gives specific advice"
+        ],
+        "therapist_approach": "Direct and straightforward",
+        "therapist_structure": "Flexible and natural",
+        "therapist_formality": "Professional and formal",
+        "lgbtq": "No",
+        "lgbtq_specialized": "Preferred but not required",
+        "religion_therapy": "Preferred but not required"
+      },
+      "updatedAt": "2025-05-11T13:35:04.996Z"
     }
   ]
 }
