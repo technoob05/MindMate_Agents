@@ -4,24 +4,40 @@ import fs from 'fs';
 import path from 'path';
 import { Credentials, JWTInput } from 'google-auth-library'; // Import Credentials & JWTInput types
 
-// Construct the path to the credentials file relative to the project root
-const credentialsPath = path.resolve(process.cwd(), 'google-credentials.json');
-let credentialsJson: Credentials;
+// Flag to track if TTS is available
+let ttsAvailable = false;
+let ttsClient: TextToSpeechClient | null = null;
 
+// Try to initialize the TTS client, but don't fail if credentials are missing
 try {
-  const credentialsFileContent = fs.readFileSync(credentialsPath, 'utf-8');
-  credentialsJson = JSON.parse(credentialsFileContent);
+  // Construct the path to the credentials file relative to the project root
+  const credentialsPath = path.resolve(process.cwd(), 'google-credentials.json');
+  
+  if (fs.existsSync(credentialsPath)) {
+    const credentialsFileContent = fs.readFileSync(credentialsPath, 'utf-8');
+    const credentialsJson = JSON.parse(credentialsFileContent);
+    
+    // Initialize Google Cloud TTS Client with explicit credentials
+    ttsClient = new TextToSpeechClient({ credentials: credentialsJson as JWTInput });
+    ttsAvailable = true;
+    console.log('Google TTS initialized successfully');
+  } else {
+    console.warn('Google credentials file not found. TTS functionality will be disabled.');
+  }
 } catch (error) {
-  console.error('Error reading or parsing Google credentials file:', error);
-  // Throw or handle the error appropriately - maybe return a 500 response earlier
-  throw new Error('Could not load Google credentials for TTS.');
+  console.error('Error initializing Google TTS:', error);
+  // Don't throw, just log the error and continue with disabled TTS
 }
 
-
-// Initialize Google Cloud TTS Client with explicit credentials, casting to JWTInput
-const ttsClient = new TextToSpeechClient({ credentials: credentialsJson as JWTInput });
-
 export async function POST(req: NextRequest) {
+  // If TTS is not available, return a friendly error
+  if (!ttsAvailable || !ttsClient) {
+    return NextResponse.json({ 
+      error: 'Text-to-Speech service is not available. Missing Google credentials.',
+      fallbackText: 'TTS is disabled in this environment. Please configure Google credentials to enable this feature.'
+    }, { status: 503 });  // 503 Service Unavailable
+  }
+
   try {
     const { text, emotion } = await req.json();
 

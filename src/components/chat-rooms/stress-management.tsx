@@ -1,3 +1,5 @@
+"use client";
+
 // src/components/chat-rooms/stress-management.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';

@@ -1,4 +1,8 @@
 'use client';
+
+// Force this page to be dynamically rendered (not statically generated at build time)
+export const dynamic = 'force-dynamic';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

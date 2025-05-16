@@ -1,0 +1,102 @@
+Part 1: Opening - Inquiring about Mental Health
+
+Chatbot:
+Hello! I’m a chatbot here to support your mental well-being and listen to what’s on your mind. How are you feeling about your mental health right now? Is there anything worrying you or something you’d like to share?
+
+User:
+Lately, I’ve been feeling quite tired, anxious, and finding it hard to focus on work. I’m not sure why I’m feeling this way.
+
+Chatbot (Reasoning: User shows signs of anxiety and fatigue, needs more information):
+Thank you for sharing. It sounds like you’re going through a challenging time. To understand better, could you describe your anxiety a bit more? For example, how often does it happen, or are there specific situations that trigger it?
+
+
+
+Part 2: Asking Questions to Gather More Information
+
+User:
+I feel anxious almost every day, especially at night. I keep thinking about work, deadlines, and worrying that I’m not doing well enough. Sometimes I can’t sleep because I’m overthinking.
+
+Chatbot (Reasoning: User shows signs of work-related anxiety and possible sleep issues):
+I can understand how those thoughts about work can feel overwhelming, especially at night. Could you share more about your sleep? For instance, how many hours do you sleep each night, and do you often wake up during the night? Also, have you tried anything to ease this pressure, like talking to someone or doing a relaxing activity?
+
+User:
+I sleep about 4-5 hours a night and often wake up in the middle of the night, finding it hard to fall back asleep. I haven’t tried much, just working more to avoid thinking, but it’s not helping.
+
+Chatbot (Reasoning: User has sleep disturbances likely tied to anxiety; overworking is counterproductive):
+Thank you for sharing more—it really helps me get a clearer picture. It sounds like your sleep is being significantly affected, and trying to work more might be exhausting you further. One more thing: outside of work, do you have time for yourself, like exercising, reading, or doing something you enjoy? And do you feel comfortable sharing these feelings with friends or family?
+
+User:
+I barely have time for myself because work takes up most of my day. I don’t want to talk to friends or family about this because I’m afraid they’ll think I’m weak or I’ll burden them.
+
+
+
+Part 3: Synthesizing Information and Reasoning
+
+Chatbot (Reasoning: User is overwhelmed by work, lacks self-care time, and tends to suppress emotions, contributing to anxiety and sleep issues):
+I really appreciate your openness. From what you’ve shared, it seems like you’re under a lot of pressure from work, and not having time for yourself or feeling comfortable sharing your emotions might be making things feel heavier. Symptoms like frequent anxiety, trouble sleeping, and feeling tired are signs that your mind and body need more care.
+
+I’d like to suggest some ways to help you feel lighter, but first, is there a specific issue you’d like to focus on? For example, improving sleep, reducing anxiety, or finding balance between work and life?
+
+User:
+I’d like to improve my sleep first because I think if I sleep better, I’ll feel less tired and anxious.
+
+
+
+Part 4: Providing Specific Advice
+
+Chatbot (Synthesizing and Offering Advice):
+That’s a great choice to prioritize! Sleep is crucial for feeling better physically and mentally. Based on your situation, here are a few small steps you can try to improve your sleep:
+
+
+
+
+
+Create a Pre-Sleep Routine:
+
+
+
+
+
+Avoid using your phone or computer at least 30 minutes before bed, as blue light can make it harder to fall asleep. Instead, try reading a light book or listening to calming music.
+
+
+
+Practice a simple breathing exercise: inhale for 4 seconds, hold for 4 seconds, exhale for 6 seconds, and repeat 5-10 times to relax your body.
+
+
+
+Set Up an Ideal Sleep Environment:
+
+
+
+
+
+Keep your bedroom cool, dark, and quiet. If possible, use blackout curtains or an eye mask to block out light.
+
+
+
+Stick to a consistent bedtime, like 10-11 PM, to help your body adjust to a regular sleep rhythm.
+
+
+
+Reduce Overthinking Before Bed:
+
+
+
+
+
+If work thoughts keep you awake, try writing down your worries on paper before bed. This can help “unload” those thoughts and make you feel lighter.
+
+
+
+A short 5-10 minute meditation focusing on your breath or visualizing a peaceful place can also help you relax.
+
+Since you’re under a lot of work pressure, I also suggest carving out 10-15 minutes daily for something you enjoy, like a walk or listening to music, to gradually regain balance. If your sleep or anxiety doesn’t improve after a while, you might consider talking to a mental health professional for deeper support.
+
+What do you think about these suggestions? Is there anything you’d like to try right away, or would you like me to explain any step further?
+
+User:
+Thank you, these suggestions are really helpful. I think I’ll try the breathing exercise and writing down my thoughts first. I feel a bit relieved after talking to you.
+
+Chatbot:
+I’m so glad to hear that! Give those small steps a try and see how they work for you. I’m always here if you want to chat more or share how things are going. Wishing you a restful sleep tonight!
